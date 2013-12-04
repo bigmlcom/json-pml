@@ -1,0 +1,31 @@
+{
+  "description":"Generic structure of a status message",
+  "type":"object",
+  "properties":{
+    "status":{
+      "type":"object",
+      "properties":{
+        "kind":{
+          "description":"The type of this status message",
+          "required":true,
+          "type":"string"
+        },
+        "last_update":{
+          "description":"Date for the last status update",
+          "type":"integer",
+          "format":"utc-millisec"
+        },
+        "elapsed_time":{
+          "description":"Milliseconds spent in construction so far",
+          "type":"integer"
+        },
+        "status":{
+          "required":true,
+          "enum":[
+            "queued","started","in-progress","summarized","finished","error"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "type":"object",
+  "properties":{
+    "categories":{
+      "description":"Captures the distribution for the objective field.
+                     Each tuple contains a category and the category
+                     occurrence count.  Used when the objective is
+                     categorical.
+
+                     For partial models, counts are an estimation and,
+                     as such, they won't be in general integers.  But
+                     finished models the pairs will always consist of
+                     a string and an integer.",
+      "type":"array",
+      "items":{
+        "type":"array",
+        "items":[
+          {"type":["string", "number"]},
+          {"type":"number"}]
+      }
+    },
+    "counts":{
+      "description":"Captures the distribution for the objective field.
+                     Contains tuples of the unique values and their
+                     occurrence counts.  Used when there are 32 or
+                     less unique numeric values.
+
+                     During model construction, these counts can be
+                     fractional for partial models.  When the model is
+                     finished, however, all counts will be integers.",
+      "type":"array",
+      "items":{
+        "type":"array",
+        "items":["number", "number"]
+      }
+    },
+    "bins":{
+      "description":"Captures the distribution for the objective field.
+                     Each tuple represents a bin from an approximate
+                     histogram.  Each bin contains the bin mean and a
+                     membership count.  Used when there are more than
+                     32 unique numeric values
+
+                     During model construction, the counts can be
+                     fractional for partial models.  When the model is
+                     finished, however, all counts will be integers.",
+      "type":"array",
+      "items":{
+        "type":"array",
+        "items":["number", "number"]
+      }
+    },
+    "maximum":{
+      "description":"Maximum value for numeric fields, used when 'bins'
+                     are present.",
+      "type":"number"
+    },
+    "minimum":{
+      "description":"Minimum value for numeric fields, used when 'bins'
+                     are present.",
+      "type":"number"
+    }
+  }
+}

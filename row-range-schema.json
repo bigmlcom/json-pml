@@ -1,0 +1,14 @@
+{
+  "description":"Specification for a range of rows.",
+  "type":"object",
+  "properties":{
+    "start":{
+      "type":"number",
+      "minimum":0
+    },
+    "size":{
+      "type":"number",
+      "minimum":0
+    }
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "description":"A collection of fields",
+  "type":"object",
+  "additionalProperties":{"$ref":"field-schema.json"}
+}

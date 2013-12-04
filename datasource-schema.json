@@ -1,0 +1,99 @@
+{
+  "description":"Metadata specifying a data source",
+  "type":"object",
+  "properties":{
+    "datasource":{
+      "type":"object",
+      "properties":{
+        "kind":{
+          "description":"Origin of the data",
+          "required":true,
+          "enum":["internal", "external", "inline", "file", "clone"]
+        },
+        "format":{
+          "description":"Data format",
+          "enum":["csv", "arff", "json", "excel"]
+        },
+        "json_key":{
+          "description":"Key where rows are to be found in JSON top-level maps",
+          "type":"string"
+        },
+        "data":{
+          "description":"Data for inline sources",
+          "type":"string"
+        },
+        "charset":{
+          "description":"The character set used in the source",
+          "type":"string",
+          "default":"UTF-8"
+        },
+        "size":{
+          "description":"Size, in bytes, of the incoming data",
+          "type":"integer",
+          "minimum":0
+        },
+        "encoding":{
+          "description":"Data encoding: plain, zip, ...",
+          "type":"string",
+          "default":"plain"
+        },
+        "locale":{
+          "description":"Default locale for field values (used during peeking)",
+          "type":"string"
+        },
+       "uri":{
+          "description":"A URI defining how to access the data",
+          "type":"string"
+        },
+        "uris":{
+          "description":"A list of URIs to be read to get the data",
+          "type":"array",
+          "items":"string"
+        },
+        "head_bytes":{
+          "description":"Size of the peeked head",
+          "type":"integer",
+          "minimum":0
+        },
+        "head_rows":{
+          "description":"Number of rows in peeked head",
+          "type":"integer",
+          "minimum":0
+        },
+        "head":{
+          "description":"First blocks of decoded data",
+          "type":"string"
+        },
+        "header":{
+          "description":"Result of the header autodetection",
+          "type":"boolean"
+        },
+        "separator":{
+          "description":"Result of the separator autodetection",
+          "type":"string"
+        },
+        "callbacks":{
+          "$ref":"callbacks-schema.json"
+        },
+        "fields":{
+          "description":"Possibly partial list of inferred columns
+                         in this datasource",
+          "type":"object",
+          "additionalProperties":{"$ref":"generic-field-schema.json"}
+        },
+        "fields_preview":{
+          "description":"Fields peeked as a map from field id to columns",
+          "type":"object"
+        },
+        "rogue_rows":{
+          "description":"Rows peeked that had an incorrect number of fields",
+          "type":"object"
+        },
+        "term_analysis":{
+          "description":"Default values for term analysis parameters",
+          "$ref":"term-analysis-schema.json"
+        }
+      }
+    }
+  }
+}

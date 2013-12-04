@@ -1,0 +1,37 @@
+{
+  "description":"A list of callback specifications.  They're invoked
+                 upon resource state changes.",
+  "type":"array",
+  "items":{
+    "description":"Each callback specification contains at an HTTP method,
+                   a URL, a list of triggering states and a synchronicity
+                   flag.",
+    "type":"object",
+    "properties":{
+      "method":{
+        "description":"The HTTP method to use.",
+        "default":"GET",
+        "enum":["GET", "POST", "PUT", "DELETE", "get", "post", "put", "delete"]
+      },
+      "url":{
+        "description":"The URL to invoke with the method above.",
+        "required":true,
+        "type":"string"
+      },
+      "states":{
+        "description":"A list of states for which the callback should be
+                       called.  If not given, the callback will be called
+                       for all state changes.",
+        "type":"array",
+        "items":["string"]
+      },
+      "synchronous":{
+        "description":"A flag specifying wether the callback is synchronous and
+                       we need to wait for a remote response before
+                       proceeding.",
+        "default":false,
+        "type":"boolean"
+      }
+    }
+  }
+}

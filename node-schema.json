@@ -1,0 +1,46 @@
+{
+  "type":"object",
+  "properties":{
+    "count":{
+      "description":"Number of training instances at this node",
+      "required":true,
+      "type":"number"
+    },
+    "predicate":{
+      "required":true,
+      "type":["boolean", {"$ref":"predicate-schema.json"}]
+    },
+    "output":{
+      "description":"Prediction given at this node",
+      "required":true,
+      "type":["number","string"]
+    },
+    "confidence":{
+      "description":"Probability of correctness for classification and an
+                     estimate of the error for regression.",
+      "type":["number"],
+      "minimum":0
+    },
+    "objective_summary":{
+      "description":"Distribution for the the prediction at this point.",
+      "$ref":"distribution-schema.json"
+    },
+    "distribution":{
+      "description":"DEPRECATED - Distribution of the target at this node",
+      "type":"array",
+      "items":{
+        "type":"array",
+        "items":[
+          {"type":["string", "number"]},
+          {"type":"number"}
+        ]
+      }
+    },
+    "children":{
+      "description":"Children of this node",
+      "type":"array",
+      "items":{"$ref":"node-schema.json"},
+      "minItems":1
+    }
+  }
+}

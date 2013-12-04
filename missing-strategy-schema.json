@@ -1,0 +1,6 @@
+{
+  "description":"An enumeration describing the strategy to follow
+                 during predictions in the face of missing field values.",
+  "enum":["proportional", "last_prediction"],
+  "default":"last_prediction"
+}

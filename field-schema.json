@@ -1,0 +1,214 @@
+{
+  "description":"A field from the dataset.",
+  "type":[
+    {
+      "type":"object",
+      "extends":{
+        "$ref":"generic-field-schema.json"
+      },
+      "description":"A text field from the dataset.",
+      "properties":{
+        "optype":{
+          "description":"Operational type of this field.",
+          "enum":["text"]
+        },
+        "datatype":{
+          "description":"The storage type of the field.",
+          "enum":["string","boolean"]
+        },
+        "summary":{
+          "type":"object",
+          "properties":{
+            "term_forms":{
+              "description":"Dictionary of multi-form terms to all forms seen.",
+              "type":"object"
+            },
+            "tag_cloud":{
+              "description":"Top terms with number of occurences.",
+              "type":"array",
+              "items":{
+                "type":"array",
+                "items":["string", "number"]
+              }
+            },
+            "missing_count":{
+              "description":"# of instances missing in this field.",
+              "type":"integer"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type":"object",
+      "extends":{
+        "$ref":"generic-field-schema.json"
+      },
+      "description":"A categorical field from the dataset.",
+      "properties":{
+        "optype":{
+          "description":"Operational type of this field.",
+          "enum":["categorical"]
+        },
+        "datatype":{
+          "description":"The storage type of the field.",
+          "enum":["string"]
+        },
+        "summary":{
+          "type":"object",
+          "properties":{
+            "missing_count":{
+              "description":"# of instances missing this field.",
+              "type":["integer","null"]
+            },
+            "categories":{
+              "description":"The possible categories for categorical fields.",
+              "type":"array",
+              "items":{
+                "type":"array",
+                "items":[
+                  {"type":["string", "number"]},
+                  {"type":["integer","null"]}
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "type":"object",
+      "extends":{
+        "$ref":"generic-field-schema.json"
+      },
+      "description":"A numeric field from the dataset.",
+      "properties":{
+        "optype":{
+          "description":"Operational type of this field.",
+          "enum":["numeric"]
+        },
+        "datatype":{
+          "description":"The storage type of the field.",
+          "enum":[
+            "integer","int8","int16","int32","int64",
+            "float","double","day","month","year","hour",
+            "minute","second","millisecond","day-of-week","day-of-month"
+          ]
+        },
+        "summary":{
+          "properties":{
+            "missing_count":{
+              "description":"# of instances missing this field.",
+              "type":"integer"
+            },
+            "maximum":{
+              "description":"Maximum value for numeric fields.",
+              "type":"number"
+            },
+            "minimum":{
+              "description":"Minimum value for numeric fields.",
+              "type":"number"
+            },
+            "median":{
+              "description":"The approximate median for numeric fields.",
+              "type":"number"
+            },
+            "sum":{
+              "description":"Sum of values (for mean calculation).",
+              "type":"number"
+            },
+            "sum_squares":{
+              "description":"Sum of squared values (for variance calculation).",
+              "type":"number"
+            },
+            "population":{
+              "description":"# of instances containing data for this field.",
+              "type":"integer"
+            },
+            "mean":{
+              "description":"The sample mean for numeric fields.",
+              "type":"number"
+            },
+            "variance":{
+              "description":"The sample variance for numeric fields.",
+              "type":"number"
+            },
+            "standard_deviation":{
+              "description":"The sample standard deviation for numeric fields.",
+              "type":"number"
+            },
+            "splits":{
+              "description":"DEPRECATED - Histogram split points for field.",
+              "type":"array",
+              "items":{
+                "type":"number"
+              }
+            },
+            "counts":{
+              "description":"Captures the distribution for the field.  Contains
+                             tuples of the unique values and their occurrence
+                             counts. Used when there are 32 or less unique
+                             numeric values.",
+              "type":"array",
+              "items":{
+                "type":"array",
+                "items":[
+                  {"type":"number"},
+                  {"type":"integer"}
+                ]
+              }
+            },
+            "bins":{
+              "description":"Captures the distribution for the field.
+                             Each tuple represents a bin from an approximate
+                             histogram.  Each bin contains the bin mean and a
+                             membership count.  Used when there are more than 32
+                             unique numeric values.",
+              "type":"array",
+              "items":{
+                "type":"array",
+                "items":[
+                  {"type":"number"},
+                  {"type":"integer"}
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "type":"object",
+      "extends":{
+        "$ref":"generic-field-schema.json"
+      },
+      "description":"A datetime field from the dataset.",
+      "properties":{
+        "optype":{
+          "description":"Operational type of this field.",
+          "enum":["datetime"]
+        },
+        "datatype":{
+          "description":"The storage type of the field.",
+          "enum":["string"]
+        },
+        "time_formats":{
+          "description":"Formats of times in this field from clj-time.",
+          "type":"array",
+          "items":{
+            "type":"string"
+          }
+        },
+        "summary":{
+          "type":"object",
+          "properties":{
+            "missing_count":{
+              "description":"# of instances missing this field.",
+              "type":"integer"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

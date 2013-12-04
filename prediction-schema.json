@@ -1,0 +1,90 @@
+{
+  "description":"Non-batch prediction requests and their responses",
+  "type":"object",
+  "properties":{
+    "prediction":{
+      "type":"object",
+      "extends":{"$ref":"model-combiner-schema.json"},
+      "properties":{
+        "kind":{
+          "description":"Identifier of this prediction's kind: single
+                         predictions use a sigle input map",
+          "required":true,
+          "enum":["single"]
+        },
+        "missing_strategy":{
+          "$ref":"missing-strategy-schema.json"
+        },
+        "inputs":{
+          "description":"Map of inputs to use for the prediction",
+          "type":"object"
+        },
+        "objective_fields":{
+          "description":"Collection of objective field identifiers",
+          "type":"array",
+          "items":{"type":"string"}
+        },
+        "fields":{
+          "description":"List of descriptors for fields used in this message",
+          "$ref":"field-coll-schema.json"
+        },
+        "result":[
+          {"description":"Prediction given as a map from field to value",
+           "type":"object"},
+          {"$ref":"prediction-results-schema.json"}],
+        "bad_fields":{
+          "description":"List of ids of input fields with wrong values
+                         (single model only).",
+          "type":"array",
+          "items":"string"
+        },
+        "unknown_fields":{
+          "description":"List of ids of input fields not present in the model
+                         (single model only)",
+          "type":"array",
+          "items":"string"
+        },
+        "path":{
+          "description":"A list of the predicates traversed to make the
+                         prediction (single model only)",
+          "type":"array",
+          "items":{"$ref":"predicate-schema.json"}
+        },
+        "next_predicates":{
+          "description":"A list of the predicates for children of this node
+                         (single model only)",
+          "type":"array",
+          "items":{
+            "type":"object",
+            "extends":{"$ref":"predicate-schema.json"},
+            "properties":{
+              "count":{"description":"Support for this child", "type":"integer"}
+            }
+          }
+        },
+        "confidence":{
+          "description":"Probability of correctness for classification
+                         and an estimate of the error for regression
+                         (single model only)",
+          "type":["number"],
+          "minimum":0
+        },
+        "count":{
+          "description":"Number of training instances predicting this result
+                         (single model only)",
+          "type":"number"
+        },
+        "total_count":{
+          "description":"Total number of training instances in the model
+                         (single model only)",
+          "type":"number"
+        },
+        "objective_summary":{
+          "description":"Distribution for the the prediction
+                         (single model only).",
+          "$ref":"distribution-schema.json"
+        }
+      }
+    }
+  }
+}

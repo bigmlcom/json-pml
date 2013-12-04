@@ -1,0 +1,38 @@
+{
+  "description":"Result list for a multi-model prediction with fixed input",
+  "type":"array",
+  "items":{
+    "type":"object",
+    "properties":{
+      "prediction":{
+        "description":"Predicted value for the objective field",
+        "required":true,
+        "type":["number", "string"]
+      },
+      "confidence":{
+        "description":"Probability of correctness for classification
+                       and an estimate of the error for regression.",
+        "required":true,
+        "type":"number",
+        "minimum":0
+      },
+      "count":{
+        "description":"Number of training instances at the model node
+                       making the predicition",
+        "required":true,
+        "type":"number"
+      },
+      "total_count":{
+        "description":"Total number of training instances in the model",
+        "required":true,
+        "type":"number"
+      },
+      "distribution":{
+        "description":"Either bins, counts or categories; see
+                       distribution-schema.json for more information.",
+        "type":"array",
+        "items":{"type":"array"}
+      }
+    }
+  }
+}

@@ -1,0 +1,157 @@
+{
+  "description":"A model consisting of a decision tree",
+  "type":"object",
+  "extends":{"$ref":"model-schema.json"},
+  "properties":{
+    "model":{
+      "type":"object",
+      "properties":{
+        "kind":{
+          "description":"The kind of tree model.",
+          "required":true,
+          "enum":["stree", "mtree"]
+        },
+        "missing_strategy":{
+          "$ref":"missing-strategy-schema.json"
+        },
+        "split_criterion":{
+          "description":"Method of choosing best attribute and split point for
+                         a given node.",
+          "enum":["information_gain", "information_gain_ratio",
+                  "information_gain_mix", "squared_error",
+                  "squared_error_ratio"]
+        },
+        "stat_pruning":{
+          "description":"Eliminates low confidence leaf nodes from tree using
+                         statistical tests.",
+          "default":true,
+          "type":"boolean"
+        },
+        "randomize":{
+          "description":"When true only a random subset of fields are
+                         considered for each split (ala random forests)",
+          "default":false,
+          "type":"boolean"
+        },
+        "random_candidates":{
+          "description":"Sets the number of random fields considered when
+                         'randomize' is true. By default this is the square root
+                         of the total number of input fields. Also known as 'mtry'
+                         in the R random forest package.",
+          "type":"integer"
+        },
+        "support_threshold":{
+          "description":"For a split to be valid, each child's support
+                         (instances / total instances) must be greater than this
+                         threshold.",
+          "default":0,
+          "type":"number",
+          "minimum":0,
+          "maximum":1
+        },
+        "depth_threshold":{
+          "description":"The depth, or generation, limit for a tree.",
+          "default":20,
+          "type":"integer",
+          "minimum":1
+        },
+        "prune_holdout":{
+          "description":"DEPRECATED - Pruning with a holdout set.",
+          "type":"number",
+          "minimum":0,
+          "maximum":1
+        },
+        "freeze_threshold":{
+          "description":"PRIVATE - Once a field histogram exceeds this many
+                         inserts, its bin locations are 'frozen' into place
+                         to improve the performance of future inserts.",
+          "default":4096,
+          "type":"integer",
+          "minimum":0
+        },
+        "objective_histogram_size":{
+          "description":"PRIVATE - Size of the histograms for capturing the
+                         objective field.",
+          "default":32,
+          "type":"integer"
+        },
+        "field_histogram_size":{
+          "description":"PRIVATE - Size of the histograms for capturing
+                         input fields.",
+          "default":64,
+          "type":"integer"
+        },
+        "similarity_threshold":{
+          "description":"PRIVATE - The threshold for early splitting
+                         (lower requires more similarity).",
+          "default":0.15,
+          "type":"number",
+          "minimum":0,
+          "maximum":1
+        },
+        "split_score_threshold":{
+          "description":"PRIVATE - The minimum score required for a split to be
+                         vaild.",
+          "default":1.0E-12,
+          "type":"number",
+          "minimum":0,
+          "maximum":1
+        },
+        "node_threshold":{
+          "description":"PRIVATE - The soft limit for number of nodes in
+                         the tree.",
+          "default":512,
+          "type":"integer"
+        },
+        "selective_pruning":{
+          "description":"PRIVATE - When true, stat pruning will have less effect
+                         for small datasets.",
+          "type":"boolean"
+        },
+        "z_statistic":{
+          "description":"PRIVATE - Parameter for stat pruning.",
+          "default":2,
+          "type":"number"
+        },
+        "split_early":{
+          "description":"PRIVATE - Allows early splits.",
+          "default":true,
+          "type":"boolean"
+        },
+        "importance":{
+          "description":"Contains pairs of field ids and importance scores (one
+                         for each input field). The higher the score, the more
+                         the field helps reduce error on the training set.",
+          "type":"array",
+          "items":{
+            "type":"array",
+            "items":[
+              {"type":"string"},
+              {"type":"number"}
+            ]
+          }
+        },
+        "distribution":{
+          "description":"The training data distribution across predicted
+                         values, initially and after flowing through the
+                         tree.",
+          "type":"object",
+          "properties":{
+            "training":{
+              "description":"Distribution of objective values for input.",
+              "$ref":"distribution-schema.json"
+            },
+            "predictions":{
+              "description":"Distribution of objective values on leaves.",
+              "$ref":"distribution-schema.json"
+            }
+          }
+        },
+        "root":{
+          "description":"The root node of the decision tree.",
+          "$ref":"node-schema.json"
+        }
+      }
+    }
+  }
+}

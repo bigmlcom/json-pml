@@ -1,0 +1,34 @@
+{
+  "description":"Structure for field term analysis parameters.",
+  "type":"object",
+  "properties":{
+    "enabled":{
+      "description":"Enable/disables term analysis for this field.",
+      "default":false,
+      "type":"boolean"
+    },
+    "language":{
+      "description":"Language code for detected language (or 'none').",
+      "default":"none",
+      "type":"string"
+    },
+    "case_sensitive":{
+      "description":"Defines whether the term analysis is case sensitive.",
+      "type":"boolean"
+    },
+    "stem_words":{
+      "description":"Defines whether the term analysis stems words.",
+      "type":"boolean"
+    },
+    "use_stopwords":{
+      "description":"Defines whether the term analysis uses stop words.",
+      "type":"boolean"
+    },
+    "token_mode":{
+      "description":"Defines whether the term analysis uses full terms,
+                     tokenized terms, or both.",
+      "default":"all",
+      "enum":["tokens_only","full_terms_only","all"]
+    }
+  }
+}

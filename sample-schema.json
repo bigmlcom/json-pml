@@ -1,0 +1,31 @@
+{
+  "description":"Sampling specification. If not given,
+                 no sampling is performed.",
+  "type":"object",
+  "properties":{
+    "rate":{
+      "description":"The rate: fraction of rows we pick.",
+      "required":true,
+      "type":"number",
+      "minimum":0
+    },
+    "replace":{
+      "description":"Whether we sample with replacement or not.",
+      "type":"boolean",
+      "default":false
+    },
+    "out_of_bag":{
+      "description":"Is the sampling out of bag?",
+      "type":"boolean",
+      "default":false
+    },
+    "seed":{
+      "description":"A string to feed the random number generator
+                     used for sampling.  The same seed produces
+                     always the same sample (if all other parameters
+                     stay the same).  If not specified, we choose a
+                     seed at random.",
+      "type":["string", "number"]
+    }
+  }
+}

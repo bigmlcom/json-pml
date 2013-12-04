@@ -1,0 +1,82 @@
+{
+  "type":"object",
+  "properties":{
+    "dataset_id":{
+      "description":"Identifier of this model's main dataset",
+      "type":"string"
+    },
+    "dataset_ids":{
+      "description":"Identifiers of this model's additional datasets",
+      "type":"array",
+      "items":"string"
+    },
+    "fields_maps":{
+      "description":"List of two-element arrays, where the first is a
+                     dataset ID and the second is a field map; to be used
+                     with dataset_ids",
+      "type":"array",
+      "items":{
+        "type":"array",
+        "items":[{"type":"string"}, {"type":"object"}]
+      }
+    },
+    "row_range":{
+      "$ref":"row-range-schema.json"
+    },
+    "row_ranges":{
+      "description":"Rows used to build this model, per dataset.",
+      "type":"array",
+      "items":{
+        "type":"array",
+        "items":[{"type":"string"}, {"type":{"$ref":"row-range-schema.json"}}]
+      }
+    },
+    "sample":{
+      "$ref":"sample-schema.json"
+    },
+    "samples":{
+      "description":"A list of sample specifications, as pairs of
+                     dataset id and sample",
+      "type":"array",
+      "items":{
+        "type":"array",
+        "items":[{"type":"string"}, {"type":{"$ref":"sample-schema.json"}}]
+      }
+    },
+    "ordering":{
+      "enum":["linear", "random", "deterministic"],
+      "default":"deterministic"
+    },
+    "locale":{
+      "description":"Default locale for field values",
+      "type":"string"
+    },
+    "callbacks":{
+      "$ref":"callbacks-schema.json"
+    },
+    "missing_tokens":{
+      "description":"Default tokens that represent a missing value",
+      "type":"array",
+      "default":[],
+      "items":{
+        "type":"string"
+      }
+    },
+    "fields":{
+      "description":"Possibly partial list of descriptors for fields
+                     used in the model",
+      "$ref":"field-coll-schema.json"
+    },
+    "objective_fields":{
+      "description":"Collection of objective field identifiers (targets)",
+      "type":"array",
+      "items":{"type":"string"}
+    },
+    "objective_field":{
+      "description":"Objective field (target) identifier.  Gets added to
+                     objective_fields.  Useful for models with a single
+                     objective field.",
+      "type":"string"
+    }
+  }
+}

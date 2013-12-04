@@ -1,0 +1,54 @@
+{
+  "description":"Fields common to messages dealing with a collection
+                 of models whose fields map to a dataset.",
+  "type":"object",
+  "properties":{
+    "model_id":{
+      "description":"Identifier of the model evaluated.",
+      "type":"string"
+    },
+    "combiner":{
+      "description":"The strategy for combining predictions.",
+      "default":"plurality",
+      "$ref":"prediction-combiner-schema.json"
+    },
+    "combiners":{
+      "description":"A list of combiner instances.",
+      "type":"array",
+      "items":{"$ref":"prediction-combiner-schema.json"}
+    },
+    "missing_strategy":{
+      "description":"A missing strategy to supplant that of all models.",
+      "$ref":"missing-strategy-schema.json"
+    },
+    "missing_strategies":{
+      "description":"List of two-element arrays, where the first is a
+                     model ID and the second is a missing_strategy;
+                     to be used with model_ids",
+      "type":"array",
+      "items":{
+        "type":"array",
+        "items":[{"type":"string"}, {"$ref":"missing-strategy-schema.json"}]
+      }
+    },
+    "model_ids":{
+      "description":"IDs for an ensemble of models",
+      "type":"array",
+      "items":{"type":"string"}
+    },
+    "fields_map":{
+      "description":"Mapping of dataset field ids to model field ids",
+      "type":"object"
+    },
+    "fields_maps":{
+      "description":"List of two-element arrays, where the first is a
+                     model ID and the second is a field map; to be used
+                     with model_ids",
+      "type":"array",
+      "items":{
+        "type":"array",
+        "items":[{"type":"string"}, {"type":"object"}]
+      }
+    }
+  }
+}
