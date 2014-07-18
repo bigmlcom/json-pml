@@ -1,0 +1,37 @@
+{
+  "description":"Dataset export request",
+  "type":"object",
+  "properties":{
+    "dataset":{
+      "type":"object",
+      "extends":[{"$ref":"dataset-externalizer-schema.json"}],
+      "properties":{
+        "kind":{
+          "required":true,
+          "enum":["export"]
+        },
+        "origin_id":{
+          "description":"The dataset to be exported to CSV",
+          "type":"string",
+          "required":true
+        },
+        "format":{
+          "description":"The externalization format",
+          "enum":["csv"]
+        },
+        "input_fields":{
+          "description":"List of field identifiers, names or columns
+                         to externalize",
+          "type":"array",
+          "items":{"type":["integer","string"]}
+        },
+        "excluded_input_fields":{
+          "description":"List of field identifiers, names or columns to exclude
+                         from inputs",
+          "type":"array",
+          "items":{"type":["integer","string"]}
+        }
+      }
+    }
+  }
+}

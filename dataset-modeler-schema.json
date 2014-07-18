@@ -67,6 +67,15 @@
                      used in the model",
       "$ref":"field-coll-schema.json"
     },
+    "default_values":{
+      "description":"A map for field identifiers to values for
+                     missing entries.",
+      "type":"object"
+    },
+    "default_numeric_value":{
+      "description":"Catch-all missing filler for numeric fields.",
+      "enum":["minimum", "maximum", "mean", "zero", "median"]
+    },
     "objective_fields":{
       "description":"Collection of objective field identifiers (targets)",
       "type":"array",
@@ -77,6 +86,21 @@
                      objective_fields.  Useful for models with a single
                      objective field.",
       "type":"string"
+    },
+    "weight_field":{
+      "description":"Weight field identifier.",
+      "type":"string"
+    },
+    "objective_weights":{
+      "description":"For classification models, this maps the objective
+                     classes to class weights.",
+      "type":"array",
+      "items":{
+        "type":"array",
+        "items":[
+          {"type":"string"},
+          {"type":"number"}]
+      }
     }
   }
 }

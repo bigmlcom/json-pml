@@ -47,9 +47,25 @@
           "minimum":0,
           "type":"number"
         },
-        "used_bytes":{
-          "description":"Number of source bytes serialized",
+        "count":{
+          "description":"Number of rows in the dataset",
           "minimum":0,
+          "type":"integer"
+        },
+        "missing_numeric_count":{
+          "description":"Number of rows in the dataset with at least
+                         one missing numeric values",
+          "minimum":0,
+          "type":"integer"
+        },
+        "used_bytes":{
+          "description":"Number of source bytes used as input",
+          "minimum":0,
+          "type":"integer"
+        },
+        "serialized_bytes":{
+          "description":"Number of bytes of the serialized dataset",
+          "minimum":-1,
           "type":"integer"
         },
         "missing_tokens":{
@@ -67,6 +83,11 @@
           "description":"Identifier of the dataset to be cloned",
           "type":"string"
         },
+        "origin_ids":{
+          "description":"A list of identifier of datasets to be cloned",
+          "type":"array",
+          "items":"string"
+        },
         "sample":{
           "$ref":"sample-schema.json"
         },
@@ -81,14 +102,16 @@
           "$ref":"field-coll-schema.json"
         },
         "input_fields":{
-          "description":"List of datasource field identifiers to use",
+          "description":"List of datasource field identifiers, names or columns
+                         to use",
           "type":"array",
-          "items":{"type":"string"}
+          "items":{"type":["integer","string"]}
         },
         "excluded_input_fields":{
-          "description":"List of field identifiers to exclude from inputs",
+          "description":"List of field identifiers, names or columns to exclude
+                         from inputs",
           "type":"array",
-          "items":"string"
+          "items":{"type":["integer","string"]}
         },
         "output_fields":{
           "$ref":"output-fields-schema.json"
@@ -113,7 +136,7 @@
         "objective":{
           "description":"Descriptor of the field that should be used as
                          objective field by default, including its id",
-          "$ref":"generic-field-schema.json"
+          "type":["null", {"$ref":"generic-field-schema.json"}]
         }
       }
     }

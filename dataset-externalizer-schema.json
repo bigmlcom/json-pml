@@ -1,0 +1,38 @@
+{
+  "description":"Shared fields in dataset externalization requests",
+  "type":"object",
+  "properties":{
+    "output_store":{
+      "description":"Full URI to the store where the final output
+                     file will be stored.",
+      "type":"string"
+    },
+    "output_file":{
+      "description":"Name of the file to store the output.",
+      "type":"string"
+    },
+    "header":{
+      "description":"Whether to include a header with field names.",
+      "type":"boolean",
+      "default":false
+    },
+    "separator":{
+      "description":"Separator to use for the output CSV.  Only the
+                     first character is used.",
+      "type":"string",
+      "default":","
+    },
+    "preview_rows":{
+      "description":"Maximum number of preview rows in response.",
+      "type":"integer",
+      "minimum":0,
+      "default":0
+    },
+    "preview":{
+      "description":"A preview of the output initial rows,
+                     as a list of lists of strings.",
+      "type":"array",
+      "items":{"type":"array", "items":"string"}
+    }
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "description":"A model representing a k-means clustering",
+  "type":"object",
+  "extends":{"$ref":"model-schema.json"},
+  "properties":{
+    "model":{
+      "type":"object",
+      "properties":{
+        "kind":{
+          "description":"The kind of model (kmeans).",
+          "required":true,
+          "enum":["kmeans"]
+        },
+        "k":{
+          "description":"The desired number of clusters.",
+          "required":true,
+          "type":"integer"
+        },
+        "name_prefix":{
+          "description":"A prefix used to give names to the clusters.",
+          "type":"string",
+          "default": "Cluster "
+        },
+        "balance_fields":{
+          "description":"Toggles balancing field weights.",
+          "type":"boolean",
+          "default":true
+        },
+        "summary_fields":{
+          "description":"List of input fields that should be used as auxiliary
+                        fields in the model creation process.",
+          "type":"array",
+          "items":{"type":"string"}
+        },
+        "field_scales":{
+          "description":"Maps field ids to scales.",
+          "type":"object"
+        },
+        "final_field_scales":{
+          "description":"Maps field ids to scales (factoring in balancing).",
+          "type":"object"
+        },
+        "seed":{
+          "description":"Seeds kmeans so that results are deterministic.",
+          "type":"string"
+        },
+        "clusters":{
+          "description":"Contains the cluster centroid and other cluster
+                         informations (summaries and models).",
+          "type":"array",
+          "items":{
+            "type":"object",
+            "properties":{
+              "id":{
+                "description":"The cluster id.",
+                "type":"string"
+              },
+              "center":{
+                "description":"Maps field ids to a center values.",
+                "type":"object"
+              },
+              "distance":{
+                "description":"The distribution of distances from the center
+                               to points in its neighborhood.",
+                "$ref":"distribution-schema.json"
+              }
+            }
+          }
+        },
+        "datasets":{
+          "description":"A map from cluster id to its associated dataset id",
+          "type":"object"
+        }
+      }
+    }
+  }
+}

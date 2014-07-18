@@ -17,7 +17,7 @@
         },
         "inputs":{
           "description":"Map of inputs to use for the prediction",
-          "type":"object"
+          "type":["object", {"type":"array", "items":"string"}]
         },
         "objective_fields":{
           "description":"Collection of objective field identifiers",
@@ -81,6 +81,16 @@
         },
         "objective_summary":{
           "description":"Distribution for the the prediction
+                         (single model only).",
+          "$ref":"distribution-schema.json"
+        },
+        "weight":{
+          "description":"Total weight of instances predicting this result
+                         (single model only).",
+          "type":"number"
+        },
+        "weighted_objective_summary":{
+          "description":"Weighted distribution for the the prediction
                          (single model only).",
           "$ref":"distribution-schema.json"
         }

@@ -135,7 +135,7 @@
             },
             "standard_deviation":{
               "description":"The sample standard deviation for numeric fields.",
-              "type":"number"
+              "type":["number", "string"]
             },
             "splits":{
               "description":"DEPRECATED - Histogram split points for field.",

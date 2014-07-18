@@ -11,7 +11,8 @@
       "method":{
         "description":"The HTTP method to use.",
         "default":"GET",
-        "enum":["GET", "POST", "PUT", "DELETE", "get", "post", "put", "delete"]
+        "enum":["GET", "POST", "PUT", "DELETE",
+                "get", "post", "put", "delete"]
       },
       "url":{
         "description":"The URL to invoke with the method above.",
@@ -26,9 +27,16 @@
         "items":["string"]
       },
       "synchronous":{
-        "description":"A flag specifying wether the callback is synchronous and
-                       we need to wait for a remote response before
-                       proceeding.",
+        "description":"A flag specifying wether the callback is
+                       synchronous and we need to wait for a remote response
+                       before proceeding.",
+        "default":false,
+        "type":"boolean"
+      },
+      "fire_once":{
+        "description":"A flag specifying whether callbacks should be
+                       called at most once, even if the job is requeued
+                       and retraces previous states.",
         "default":false,
         "type":"boolean"
       }

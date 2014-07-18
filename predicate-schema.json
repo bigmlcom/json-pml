@@ -9,6 +9,7 @@
     "operator":{
       "description":"Operator used to test the field's value",
       "enum":["=", "!=", "/=", ">", "<", "<=", ">=",
+              "=*", "!=*", ">*", "<=*",
               "equal", "equals", "eq", "notEqual",
               "lessThan", "lt", "greaterThan", "gt",
               "lessOrEqual", "le", "greaterOrEqual", "ge"]
@@ -21,7 +22,7 @@
     },
     "value":{
       "description":"Value used, besides the field's, for this decision",
-      "type":["number","string"]
+      "type":["number","string","null"]
     }
   }
 }

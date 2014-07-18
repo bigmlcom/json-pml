@@ -1,16 +1,11 @@
 {
-  "description":"A model consisting of a decision tree",
+  "description":"Parameters specifying decision trees",
   "type":"object",
   "extends":{"$ref":"model-schema.json"},
   "properties":{
     "model":{
       "type":"object",
       "properties":{
-        "kind":{
-          "description":"The kind of tree model.",
-          "required":true,
-          "enum":["stree", "mtree"]
-        },
         "missing_strategy":{
           "$ref":"missing-strategy-schema.json"
         },
@@ -36,63 +31,17 @@
         "random_candidates":{
           "description":"Sets the number of random fields considered when
                          'randomize' is true. By default this is the square root
-                         of the total number of input fields. Also known as 'mtry'
-                         in the R random forest package.",
+                         of the total number of input fields.
+                         Also known as 'mtry' in the R random forest package.",
           "type":"integer"
         },
-        "support_threshold":{
-          "description":"For a split to be valid, each child's support
-                         (instances / total instances) must be greater than this
-                         threshold.",
-          "default":0,
-          "type":"number",
-          "minimum":0,
-          "maximum":1
-        },
         "depth_threshold":{
-          "description":"The depth, or generation, limit for a tree.",
-          "default":20,
+          "description":"The depth limit for a tree.",
           "type":"integer",
           "minimum":1
         },
         "prune_holdout":{
           "description":"DEPRECATED - Pruning with a holdout set.",
-          "type":"number",
-          "minimum":0,
-          "maximum":1
-        },
-        "freeze_threshold":{
-          "description":"PRIVATE - Once a field histogram exceeds this many
-                         inserts, its bin locations are 'frozen' into place
-                         to improve the performance of future inserts.",
-          "default":4096,
-          "type":"integer",
-          "minimum":0
-        },
-        "objective_histogram_size":{
-          "description":"PRIVATE - Size of the histograms for capturing the
-                         objective field.",
-          "default":32,
-          "type":"integer"
-        },
-        "field_histogram_size":{
-          "description":"PRIVATE - Size of the histograms for capturing
-                         input fields.",
-          "default":64,
-          "type":"integer"
-        },
-        "similarity_threshold":{
-          "description":"PRIVATE - The threshold for early splitting
-                         (lower requires more similarity).",
-          "default":0.15,
-          "type":"number",
-          "minimum":0,
-          "maximum":1
-        },
-        "split_score_threshold":{
-          "description":"PRIVATE - The minimum score required for a split to be
-                         vaild.",
-          "default":1.0E-12,
           "type":"number",
           "minimum":0,
           "maximum":1
@@ -112,11 +61,6 @@
           "description":"PRIVATE - Parameter for stat pruning.",
           "default":2,
           "type":"number"
-        },
-        "split_early":{
-          "description":"PRIVATE - Allows early splits.",
-          "default":true,
-          "type":"boolean"
         },
         "importance":{
           "description":"Contains pairs of field ids and importance scores (one

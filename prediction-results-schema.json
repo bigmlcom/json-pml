@@ -32,6 +32,17 @@
                        distribution-schema.json for more information.",
         "type":"array",
         "items":{"type":"array"}
+      },
+      "weight":{
+        "description":"Total weight of the training instances at the
+                       model node making the predicition.",
+        "type":"number"
+      },
+      "weighted_distribution":{
+        "description":"Either bins, counts or categories; see
+                       distribution-schema.json for more information.",
+        "type":"array",
+        "items":{"type":"array"}
       }
     }
   }

@@ -1,9 +1,17 @@
 {
   "type":"object",
   "properties":{
+    "id":{
+      "description":"The node id, assigned depth first starting with 0.",
+      "type":"number"
+    },
     "count":{
-      "description":"Number of training instances at this node",
+      "description":"Number of training instances at this node.",
       "required":true,
+      "type":"number"
+    },
+    "weight":{
+      "description":"Total weight at this node (if tree is weighted).",
       "type":"number"
     },
     "predicate":{

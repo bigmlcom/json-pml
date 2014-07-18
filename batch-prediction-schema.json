@@ -5,20 +5,12 @@
     "prediction":{
       "type":"object",
       "extends":[{"$ref":"dataset-modeler-schema.json"},
+                 {"$ref":"dataset-externalizer-schema.json"},
                  {"$ref":"model-combiner-schema.json"}],
       "properties":{
         "kind":{
           "required":true,
           "enum":["batch"]
-        },
-        "output_store":{
-          "description":"Full URI to the store where the final prediction
-                         file will be stored.",
-          "type":"string"
-        },
-        "output_file":{
-          "description":"Name of the file to store the predictions.",
-          "type":"string"
         },
         "output_fields":{
           "description":"List of identifiers of fields to include in output.",
@@ -32,33 +24,24 @@
           "type":"boolean",
           "default":"false"
         },
-        "header":{
-          "description":"Whether to include a header with field names.",
-          "type":"boolean",
-          "default":false
+        "prediction_name":{
+          "description":"Name for the prediction column in header.",
+          "type":"string"
         },
-        "separator":{
-          "description":"Separator to use for the output CSV.  Only the
-                         first character is used.",
+        "confidence_name":{
+          "description":"Name for the confidence column in header.",
           "type":"string",
-          "default":","
+          "default":"confidence"
         },
         "confidence":{
           "description":"Whether to include the confidence of each prediction.",
           "type":"boolean",
           "default":false
         },
-        "preview_rows":{
-          "description":"Maximum number of preview rows in response.",
-          "type":"integer",
-          "minimum":0,
-          "default":0
-        },
-        "preview":{
-          "description":"A preview of the output initial rows,
-                         as a list of lists of strings.",
-          "type":"array",
-          "items":{"type":"array", "items":"string"}
+        "missing_value":{
+          "description":"String to be used to denote 'no prediction'.",
+          "type":"string",
+          "default":"-"
         }
       }
     }
