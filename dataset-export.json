@@ -1,0 +1,94 @@
+{
+ "type":"object",
+ "properties":{
+   "dataset":{
+     "type":"object",
+     "properties":{
+       "excluded_input_fields":{
+         "type":"array" ,
+         "items":{
+           "anyOf":[
+             {
+               "type":"integer"
+             },
+             {
+               "type":"string"
+             }
+           ]
+         },
+         "description":"List of field identifiers, names or columns to exclude from input"
+       },
+       "format":{
+         "type":"string" ,
+         "enum":[
+           "csv"
+         ],
+         "description":"The externalization forma"
+       },
+       "header":{
+         "type":"boolean",
+         "description":"Whether to include a header with field names"
+       },
+       "input_fields":{
+         "type":"array" ,
+         "items":{
+           "anyOf":[
+             {
+               "type":"integer"
+             },
+             {
+               "type":"string"
+             }
+           ]
+         },
+         "description":"List of field identifiers, names or columns to externalize"
+       },
+       "kind":{
+         "type":"string" ,
+         "enum":[
+           "export"
+         ]
+       },
+       "origin_id":{
+         "type":"string",
+         "description":"The dataset to be exported to CS"
+       },
+       "output_file":{
+         "type":"string",
+         "description":"Name of the file to store the output"
+       },
+       "output_store":{
+         "type":"string",
+         "description":"Full URI to the store where the final output file will be stored"
+       },
+       "preview":{
+         "type":"array" ,
+         "items":{
+           "type":"array" ,
+           "items":{
+             "type":"string"
+           }
+         },
+         "description":"A preview of the output initial rows, as a list of lists of strings"
+       },
+       "preview_rows":{
+         "type":"integer",
+         "minimum":,
+         "description":"Maximum number of preview rows in response"
+       },
+       "separator":{
+         "type":"string",
+         "default": ",",
+         "description":"Separator to use for the output CSV (only the first character is used)"
+       }
+     },
+     "required":[
+       "kind", "origin_id"
+     ]
+   }
+ },
+ "required":[
+   "dataset"
+ ],
+ "additionalProperties": false
+}

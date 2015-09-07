@@ -1,0 +1,488 @@
+{
+ "type":"object",
+ "properties":{
+   "dataset":{
+     "type":"object",
+     "properties":{
+       "byte_limit":{
+         "type":"number",
+         "minimum":0,
+         "description":"Number of decompressed bytes from the source to use."
+       },
+       "callbacks":{
+         "type":"array" ,
+         "items":{
+           "type":"object",
+           "properties":{
+             "address":{
+               "type":"string",
+               "description":"For MSG callbacks, the mailbox address to use"
+             },
+             "delay":{
+               "type":"integer",
+               "description":"Seed for an initial random delay before first call, in millisecs.  The actual delay is this value plus a random number in [0, 1000)"
+             },
+             "fire_once":{
+               "type":"boolean",
+               "description":"A flag specifying whether callbacks should be called at most once, even if the job is requeued and retraces previous states"
+             },
+             "method":{
+               "type":"string" ,
+               "enum":[
+                 "DELETE", "delete", "put", "msg", "post", "MSG", "POST", "GET", "get", "PUT"
+               ],
+               "default": "GET",
+               "description":"The HTTP method to use"
+             },
+             "payload":{
+               "type":"object",
+               "description":"The payload to be used as a message body"
+             },
+             "retries":{
+               "type":"integer",
+               "description":"Number of times the callback is retried on failures"
+             },
+             "retry_delay":{
+               "type":"integer",
+               "default": 1000,
+               "description":"Seed for a exponential back-off between retries, in millisecs"
+             },
+             "states":{
+               "type":"array" ,
+               "items":{
+                 "type":"string"
+               },
+               "description":"A list of states for which the callback should be called. If not given, the callback will be called for all state changes"
+             },
+             "synchronous":{
+               "type":"boolean",
+               "description":"A flag specifying wether the callback is synchronous and we need to wait for a remote response before proceeding"
+             },
+             "timeout":{
+               "type":"integer",
+               "default": 30000,
+               "description":"Lapse in millisecs waiting for the callback to get a response"
+             },
+             "url":{
+               "type":"string",
+               "description":"The URL to invoke with the method above"
+             }
+           },
+           "required":[
+             "url"
+           ]
+         }
+       },
+       "count":{
+         "type":"integer",
+         "minimum":0,
+         "description":"Number of rows in the dataset"
+       },
+       "datasink":{
+         "type":"string",
+         "description":"URI of the datastore used for this dataset"
+       },
+       "datasource_id":{
+         "type":"string",
+         "description":"Identifier of this dataset's datasource"
+       },
+       "excluded_input_fields":{
+         "type":"array" ,
+         "items":{
+           "anyOf":[
+             {
+               "type":"integer"
+             },
+             {
+               "type":"string"
+             }
+           ]
+         },
+         "description":"List of field identifiers, names or columns to exclude from inputs"
+       },
+       "fields":{
+         "type":"object",
+         "additionalProperties": false,
+         "description":"Possibly partial list of fields for this data"
+       },
+       "header":{
+         "type":"boolean",
+         "default": true,
+         "description":"Whether the CSV contains a header"
+       },
+       "input_fields":{
+         "type":"array" ,
+         "items":{
+           "anyOf":[
+             {
+               "type":"integer"
+             },
+             {
+               "type":"string"
+             }
+           ]
+         },
+         "description":"List of datasource field identifiers, names or columns to use"
+       },
+       "input_offset":{
+         "type":"integer",
+         "minimum":0,
+         "description":"Number of rows to skip to start field generation."
+       },
+       "input_step":{
+         "type":"integer",
+         "minimum":1,
+         "default": 1,
+         "description":"Step when traversing input rows to generate fields."
+       },
+       "locale":{
+         "type":"string",
+         "description":"Default locale for field values"
+       },
+       "missing_numeric_count":{
+         "type":"integer",
+         "minimum":0,
+         "description":"Number of rows in the dataset with at one missing numeric values"
+       },
+       "missing_tokens":{
+         "type":"array" ,
+         "items":{
+           "type":"string"
+         },
+         "description":"Default tokens that represent a missing value"
+       },
+       "objective":{
+         "anyOf":[
+           {
+             "type":"null"
+           },
+           {
+             "type":"object",
+             "properties":{
+               "auto_generated":{
+                 "type":"boolean",
+                 "description":"True if the field was generated from another field"
+               },
+               "child_ids":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"string"
+                 },
+                 "description":"IDs of the children if this generates other fields"
+               },
+               "column_number":{
+                 "type":"integer",
+                 "minimum":0,
+                 "description":"Column from the data source"
+               },
+               "datatype":{
+                 "type":"string",
+                 "description":"The storage type of the field"
+               },
+               "description":{
+                 "type":"string",
+                 "description":"Free text description of the field"
+               },
+               "label":{
+                 "type":"string",
+                 "description":"A label for the field (free text for use by clients)"
+               },
+               "locale":{
+                 "type":"string",
+                 "description":"Overrides global locale"
+               },
+               "missing_tokens":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"string"
+                 },
+                 "description":"Overrides global missing tokens"
+               },
+               "name":{
+                 "type":"string",
+                 "description":"Name for the field"
+               },
+               "parent_ids":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"string"
+                 },
+                 "description":"IDs of the parents if this is a generated field"
+               },
+               "preferred":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"boolean"
+                   }
+                 ],
+                 "default": true,
+                 "description":"Whether the field is used by default for model creation"
+               },
+               "term_analysis":{
+                 "type":"object",
+                 "properties":{
+                   "case_sensitive":{
+                     "type":"boolean",
+                     "description":"Defines whether the term analysis is case sensitive"
+                   },
+                   "enabled":{
+                     "type":"boolean",
+                     "description":"Enable/disables term analysis for this field"
+                   },
+                   "language":{
+                     "type":"string",
+                     "default": "none",
+                     "description":"Language code for detected language (or 'none')"
+                   },
+                   "stem_words":{
+                     "type":"boolean",
+                     "description":"Defines whether the term analysis stems words"
+                   },
+                   "token_mode":{
+                     "type":"string" ,
+                     "enum":[
+                       "full_terms_only", "tokens_only", "all"
+                     ],
+                     "default": "all",
+                     "description":"Defines whether the term analysis uses full terms, tokenized terms, or both"
+                   },
+                   "use_stopwords":{
+                     "type":"boolean",
+                     "description":"Defines whether the term analysis uses stop words"
+                   }
+                 }
+               }
+             }
+           }
+         ],
+         "description":"Descriptor of the field that should be used as objective field by default, including its id"
+       },
+       "origin_id":{
+         "type":"string",
+         "description":"Identifier of the dataset to be cloned"
+       },
+       "origina_ids":{
+         "type":"array" ,
+         "items":{
+           "type":"string"
+         },
+         "description":"A list of identifier of datasets to be cloned"
+       },
+       "output_fields":{
+         "type":"array" ,
+         "items":{
+           "anyOf":[
+             {
+               "type":"string"
+             },
+             {
+               "type":"object",
+               "properties":{
+                 "description":{
+                   "type":"string",
+                   "description":"Description of the field, when there's only one"
+                 },
+                 "descriptions":{
+                   "type":"array" ,
+                   "items":{
+                     "type":"string"
+                   },
+                   "description":"Descriptions of the fields"
+                 },
+                 "generator":{
+                   "anyOf":[
+                     {
+                       "type":"array" ,
+                       "items":{
+                         "type":"any"
+                       }
+                     },
+                     {
+                       "type":"string"
+                     }
+                   ],
+                   "description":"A Flatline expression that generates one or more fields"
+                 },
+                 "ids":{
+                   "type":"array" ,
+                   "items":{
+                     "type":"string"
+                   },
+                   "description":"List of ids for fields generated by this generator"
+                 },
+                 "json_generator":{
+                   "type":"array" ,
+                   "items":{
+                     "type":"any"
+                   },
+                   "description":"When generator is a sexp, its JSON representation"
+                 },
+                 "label":{
+                   "type":"string",
+                   "description":"A label for the generated field, when there's only one"
+                 },
+                 "labels":{
+                   "type":"array" ,
+                   "items":{
+                     "type":"string"
+                   },
+                   "description":"Labels for the generated fields"
+                 },
+                 "name":{
+                   "type":"string",
+                   "description":"For a single generated field, its name"
+                 },
+                 "names":{
+                   "type":"array" ,
+                   "items":{
+                     "type":"string"
+                   },
+                   "description":"A list of names, one per generated field"
+                 },
+                 "optype":{
+                   "type":"string" ,
+                   "enum":[
+                     "numeric", "text", "datetime", "categorical"
+                   ],
+                   "description":"For a single generated field, its optype. If many fields are generated by this entry, all will have this default"
+                 },
+                 "optypes":{
+                   "type":"array" ,
+                   "items":{
+                     "type":"string" ,
+                     "enum":[
+                       "numeric", "text", "datetime", "categorical"
+                     ]
+                   },
+                   "description":"A list of optypes, one per generated field"
+                 }
+               },
+               "required":[
+                 "generator"
+               ]
+             }
+           ]
+         }
+       },
+       "output_row_filter":{
+         "anyOf":[
+           {
+             "type":"array" ,
+             "items":{
+               "type":"any"
+             }
+           },
+           {
+             "type":"string"
+           }
+         ],
+         "description":"Expression specifying the generated rows to be included in the dataset"
+       },
+       "quote":{
+         "type":"string",
+         "default": "\""
+       },
+       "refresh_field_types":{
+         "type":"boolean",
+         "description":"Whether to try to upgrade original field types in filters and samplings"
+       },
+       "refresh_preferred":{
+         "type":"boolean",
+         "description":"Whether to try to upgrade original preferred flags in filters, samplings and generation"
+       },
+       "row_filter":{
+         "anyOf":[
+           {
+             "type":"array" ,
+             "items":{
+               "type":"any"
+             }
+           },
+           {
+             "type":"string"
+           }
+         ],
+         "description":"Expression specifying the rows to be included in the dataset"
+       },
+       "row_range":{
+         "type":"object",
+         "properties":{
+           "size":{
+             "type":"integer",
+             "minimum":0
+           },
+           "start":{
+             "type":"integer",
+             "minimum":0
+           }
+         },
+         "additionalProperties": false
+       },
+       "sample":{
+         "type":"object",
+         "properties":{
+           "out_of_bag":{
+             "type":"boolean",
+             "description":"Is the sampling out of bag?"
+           },
+           "rate":{
+             "type":"number",
+             "minimum":0,
+             "description":"The rate: fraction of rows we pick"
+           },
+           "replace":{
+             "type":"boolean",
+             "description":"Whether we sample with replacement or not"
+           },
+           "seed":{
+             "anyOf":[
+               {
+                 "type":"number"
+               },
+               {
+                 "type":"string"
+               }
+             ],
+             "description":"A string to feed the random number generator used for sampling.  The same seed produces always the same sample (if all other parameters stay the same).  If not specified, we choose a seed at random"
+           }
+         },
+         "required":[
+           "rate"
+         ]
+       },
+       "separator":{
+         "type":"string",
+         "default": ", ",
+         "description":"The CSV separator character"
+       },
+       "serialized_bytes":{
+         "type":"integer",
+         "minimum":-1,
+         "description":"Number of bytes of the serialized dataset"
+       },
+       "term_limit":{
+         "type":"integer",
+         "default": 500,
+         "description":"The maximum number of terms to be when performing text analysis"
+       },
+       "trim":{
+         "type":"boolean",
+         "default": true,
+         "description":"Whether to trim field strings"
+       },
+       "used_bytes":{
+         "type":"integer",
+         "minimum":0,
+         "description":"Number of source bytes used as input"
+       }
+     }
+   }
+ },
+ "required":[
+   "dataset"
+ ],
+ "additionalProperties": false
+}

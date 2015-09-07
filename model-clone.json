@@ -1,0 +1,32 @@
+{
+ "type":"object",
+ "properties":{
+   "model":{
+     "type":"object",
+     "properties":{
+       "fields":{
+         "type":"object",
+         "additionalProperties": false,
+         "description":"Possibly partial list of descriptors for fields whose name should be modified"
+       },
+       "kind":{
+         "type":"string" ,
+         "enum":[
+           "clone"
+         ]
+       },
+       "origin_id":{
+         "type":"string",
+         "description":"Identifier of the model whose data is referred by this one"
+       }
+     },
+     "required":[
+       "kind", "origin_id"
+     ]
+   }
+ },
+ "required":[
+   "model"
+ ],
+ "additionalProperties": false
+}

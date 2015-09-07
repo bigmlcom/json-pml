@@ -1,0 +1,525 @@
+{
+ "type":"object",
+ "properties":{
+   "prediction":{
+     "type":"object",
+     "properties":{
+       "bad_fields":{
+         "type":"array" ,
+         "items":{
+           "type":"string"
+         },
+         "description":"List of ids of input fields with wrong values (single model only)"
+       },
+       "combiner":{
+         "anyOf":[
+           {
+             "type":"string" ,
+             "enum":[
+               "probability_weighted", "plurality", "confidence_weighted"
+             ]
+           },
+           {
+             "type":"object",
+             "properties":{
+               "class":{
+                 "type":"string",
+                 "description":"Category to be considered the positive class"
+               },
+               "k":{
+                 "type":"integer",
+                 "description":"Minimum number of occurrences of positive class"
+               },
+               "kind":{
+                 "type":"string" ,
+                 "enum":[
+                   "threshold"
+                 ]
+               }
+             },
+             "required":[
+               "k", "kind"
+             ]
+           }
+         ],
+         "default": "plurality",
+         "description":"The strategy for combining predictions"
+       },
+       "combiners":{
+         "type":"array" ,
+         "items":{
+           "anyOf":[
+             {
+               "type":"string" ,
+               "enum":[
+                 "probability_weighted", "plurality", "confidence_weighted"
+               ]
+             },
+             {
+               "type":"object",
+               "properties":{
+                 "class":{
+                   "type":"string",
+                   "description":"Category to be considered the positive class"
+                 },
+                 "k":{
+                   "type":"integer",
+                   "description":"Minimum number of occurrences of positive class"
+                 },
+                 "kind":{
+                   "type":"string" ,
+                   "enum":[
+                     "threshold"
+                   ]
+                 }
+               },
+               "required":[
+                 "k", "kind"
+               ]
+             }
+           ]
+         },
+         "description":"A list of combiner instances"
+       },
+       "confidence":{
+         "type":"number",
+         "minimum":0,
+         "description":"Probability of correctness for classification and an estimate of the error for regression (single model only)"
+       },
+       "count":{
+         "type":"integer",
+         "minimum":0,
+         "description":"Number of training instances predicting this (single model only)"
+       },
+       "fields":{
+         "type":"object",
+         "additionalProperties": false,
+         "description":"List of descriptors for fields used in this message"
+       },
+       "fields_map":{
+         "type":"object",
+         "description":"Mapping of dataset field ids to model field id"
+       },
+       "fields_maps":{
+         "type":"array" ,
+         "items":{
+           "type":"array" ,
+           "items":[
+             {
+               "type":"string"
+             },
+             {
+               "type":"object"
+             }
+           ]
+         },
+         "description":"List of two-element arrays, where the first is a model ID and the second is a field map; to be used with model_id"
+       },
+       "inputs":{
+         "anyOf":[
+           {
+             "type":"object"
+           },
+           {
+             "type":"array" ,
+             "items":{
+               "anyOf":[
+                 {
+                   "type":"null"
+                 },
+                 {
+                   "anyOf":[
+                     {
+                       "type":"string"
+                     },
+                     {
+                       "type":"number"
+                     }
+                   ]
+                 }
+               ]
+             }
+           }
+         ],
+         "description":"Map of inputs to use for the prediction"
+       },
+       "kind":{
+         "type":"string" ,
+         "enum":[
+           "single"
+         ],
+         "description":"The kind of this message's body"
+       },
+       "missing_strategies":{
+         "type":"array" ,
+         "items":{
+           "type":"array" ,
+           "items":[
+             {
+               "type":"string"
+             },
+             {
+               "type":"string" ,
+               "enum":[
+                 "last_prediction", "proportional"
+               ]
+             }
+           ]
+         },
+         "description":"List of two-element arrays, where the first is a model ID and the second is a missing_strategy; to be used with model_ids"
+       },
+       "missing_strategy":{
+         "type":"string" ,
+         "enum":[
+           "last_prediction", "proportional"
+         ],
+         "description":"A missing strategy to supplant that of all models"
+       },
+       "model_id":{
+         "type":"string",
+         "description":"Identifier of the model evaluated"
+       },
+       "model_ids":{
+         "type":"array" ,
+         "items":{
+           "type":"string"
+         },
+         "description":"IDs for an ensemble of model"
+       },
+       "next_predicates":{
+         "type":"array" ,
+         "items":{
+           "type":"object",
+           "properties":{
+             "count":{
+               "type":"integer",
+               "description":"A list of the predicates for children of this (single model only)"
+             },
+             "field":{
+               "type":"string",
+               "description":"Identifier of the field used for this decision"
+             },
+             "operator":{
+               "type":"string" ,
+               "enum":[
+                 "!=", "=", "lt", "<=", "notEqual", "greaterThan", "eq", "/=", "=*", "gt", "greaterOrEqual", "<=*", ">*", ">=", "!=*", "lessThan", "ge", "<", "le", "equal", "lessOrEqual", "equals", ">"
+               ],
+               "description":"Operator used to test the field's value"
+             },
+             "term":{
+               "type":"string",
+               "description":"The term/word of interest for the predicate. The occurance count of this term will be the value that is split on."
+             },
+             "value":{
+               "anyOf":[
+                 {
+                   "type":"null"
+                 },
+                 {
+                   "anyOf":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "type":"string"
+                     }
+                   ]
+                 }
+               ],
+               "description":"Value used, besides the field's, for this decision"
+             }
+           }
+         },
+         "description":"A list of the predicates for children of this (single model only)"
+       },
+       "objective_fields":{
+         "type":"array" ,
+         "items":{
+           "type":"string"
+         },
+         "description":"Collection of objective field identifiers"
+       },
+       "objective_summary":{
+         "type":"object",
+         "properties":{
+           "bins":{
+             "type":"array" ,
+             "items":{
+               "type":"array" ,
+               "items":[
+                 {
+                   "type":"number"
+                 },
+                 {
+                   "type":"number"
+                 }
+               ]
+             },
+             "description":"Captures the distribution for the objective field.  Each tuple represents a bin from an approximate histogram.  Each bin contains the bin mean and a membership count.  Used when there are more than 32 unique numeric values. During model construction, the counts can be fractional for partial models.  When the model is finished, however, all counts will be integers."
+           },
+           "categories":{
+             "type":"array" ,
+             "items":{
+               "type":"array" ,
+               "items":[
+                 {
+                   "type":"string"
+                 },
+                 {
+                   "type":"number"
+                 }
+               ]
+             },
+             "description":"Captures the distribution for the objective field.  Each tuple contains a category and the category occurrence count.  Used when the objective is categorical. For partial models, counts are an estimation and, as such, they won't be in general integers.  But finished models the pairs will always consist of a string and an integer."
+           },
+           "counts":{
+             "type":"array" ,
+             "items":{
+               "type":"array" ,
+               "items":[
+                 {
+                   "type":"number"
+                 },
+                 {
+                   "type":"number"
+                 }
+               ]
+             },
+             "description":"Captures the distribution for the objective field.  Contains tuples of the unique values and their occurrence counts.  Used when there are 32 or less unique numeric values. During model construction, these counts can be fractional for partial models.  When the model is finished, however, all counts will be integers."
+           },
+           "exact":{
+             "type":"boolean",
+             "description":"When the numeric distribution is in eqi-width format this captures whether the histogram is approximate or represents the distribution exactly"
+           },
+           "maximum":{
+             "type":"number",
+             "description":"Maximum value for numeric fields, used when 'bins' are present"
+           },
+           "populations":{
+             "type":"array" ,
+             "items":{
+               "type":"number"
+             },
+             "description":"When the numeric distribution is in eqi-width format this captures the population of each eqi-width bin"
+           },
+           "start":{
+             "type":"number",
+             "description":"When the numeric distribution is in eqi-width this captures the lower edge of the first bin"
+           },
+           "width":{
+             "type":"number",
+             "description":"When the numeric distribution is in eqi-width format this captures the width of each eqi-width bin"
+           }
+         },
+         "description":"Distribution for the the prediction (single model only)"
+       },
+       "path":{
+         "type":"array" ,
+         "items":{
+           "type":"object",
+           "properties":{
+             "field":{
+               "type":"string",
+               "description":"Identifier of the field used for this decision"
+             },
+             "operator":{
+               "type":"string" ,
+               "enum":[
+                 "!=", "=", "lt", "<=", "notEqual", "greaterThan", "eq", "/=", "=*", "gt", "greaterOrEqual", "<=*", ">*", ">=", "!=*", "lessThan", "ge", "<", "le", "equal", "lessOrEqual", "equals", ">"
+               ],
+               "description":"Operator used to test the field's value"
+             },
+             "term":{
+               "type":"string",
+               "description":"The term/word of interest for the predicate. The occurance count of this term will be the value that is split on."
+             },
+             "value":{
+               "anyOf":[
+                 {
+                   "type":"null"
+                 },
+                 {
+                   "anyOf":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "type":"string"
+                     }
+                   ]
+                 }
+               ],
+               "description":"Value used, besides the field's, for this decision"
+             }
+           }
+         },
+         "description":"A list of the predicates traversed to make the prediction (single model only)"
+       },
+       "result":{
+         "anyOf":[
+           {
+             "type":"object"
+           },
+           {
+             "type":"array" ,
+             "items":{
+               "type":"object",
+               "properties":{
+                 "confidence":{
+                   "type":"number",
+                   "minimum":0,
+                   "description":"Probability of correctness for and an estimate of the error for regression."
+                 },
+                 "count":{
+                   "type":"number",
+                   "description":"Number of training instances at the model node making the predicition"
+                 },
+                 "distribution":{
+                   "type":"array" ,
+                   "items":{
+                     "type":"array" ,
+                     "items":{
+                       "type":"any"
+                     }
+                   },
+                   "description":"Either bins, counts or categories; see distribution/schema for more information"
+                 },
+                 "prediction":{
+                   "anyOf":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "type":"string"
+                     }
+                   ],
+                   "description":"Predicted value for the objective field"
+                 },
+                 "totalcount":{
+                   "type":"number",
+                   "description":"Total number of training instances in the model"
+                 },
+                 "weight":{
+                   "type":"number",
+                   "description":"Total weight of the training instances at the model node making the predicition"
+                 },
+                 "weighted_distribution":{
+                   "type":"array" ,
+                   "items":{
+                     "type":"array" ,
+                     "items":{
+                       "type":"any"
+                     }
+                   },
+                   "description":"Either bins, counts or categories; see distribution/schema for more information"
+                 }
+               },
+               "required":[
+                 "confidence", "count", "prediction", "totalcount"
+               ]
+             }
+           }
+         ],
+         "description":"Prediction given as a map from field to value or as an array of prediction results"
+       },
+       "total_count":{
+         "type":"integer",
+         "minimum":0,
+         "description":"Total number of training instances in the model (single model only)"
+       },
+       "unknown_fields":{
+         "type":"array" ,
+         "items":{
+           "type":"string"
+         },
+         "description":"List of ids of input fields not present in the model (single model only)"
+       },
+       "weight":{
+         "type":"number",
+         "description":"Total weight of instances predicting this result (single model only)"
+       },
+       "weighted_objective_summary":{
+         "type":"object",
+         "properties":{
+           "bins":{
+             "type":"array" ,
+             "items":{
+               "type":"array" ,
+               "items":[
+                 {
+                   "type":"number"
+                 },
+                 {
+                   "type":"number"
+                 }
+               ]
+             },
+             "description":"Captures the distribution for the objective field.  Each tuple represents a bin from an approximate histogram.  Each bin contains the bin mean and a membership count.  Used when there are more than 32 unique numeric values. During model construction, the counts can be fractional for partial models.  When the model is finished, however, all counts will be integers."
+           },
+           "categories":{
+             "type":"array" ,
+             "items":{
+               "type":"array" ,
+               "items":[
+                 {
+                   "type":"string"
+                 },
+                 {
+                   "type":"number"
+                 }
+               ]
+             },
+             "description":"Captures the distribution for the objective field.  Each tuple contains a category and the category occurrence count.  Used when the objective is categorical. For partial models, counts are an estimation and, as such, they won't be in general integers.  But finished models the pairs will always consist of a string and an integer."
+           },
+           "counts":{
+             "type":"array" ,
+             "items":{
+               "type":"array" ,
+               "items":[
+                 {
+                   "type":"number"
+                 },
+                 {
+                   "type":"number"
+                 }
+               ]
+             },
+             "description":"Captures the distribution for the objective field.  Contains tuples of the unique values and their occurrence counts.  Used when there are 32 or less unique numeric values. During model construction, these counts can be fractional for partial models.  When the model is finished, however, all counts will be integers."
+           },
+           "exact":{
+             "type":"boolean",
+             "description":"When the numeric distribution is in eqi-width format this captures whether the histogram is approximate or represents the distribution exactly"
+           },
+           "maximum":{
+             "type":"number",
+             "description":"Maximum value for numeric fields, used when 'bins' are present"
+           },
+           "populations":{
+             "type":"array" ,
+             "items":{
+               "type":"number"
+             },
+             "description":"When the numeric distribution is in eqi-width format this captures the population of each eqi-width bin"
+           },
+           "start":{
+             "type":"number",
+             "description":"When the numeric distribution is in eqi-width this captures the lower edge of the first bin"
+           },
+           "width":{
+             "type":"number",
+             "description":"When the numeric distribution is in eqi-width format this captures the width of each eqi-width bin"
+           }
+         },
+         "description":"Weighted distribution for the the prediction (single model only)"
+       }
+     },
+     "required":[
+       "kind"
+     ]
+   }
+ },
+ "required":[
+   "prediction"
+ ],
+ "additionalProperties": false
+}

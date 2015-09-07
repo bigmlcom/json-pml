@@ -1,0 +1,179 @@
+{
+ "type":"object",
+ "properties":{
+   "execution":{
+     "type":"object",
+     "properties":{
+       "arguments":{
+         "anyOf":[
+           {
+             "type":"array" ,
+             "items":{
+               "type":"array" ,
+               "items":[
+                 {
+                   "type":"string"
+                 },
+                 {
+                   "type":"any"
+                 }
+               ]
+             }
+           },
+           {
+             "type":"object",
+             "additionalProperties": false
+           }
+         ],
+         "description":"Either a list of [name value] pairs or a map from script id to a list of such pairs, to specify the value of the script(s) parameters during execution."
+       },
+       "callbacks":{
+         "type":"array" ,
+         "items":{
+           "type":"object",
+           "properties":{
+             "address":{
+               "type":"string",
+               "description":"For MSG callbacks, the mailbox address to use"
+             },
+             "delay":{
+               "type":"integer",
+               "description":"Seed for an initial random delay before first call, in millisecs.  The actual delay is this value plus a random number in [0, 1000)"
+             },
+             "fire_once":{
+               "type":"boolean",
+               "description":"A flag specifying whether callbacks should be called at most once, even if the job is requeued and retraces previous states"
+             },
+             "method":{
+               "type":"string" ,
+               "enum":[
+                 "DELETE", "delete", "put", "msg", "post", "MSG", "POST", "GET", "get", "PUT"
+               ],
+               "default": "GET",
+               "description":"The HTTP method to use"
+             },
+             "payload":{
+               "type":"object",
+               "description":"The payload to be used as a message body"
+             },
+             "retries":{
+               "type":"integer",
+               "description":"Number of times the callback is retried on failures"
+             },
+             "retry_delay":{
+               "type":"integer",
+               "default": 1000,
+               "description":"Seed for a exponential back-off between retries, in millisecs"
+             },
+             "states":{
+               "type":"array" ,
+               "items":{
+                 "type":"string"
+               },
+               "description":"A list of states for which the callback should be called. If not given, the callback will be called for all state changes"
+             },
+             "synchronous":{
+               "type":"boolean",
+               "description":"A flag specifying wether the callback is synchronous and we need to wait for a remote response before proceeding"
+             },
+             "timeout":{
+               "type":"integer",
+               "default": 30000,
+               "description":"Lapse in millisecs waiting for the callback to get a response"
+             },
+             "url":{
+               "type":"string",
+               "description":"The URL to invoke with the method above"
+             }
+           },
+           "required":[
+             "url"
+           ]
+         }
+       },
+       "creation_defaults":{
+         "type":"object",
+         "additionalProperties": false,
+         "description":"A dictionary providing default values for resource creation."
+       },
+       "internal":{
+         "type":"boolean",
+         "description":"When set, resources are manipulated talking directly with wintermute proxies, so this script usable only as an internal script."
+       },
+       "max_execution_steps":{
+         "type":"integer",
+         "default": 0,
+         "description":"Maximum allowed number of execution steps. A zero or negative value denotes no limit."
+       },
+       "max_execution_time":{
+         "type":"integer",
+         "default": 0,
+         "description":"Maximum allowed execution time, in seconds. A zero or negative value denotes no limit."
+       },
+       "max_recursion_depth":{
+         "type":"integer",
+         "default": 0,
+         "description":"Maximum number of non-tail recursive  nexted calls. A zero or negative value denotes no limit."
+       },
+       "output_resources":{
+         "type":"array" ,
+         "items":{
+           "type":"array" ,
+           "items":[
+             {
+               "anyOf":[
+                 {
+                   "type":"null"
+                 },
+                 {
+                   "type":"string"
+                 }
+               ]
+             },
+             {
+               "type":"string"
+             }
+           ]
+         },
+         "description":"List of resources created during this execution,  listed as pairs [name id]."
+       },
+       "result":{
+         "type":"any",
+         "description":"The last value computed by the last script executed."
+       },
+       "results":{
+         "type":"array" ,
+         "items":{
+           "type":"any"
+         },
+         "description":"The values computed by the sxecuted scripts."
+       },
+       "script_id":{
+         "anyOf":[
+           {
+             "type":"string"
+           },
+           {
+             "type":"array" ,
+             "items":{
+               "type":"string"
+             }
+           }
+         ],
+         "description":"The identifier or list of identifiers of the script to execute."
+       },
+       "username":{
+         "type":"string",
+         "description":"The user to use as owner during execution."
+       }
+     },
+     "required":[
+       "script_id"
+     ]
+   }
+ },
+ "required":[
+   "execution"
+ ],
+ "additionalProperties": false
+}

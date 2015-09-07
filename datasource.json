@@ -1,0 +1,307 @@
+{
+ "type":"object",
+ "properties":{
+   "datasource":{
+     "type":"object",
+     "properties":{
+       "callbacks":{
+         "type":"array" ,
+         "items":{
+           "type":"object",
+           "properties":{
+             "address":{
+               "type":"string",
+               "description":"For MSG callbacks, the mailbox address to use"
+             },
+             "delay":{
+               "type":"integer",
+               "description":"Seed for an initial random delay before first call, in millisecs.  The actual delay is this value plus a random number in [0, 1000)"
+             },
+             "fire_once":{
+               "type":"boolean",
+               "description":"A flag specifying whether callbacks should be called at most once, even if the job is requeued and retraces previous states"
+             },
+             "method":{
+               "type":"string" ,
+               "enum":[
+                 "DELETE", "delete", "put", "msg", "post", "MSG", "POST", "GET", "get", "PUT"
+               ],
+               "default": "GET",
+               "description":"The HTTP method to use"
+             },
+             "payload":{
+               "type":"object",
+               "description":"The payload to be used as a message body"
+             },
+             "retries":{
+               "type":"integer",
+               "description":"Number of times the callback is retried on failures"
+             },
+             "retry_delay":{
+               "type":"integer",
+               "default": 1000,
+               "description":"Seed for a exponential back-off between retries, in millisecs"
+             },
+             "states":{
+               "type":"array" ,
+               "items":{
+                 "type":"string"
+               },
+               "description":"A list of states for which the callback should be called. If not given, the callback will be called for all state changes"
+             },
+             "synchronous":{
+               "type":"boolean",
+               "description":"A flag specifying wether the callback is synchronous and we need to wait for a remote response before proceeding"
+             },
+             "timeout":{
+               "type":"integer",
+               "default": 30000,
+               "description":"Lapse in millisecs waiting for the callback to get a response"
+             },
+             "url":{
+               "type":"string",
+               "description":"The URL to invoke with the method above"
+             }
+           },
+           "required":[
+             "url"
+           ]
+         }
+       },
+       "charset":{
+         "type":"string",
+         "default": "UTF-8",
+         "description":"The character set used in the source"
+       },
+       "data":{
+         "type":"string",
+         "description":"Data for inline sources"
+       },
+       "disable_datetime":{
+         "type":"boolean",
+         "description":"Whether automatic generation of datetime children fields should be disabled"
+       },
+       "encoding":{
+         "type":"string",
+         "default": "plain",
+         "description":"Data encoding: plain, zip, ..."
+       },
+       "fields":{
+         "type":"object",
+         "additionalProperties":{
+           "type":"object",
+           "properties":{
+             "auto_generated":{
+               "type":"boolean",
+               "description":"True if the field was generated from another field"
+             },
+             "child_ids":{
+               "type":"array" ,
+               "items":{
+                 "type":"string"
+               },
+               "description":"IDs of the children if this generates other fields"
+             },
+             "column_number":{
+               "type":"integer",
+               "minimum":0,
+               "description":"Column from the data source"
+             },
+             "datatype":{
+               "type":"string",
+               "description":"The storage type of the field"
+             },
+             "description":{
+               "type":"string",
+               "description":"Free text description of the field"
+             },
+             "label":{
+               "type":"string",
+               "description":"A label for the field (free text for use by clients)"
+             },
+             "locale":{
+               "type":"string",
+               "description":"Overrides global locale"
+             },
+             "missing_tokens":{
+               "type":"array" ,
+               "items":{
+                 "type":"string"
+               },
+               "description":"Overrides global missing tokens"
+             },
+             "name":{
+               "type":"string",
+               "description":"Name for the field"
+             },
+             "parent_ids":{
+               "type":"array" ,
+               "items":{
+                 "type":"string"
+               },
+               "description":"IDs of the parents if this is a generated field"
+             },
+             "preferred":{
+               "anyOf":[
+                 {
+                   "type":"null"
+                 },
+                 {
+                   "type":"boolean"
+                 }
+               ],
+               "default": true,
+               "description":"Whether the field is used by default for model creation"
+             },
+             "term_analysis":{
+               "type":"object",
+               "properties":{
+                 "case_sensitive":{
+                   "type":"boolean",
+                   "description":"Defines whether the term analysis is case sensitive"
+                 },
+                 "enabled":{
+                   "type":"boolean",
+                   "description":"Enable/disables term analysis for this field"
+                 },
+                 "language":{
+                   "type":"string",
+                   "default": "none",
+                   "description":"Language code for detected language (or 'none')"
+                 },
+                 "stem_words":{
+                   "type":"boolean",
+                   "description":"Defines whether the term analysis stems words"
+                 },
+                 "token_mode":{
+                   "type":"string" ,
+                   "enum":[
+                     "full_terms_only", "tokens_only", "all"
+                   ],
+                   "default": "all",
+                   "description":"Defines whether the term analysis uses full terms, tokenized terms, or both"
+                 },
+                 "use_stopwords":{
+                   "type":"boolean",
+                   "description":"Defines whether the term analysis uses stop words"
+                 }
+               }
+             }
+           }
+         },
+         "description":"List of inferred columns in this datasource"
+       },
+       "fields_preview":{
+         "type":"object",
+         "description":"Fields peeked as a map from field id to columns"
+       },
+       "format":{
+         "type":"string" ,
+         "enum":[
+           "json", "csv", "excel", "arff"
+         ],
+         "description":"Data format"
+       },
+       "head":{
+         "type":"string",
+         "description":"First blocks of decoded data"
+       },
+       "head_bytes":{
+         "type":"integer",
+         "minimum":0,
+         "description":"Size of the peeked head"
+       },
+       "head_rows":{
+         "type":"integer",
+         "minimum":0,
+         "description":"Number of rows in peeked head"
+       },
+       "header":{
+         "type":"boolean",
+         "description":"Result of the header autodetection"
+       },
+       "json_key":{
+         "type":"string",
+         "description":"Key where rows are to be found in JSON top-level maps"
+       },
+       "kind":{
+         "type":"string" ,
+         "enum":[
+           "internal", "inline", "clone", "file", "external"
+         ],
+         "description":"The kind of this message's body"
+       },
+       "locale":{
+         "type":"string",
+         "description":"Default locale for field values"
+       },
+       "rogue_rows":{
+         "type":"object",
+         "description":"Rows peeked that had an incorrect number of fields"
+       },
+       "separator":{
+         "anyOf":[
+           {
+             "type":"null"
+           },
+           {
+             "type":"string"
+           }
+         ],
+         "description":"Result of the separator autodetection"
+       },
+       "size":{
+         "type":"integer",
+         "minimum":0,
+         "description":"Size, in bytes, of the incoming data"
+       },
+       "term_analysis":{
+         "type":"object",
+         "properties":{
+           "case_sensitive":{
+             "type":"boolean",
+             "description":"Defines whether the term analysis is case sensitive"
+           },
+           "enabled":{
+             "type":"boolean",
+             "description":"Enable/disables term analysis for this field"
+           },
+           "language":{
+             "type":"string",
+             "default": "none",
+             "description":"Language code for detected language (or 'none')"
+           },
+           "stem_words":{
+             "type":"boolean",
+             "description":"Defines whether the term analysis stems words"
+           },
+           "token_mode":{
+             "type":"string" ,
+             "enum":[
+               "full_terms_only", "tokens_only", "all"
+             ],
+             "default": "all",
+             "description":"Defines whether the term analysis uses full terms, tokenized terms, or both"
+           },
+           "use_stopwords":{
+             "type":"boolean",
+             "description":"Defines whether the term analysis uses stop words"
+           }
+         },
+         "description":"Default values for term analysis parameters"
+       },
+       "uri":{
+         "type":"string",
+         "description":"A URI defining how to access the data"
+       }
+     },
+     "required":[
+       "kind"
+     ]
+   }
+ },
+ "required":[
+   "datasource"
+ ],
+ "additionalProperties": false
+}

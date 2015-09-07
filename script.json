@@ -1,0 +1,130 @@
+{
+ "type":"object",
+ "properties":{
+   "script":{
+     "type":"object",
+     "properties":{
+       "callbacks":{
+         "type":"array" ,
+         "items":{
+           "type":"object",
+           "properties":{
+             "address":{
+               "type":"string",
+               "description":"For MSG callbacks, the mailbox address to use"
+             },
+             "delay":{
+               "type":"integer",
+               "description":"Seed for an initial random delay before first call, in millisecs.  The actual delay is this value plus a random number in [0, 1000)"
+             },
+             "fire_once":{
+               "type":"boolean",
+               "description":"A flag specifying whether callbacks should be called at most once, even if the job is requeued and retraces previous states"
+             },
+             "method":{
+               "type":"string" ,
+               "enum":[
+                 "DELETE", "delete", "put", "msg", "post", "MSG", "POST", "GET", "get", "PUT"
+               ],
+               "default": "GET",
+               "description":"The HTTP method to use"
+             },
+             "payload":{
+               "type":"object",
+               "description":"The payload to be used as a message body"
+             },
+             "retries":{
+               "type":"integer",
+               "description":"Number of times the callback is retried on failures"
+             },
+             "retry_delay":{
+               "type":"integer",
+               "default": 1000,
+               "description":"Seed for a exponential back-off between retries, in millisecs"
+             },
+             "states":{
+               "type":"array" ,
+               "items":{
+                 "type":"string"
+               },
+               "description":"A list of states for which the callback should be called. If not given, the callback will be called for all state changes"
+             },
+             "synchronous":{
+               "type":"boolean",
+               "description":"A flag specifying wether the callback is synchronous and we need to wait for a remote response before proceeding"
+             },
+             "timeout":{
+               "type":"integer",
+               "default": 30000,
+               "description":"Lapse in millisecs waiting for the callback to get a response"
+             },
+             "url":{
+               "type":"string",
+               "description":"The URL to invoke with the method above"
+             }
+           },
+           "required":[
+             "url"
+           ]
+         }
+       },
+       "imports":{
+         "type":"array" ,
+         "items":{
+           "type":"string"
+         },
+         "description":"List of the identifiers of libraries imported by this script."
+       },
+       "origin_id":{
+         "anyOf":[
+           {
+             "type":"string"
+           },
+           {
+             "type":"array" ,
+             "items":{
+               "type":"string"
+             }
+           }
+         ],
+         "description":"The identifier of the script to be cloned, if any."
+       },
+       "parameters":{
+         "type":"array" ,
+         "items":{
+           "type":"object",
+           "properties":{
+             "default":{
+               "type":"any",
+               "description":"Default value for the parameter during execution. Must match its name."
+             },
+             "name":{
+               "type":"string",
+               "description":"The parameter's name"
+             },
+             "type":{
+               "type":"string" ,
+               "enum":[
+                 "boolean", "batchcentroid-id", "string", "batchprediction-id", "model-id", "list-of-string", "centroid-id", "source-id", "list-of-boolean", "list-of-number", "number", "evaluation-id", "batchanomalyscore-id", "cluster-id", "function", "dataset-id", "prediction-id", "anomaly-id", "anomalyscore-id", "ensemble-id"
+               ],
+               "description":"The parameter's data type"
+             }
+           },
+           "required":[
+             "name", "type"
+           ],
+           "additionalProperties": false
+         },
+         "description":"A list of parameters, with names, types and defaults."
+       },
+       "source_code":{
+         "type":"string"
+       }
+     }
+   }
+ },
+ "required":[
+   "script"
+ ],
+ "additionalProperties": false
+}
