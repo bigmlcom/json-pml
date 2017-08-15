@@ -4,28 +4,9 @@
    "execution":{
      "type":"object",
      "properties":{
-       "arguments":{
-         "anyOf":[
-           {
-             "type":"array" ,
-             "items":{
-               "type":"array" ,
-               "items":[
-                 {
-                   "type":"string"
-                 },
-                 {
-                   "type":"any"
-                 }
-               ]
-             }
-           },
-           {
-             "type":"object",
-             "additionalProperties": false
-           }
-         ],
-         "description":"Either a list of [name value] pairs or a map from script id to a list of such pairs, to specify the value of the script(s) parameters during execution."
+       "apian_ur":{
+         "type":"string",
+         "description":"The base URI to which API requests should go."
        },
        "callbacks":{
          "type":"array" ,
@@ -52,9 +33,31 @@
                "default": "GET",
                "description":"The HTTP method to use"
              },
+             "order":{
+               "anyOf":[
+                 {
+                   "type":"null"
+                 },
+                 {
+                   "type":"integer",
+                   "minimum":0
+                 }
+               ],
+               "description":"Trigger ordering.  Smaller (or nil) orders are triggered first, with progress callbacks taking preference over state callbacks.  Synchronous and asynchronous callbacks are ordered independently.  Callbacks with the same order, states and synchronicity are triggered in the order they are received."
+             },
              "payload":{
                "type":"object",
                "description":"The payload to be used as a message body"
+             },
+             "progress_variation":{
+               "type":"number",
+               "exclusiveMinimum":0,
+               "exclusiveMaximum":1,
+               "description":"A number in (0, 1) which gives the variation in progress that will trigger this callback."
+             },
+             "register-address":{
+               "type":"boolean",
+               "description":"For MSG callbacks, whether to register the requested address if it does not yet exist (i.e., whether to create the associated message queue when the mailbox is RabbitMQ)"
              },
              "retries":{
                "type":"integer",
@@ -70,7 +73,7 @@
                "items":{
                  "type":"string"
                },
-               "description":"A list of states for which the callback should be called. If not given, the callback will be called for all state changes"
+               "description":"A list of states for which the callback should be called. If not given, the callback will be called for either the given progress variation or, if that's not provided, for all state changes"
              },
              "synchronous":{
                "type":"boolean",
@@ -96,9 +99,53 @@
          "additionalProperties": false,
          "description":"A dictionary providing default values for resource creation."
        },
+       "dev_mode":{
+         "anyOf":[
+           {
+             "type":"null"
+           },
+           {
+             "type":"boolean"
+           }
+         ],
+         "description":"Whether resources should be created in dev mode."
+       },
+       "inputs":{
+         "anyOf":[
+           {
+             "type":"object",
+             "additionalProperties": false
+           },
+           {
+             "type":"array" ,
+             "items":{
+               "type":"array" ,
+               "items":[
+                 {
+                   "type":"string"
+                 },
+                 {
+                   "type":"any"
+                 }
+               ]
+             }
+           }
+         ],
+         "description":"Either a list of [name value] pairs or a map from script id to a list of such pairs, to specify the value of the script(s) parameters during execution."
+       },
        "internal":{
          "type":"boolean",
          "description":"When set, resources are manipulated talking directly with wintermute proxies, so this script usable only as an internal script."
+       },
+       "logs":{
+         "type":"array" ,
+         "items":{
+           "type":"array" ,
+           "items":{
+             "type":"any"
+           }
+         },
+         "description":"User logs generated during the execution of the scripts as a list of entries of the form: [level timestamp line-number log-message]"
        },
        "max_execution_steps":{
          "type":"integer",
@@ -112,15 +159,36 @@
        },
        "max_recursion_depth":{
          "type":"integer",
-         "default": 0,
-         "description":"Maximum number of non-tail recursive  nexted calls. A zero or negative value denotes no limit."
+         "default": 1024,
+         "description":"Maximum number of non-tail recursive  nested calls."
+       },
+       "output_maps":{
+         "type":"object",
+         "additionalProperties": false,
+         "description":"Mapping, in the form of a map from script id to a list of pairs of variable names, from output variables to script parameter names."
        },
        "output_resources":{
          "type":"array" ,
          "items":{
-           "type":"array" ,
-           "items":[
-             {
+           "type":"object",
+           "properties":{
+             "id":{
+               "type":"string"
+             },
+             "last_update":{
+               "type":"integer",
+               "description":"The last time, in milliseconds, the resource status. was reported"
+             },
+             "progress":{
+               "type":"number",
+               "minimum":0,
+               "maximum":1,
+               "description":"The last reported progress indicator."
+             },
+             "state":{
+               "type":"string"
+             },
+             "task":{
                "anyOf":[
                  {
                    "type":"null"
@@ -128,14 +196,49 @@
                  {
                    "type":"string"
                  }
-               ]
+               ],
+               "description":"Description of the resource construction task under way."
              },
+             "variable":{
+               "anyOf":[
+                 {
+                   "type":"null"
+                 },
+                 {
+                   "type":"string"
+                 }
+               ],
+               "description":"Name of the whizzml script variable this resource was assigned to."
+             }
+           },
+           "required":[
+             "id", "state", "variable"
+           ],
+           "additionalProperties": false
+         },
+         "description":"List of resources created during this execution, as a list of maps with resource information"
+       },
+       "outputs":{
+         "type":"array" ,
+         "items":{
+           "anyOf":[
              {
                "type":"string"
+             },
+             {
+               "type":"array" ,
+               "items":[
+                 {
+                   "type":"string"
+                 },
+                 {
+                   "type":"any"
+                 }
+               ]
              }
            ]
          },
-         "description":"List of resources created during this execution,  listed as pairs [name id]."
+         "description":"List of names or name/value pairs with the exection outptus."
        },
        "result":{
          "type":"any",
@@ -161,6 +264,26 @@
            }
          ],
          "description":"The identifier or list of identifiers of the script to execute."
+       },
+       "sources":{
+         "type":"array" ,
+         "items":{
+           "type":"array" ,
+           "items":[
+             {
+               "type":"string"
+             },
+             {
+               "type":"string"
+             }
+           ]
+         },
+         "description":"List of pairs id/name for all the sources (scripts and libraries) that this execution may refer to in logs and call stacks."
+       },
+       "tlp":{
+         "type":"integer",
+         "default": 4,
+         "description":"Maximum number of simultaneous, non-finished, resource creation tasks."
        },
        "username":{
          "type":"string",

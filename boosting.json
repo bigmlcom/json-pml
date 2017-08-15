@@ -4,9 +4,28 @@
    "model":{
      "type":"object",
      "properties":{
-       "all_numeric_objectives":{
-         "type":"boolean",
-         "description":"If true, appends all numeric fields to objective_fields."
+       "boosting":{
+         "type":"object",
+         "properties":{
+           "lambda":{
+             "type":"number",
+             "description":"Used when generating predictions with missing data"
+           },
+           "objective_class":{
+             "type":"string",
+             "description":"The class that this tree targets, used when boosting for classification"
+           },
+           "objective_field":{
+             "type":"string",
+             "description":"The field id of the original objective field when boosting is enabled"
+           },
+           "weight":{
+             "type":"number",
+             "description":"The tree's weight when boosting (learning rate + step size)"
+           }
+         },
+         "additionalProperties": false,
+         "description":"Parameters for boosted trees"
        },
        "callbacks":{
          "type":"array" ,
@@ -94,6 +113,39 @@
            ]
          }
        },
+       "combiner":{
+         "anyOf":[
+           {
+             "type":"string" ,
+             "enum":[
+               "probability_weighted", "plurality", "confidence_weighted"
+             ]
+           },
+           {
+             "type":"object",
+             "properties":{
+               "class":{
+                 "type":"string",
+                 "description":"Category to be considered the positive class"
+               },
+               "k":{
+                 "type":"integer",
+                 "description":"Minimum number of occurrences of positive class"
+               },
+               "kind":{
+                 "type":"string" ,
+                 "enum":[
+                   "threshold"
+                 ]
+               }
+             },
+             "required":[
+               "k", "kind"
+             ]
+           }
+         ],
+         "description":"When used as part of a model list, what combiner to use for individual predictions"
+       },
        "dataset_id":{
          "type":"string",
          "description":"Identifier of this model's main dataset"
@@ -115,6 +167,11 @@
        "default_values":{
          "type":"object",
          "description":"A map for field identifiers to values for missing entries."
+       },
+       "depth_threshold":{
+         "type":"integer",
+         "minimum":1,
+         "description":"The depth limit for a tree"
        },
        "discretization":{
          "type":"object",
@@ -148,6 +205,196 @@
          },
          "additionalProperties": false,
          "description":"Parameters to control the discetization of numeric fields"
+       },
+       "distribution":{
+         "type":"object",
+         "properties":{
+           "predictions":{
+             "type":"object",
+             "properties":{
+               "bins":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "type":"number"
+                     }
+                   ]
+                 },
+                 "description":"Captures the distribution for the objective field.  Each tuple represents a bin from an approximate histogram.  Each bin contains the bin mean and a membership count.  Used when there are more than 32 unique numeric values. During model construction, the counts can be fractional for partial models.  When the model is finished, however, all counts will be integers."
+               },
+               "categories":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"string"
+                     },
+                     {
+                       "type":"number"
+                     }
+                   ]
+                 },
+                 "description":"Captures the distribution for the objective field.  Each tuple contains a category and the category occurrence count.  Used when the objective is categorical. For partial models, counts are an estimation and, as such, they won't be in general integers.  But finished models the pairs will always consist of a string and an integer."
+               },
+               "counts":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "type":"number"
+                     }
+                   ]
+                 },
+                 "description":"Captures the distribution for the objective field.  Contains tuples of the unique values and their occurrence counts.  Used when there are 32 or less unique numeric values. During model construction, these counts can be fractional for partial models.  When the model is finished, however, all counts will be integers."
+               },
+               "exact":{
+                 "type":"boolean",
+                 "description":"When the numeric distribution is in eqi-width format this captures whether the histogram is approximate or represents the distribution exactly"
+               },
+               "maximum":{
+                 "type":"number",
+                 "description":"Maximum value for numeric fields, used when 'bins' are present"
+               },
+               "populations":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"number"
+                 },
+                 "description":"When the numeric distribution is in eqi-width format this captures the population of each eqi-width bin"
+               },
+               "start":{
+                 "type":"number",
+                 "description":"When the numeric distribution is in eqi-width this captures the lower edge of the first bin"
+               },
+               "width":{
+                 "type":"number",
+                 "description":"When the numeric distribution is in eqi-width format this captures the width of each eqi-width bin"
+               }
+             }
+           },
+           "training":{
+             "type":"object",
+             "properties":{
+               "bins":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "type":"number"
+                     }
+                   ]
+                 },
+                 "description":"Captures the distribution for the objective field.  Each tuple represents a bin from an approximate histogram.  Each bin contains the bin mean and a membership count.  Used when there are more than 32 unique numeric values. During model construction, the counts can be fractional for partial models.  When the model is finished, however, all counts will be integers."
+               },
+               "categories":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"string"
+                     },
+                     {
+                       "type":"number"
+                     }
+                   ]
+                 },
+                 "description":"Captures the distribution for the objective field.  Each tuple contains a category and the category occurrence count.  Used when the objective is categorical. For partial models, counts are an estimation and, as such, they won't be in general integers.  But finished models the pairs will always consist of a string and an integer."
+               },
+               "counts":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "type":"number"
+                     }
+                   ]
+                 },
+                 "description":"Captures the distribution for the objective field.  Contains tuples of the unique values and their occurrence counts.  Used when there are 32 or less unique numeric values. During model construction, these counts can be fractional for partial models.  When the model is finished, however, all counts will be integers."
+               },
+               "exact":{
+                 "type":"boolean",
+                 "description":"When the numeric distribution is in eqi-width format this captures whether the histogram is approximate or represents the distribution exactly"
+               },
+               "maximum":{
+                 "type":"number",
+                 "description":"Maximum value for numeric fields, used when 'bins' are present"
+               },
+               "populations":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"number"
+                 },
+                 "description":"When the numeric distribution is in eqi-width format this captures the population of each eqi-width bin"
+               },
+               "start":{
+                 "type":"number",
+                 "description":"When the numeric distribution is in eqi-width this captures the lower edge of the first bin"
+               },
+               "width":{
+                 "type":"number",
+                 "description":"When the numeric distribution is in eqi-width format this captures the width of each eqi-width bin"
+               }
+             },
+             "description":"The training data distribution across predicted values, initially and after flowing through the tree"
+           }
+         },
+         "additionalProperties": false,
+         "description":"The training data distribution across predicted values, initially and after flowing through the tree"
+       },
+       "early_holdout":{
+         "type":"number",
+         "minimum":0,
+         "maximum":1,
+         "default": 0,
+         "description":"Ratio of data for holdout early stopping when boosting"
+       },
+       "early_out_of_bag":{
+         "type":"boolean",
+         "default": true,
+         "description":"Whether to enable oob early stopping when boosting"
+       },
+       "ensemble_sample":{
+         "type":"object",
+         "properties":{
+           "rate":{
+             "type":"number",
+             "minimum":0,
+             "description":"The rate: fraction of rows we pick"
+           },
+           "replace":{
+             "type":"boolean",
+             "default": true,
+             "description":"Whether we sample with replacement or not"
+           },
+           "seed":{
+             "type":"string",
+             "description":"Seeds the ensemble so that it's deterministic"
+           }
+         },
+         "required":[
+           "rate"
+         ],
+         "additionalProperties": false,
+         "description":"The sampling parameters for this ensemble"
        },
        "excluded_input_fields":{
          "type":"array" ,
@@ -196,6 +443,26 @@
          },
          "description":"List of two-element arrays, where the first is a dataset ID and the second is a field map; to be used with dataset_ids"
        },
+       "final_iterations":{
+         "type":"integer",
+         "minimum":1,
+         "description":"The final number of boosting iterations"
+       },
+       "importance":{
+         "type":"array" ,
+         "items":{
+           "type":"array" ,
+           "items":[
+             {
+               "type":"string"
+             },
+             {
+               "type":"number"
+             }
+           ]
+         },
+         "description":"Contains pairs of field ids and importance scores (one for each input field). The higher the score, the more the field helps reduce error on the training set"
+       },
        "input_fields":{
          "type":"array" ,
          "items":{
@@ -218,13 +485,39 @@
          },
          "description":"List of regular expressions, selecting input fields  by name"
        },
+       "iterations":{
+         "type":"integer",
+         "minimum":1,
+         "default": 64,
+         "description":"The maximum desired number of boosting iterations"
+       },
        "kind":{
-         "type":"string",
+         "type":"string" ,
+         "enum":[
+           "boosting"
+         ],
          "description":"The kind of this message's body"
+       },
+       "learning_rate":{
+         "type":"number",
+         "minimum":0,
+         "maximum":1,
+         "default": 0.3,
+         "description":"The learning rate for boosting"
        },
        "locale":{
          "type":"string",
          "description":"Default locale for field value"
+       },
+       "missing_splits":{
+         "type":"boolean",
+         "description":"Whether to include missing features values when picking splits in the trees"
+       },
+       "missing_strategy":{
+         "type":"string" ,
+         "enum":[
+           "last_prediction", "proportional"
+         ]
        },
        "missing_tokens":{
          "type":"array" ,
@@ -238,6 +531,19 @@
          "type":"object",
          "additionalProperties": false,
          "description":"Map of descriptors for fields actually appearing in the model, without summaries"
+       },
+       "models":{
+         "type":"array" ,
+         "items":{
+           "type":"string"
+         },
+         "description":"A list of the identifiers of the trees built so far in the ensemble"
+       },
+       "node_threshold":{
+         "type":"integer",
+         "minimum":1,
+         "default": 512,
+         "description":"The soft limit for number of nodes in the tree"
        },
        "objective_field":{
          "anyOf":[
@@ -1941,6 +2247,221 @@
          ],
          "default": "deterministic"
        },
+       "prune_holdout":{
+         "type":"number",
+         "minimum":0,
+         "maximum":1,
+         "description":"DEPRECATED - Pruning with a holdout set"
+       },
+       "random_candidate_ratio":{
+         "type":"number",
+         "minimum":0,
+         "maximum":1,
+         "description":"Similar to 'random_candidates' but expressed as a ratio of the total candidates (between 0 and 1)"
+       },
+       "random_candidates":{
+         "type":"integer",
+         "description":"Sets the number of random fields considered when 'randomize' is true. By default this is the square root of the total number of input fields. Also known as 'mtry' in the R random forest package"
+       },
+       "randomize":{
+         "type":"boolean",
+         "description":"When true only a random subset of fields are considered for each split (ala random forests)"
+       },
+       "root":{
+         "type":"object",
+         "properties":{
+           "children":{
+             "type":"array" ,
+             "items":{
+               "$ref":"node.json"
+             },
+             "description":"Children of this node"
+           },
+           "confidence":{
+             "type":"number",
+             "minimum":0,
+             "description":"Probability of correctness for classification and an estimate of the error for regression"
+           },
+           "count":{
+             "type":"number",
+             "description":"Number of training instances at this node"
+           },
+           "distribution":{
+             "type":"array" ,
+             "items":{
+               "type":"array" ,
+               "items":[
+                 {
+                   "type":"string"
+                 },
+                 {
+                   "type":"number"
+                 }
+               ]
+             },
+             "description":"DEPRECATED - Distribution of the target at this node"
+           },
+           "id":{
+             "type":"number",
+             "description":"The node id, assigned depth first starting with 0"
+           },
+           "objective_summary":{
+             "type":"object",
+             "properties":{
+               "bins":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "type":"number"
+                     }
+                   ]
+                 },
+                 "description":"Captures the distribution for the objective field.  Each tuple represents a bin from an approximate histogram.  Each bin contains the bin mean and a membership count.  Used when there are more than 32 unique numeric values. During model construction, the counts can be fractional for partial models.  When the model is finished, however, all counts will be integers."
+               },
+               "categories":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"string"
+                     },
+                     {
+                       "type":"number"
+                     }
+                   ]
+                 },
+                 "description":"Captures the distribution for the objective field.  Each tuple contains a category and the category occurrence count.  Used when the objective is categorical. For partial models, counts are an estimation and, as such, they won't be in general integers.  But finished models the pairs will always consist of a string and an integer."
+               },
+               "counts":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "type":"number"
+                     }
+                   ]
+                 },
+                 "description":"Captures the distribution for the objective field.  Contains tuples of the unique values and their occurrence counts.  Used when there are 32 or less unique numeric values. During model construction, these counts can be fractional for partial models.  When the model is finished, however, all counts will be integers."
+               },
+               "exact":{
+                 "type":"boolean",
+                 "description":"When the numeric distribution is in eqi-width format this captures whether the histogram is approximate or represents the distribution exactly"
+               },
+               "maximum":{
+                 "type":"number",
+                 "description":"Maximum value for numeric fields, used when 'bins' are present"
+               },
+               "populations":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"number"
+                 },
+                 "description":"When the numeric distribution is in eqi-width format this captures the population of each eqi-width bin"
+               },
+               "start":{
+                 "type":"number",
+                 "description":"When the numeric distribution is in eqi-width this captures the lower edge of the first bin"
+               },
+               "width":{
+                 "type":"number",
+                 "description":"When the numeric distribution is in eqi-width format this captures the width of each eqi-width bin"
+               }
+             },
+             "description":"Distribution for the the prediction at this point"
+           },
+           "output":{
+             "anyOf":[
+               {
+                 "type":"number"
+               },
+               {
+                 "type":"string"
+               }
+             ],
+             "description":"Prediction given at this node"
+           },
+           "predicate":{
+             "anyOf":[
+               {
+                 "type":"boolean"
+               },
+               {
+                 "type":"object",
+                 "properties":{
+                   "field":{
+                     "type":"string",
+                     "description":"Identifier of the field used for this decision"
+                   },
+                   "operator":{
+                     "type":"string" ,
+                     "enum":[
+                       "!=", "=", "lt", "<=", "notEqual", "greaterThan", "eq", "/=", "=*", "gt", "greaterOrEqual", "!in", "<=*", "or", ">*", ">=", "!=*", "lessThan", "and", "ge", "<", "le", "equal", "lessOrEqual", "equals", "in", ">"
+                     ],
+                     "description":"Operator used to test the field's value"
+                   },
+                   "term":{
+                     "type":"string",
+                     "description":"The term/word of interest for the predicate. The occurance count of this term will be the value that is split on."
+                   },
+                   "value":{
+                     "anyOf":[
+                       {
+                         "type":"null"
+                       },
+                       {
+                         "anyOf":[
+                           {
+                             "anyOf":[
+                               {
+                                 "type":"number"
+                               },
+                               {
+                                 "type":"string"
+                               }
+                             ]
+                           },
+                           {
+                             "type":"array" ,
+                             "items":{
+                               "anyOf":[
+                                 {
+                                   "type":"number"
+                                 },
+                                 {
+                                   "type":"string"
+                                 }
+                               ]
+                             }
+                           }
+                         ]
+                       }
+                     ],
+                     "description":"Value used, besides the field's, for this decision"
+                   }
+                 }
+               }
+             ]
+           },
+           "weight":{
+             "type":"number",
+             "description":"Total weight at this node (if tree is weighted)"
+           }
+         },
+         "required":[
+           "count", "output", "predicate"
+         ],
+         "description":"The root node of the decision tree"
+       },
        "row_range":{
          "type":"object",
          "properties":{
@@ -2057,250 +2578,245 @@
          },
          "description":"A list of sample specifications, as pairs dataset id and sample"
        },
-       "training_performance_measure":{
+       "scores":{
+         "type":"array" ,
+         "items":{
+           "type":"number"
+         },
+         "description":"A list of boosting scores from early-stop tests"
+       },
+       "selective_pruning":{
+         "type":"boolean",
+         "description":"When true, stat pruning will have less effect for small datasets"
+       },
+       "size":{
+         "type":"integer",
+         "minimum":1,
+         "description":"The desired number of trees in the ensemble"
+       },
+       "split_candidates":{
+         "type":"integer",
+         "minimum":1,
+         "default": 32,
+         "description":"The maximum number of split points considered for each numeric split"
+       },
+       "split_criterion":{
+         "type":"string" ,
+         "enum":[
+           "information_gain", "information_gain_mix", "squared_error", "information_gain_ratio", "squared_error_ratio"
+         ],
+         "description":"Method of choosing best attribute and split point for a given node"
+       },
+       "stat_pruning":{
          "anyOf":[
            {
-             "type":"object",
-             "properties":{
-               "accuracy":{
+             "type":"null"
+           },
+           {
+             "type":"boolean"
+           }
+         ],
+         "default": true,
+         "description":"Eliminates low confidence leaf nodes from tree statistical tests"
+       },
+       "step_out_of_bag":{
+         "type":"boolean",
+         "description":"Whether to enable boosting step size search on on out-of-bag samples"
+       },
+       "training_performance_measure":{
+         "type":"object",
+         "properties":{
+           "accuracy":{
+             "type":"number",
+             "minimum":0,
+             "maximum":1,
+             "description":"Classifier accuracy, correct/total instances"
+           },
+           "average_balanced_accuracy":{
+             "type":"number",
+             "minimum":0,
+             "maximum":1,
+             "description":"Balanced accuracy macro-averaged over all classes"
+           },
+           "average_f_measure":{
+             "type":"number",
+             "minimum":0,
+             "maximum":1,
+             "description":"Macro-averaged F1 score over all classes"
+           },
+           "average_phi":{
+             "type":"number",
+             "minimum":-1,
+             "maximum":1,
+             "description":"Macro-averaged Phi coefficient over all classes"
+           },
+           "average_precision":{
+             "type":"number",
+             "minimum":0,
+             "maximum":1,
+             "description":"Macro-averaged precision over all classes"
+           },
+           "average_recall":{
+             "type":"number",
+             "minimum":0,
+             "maximum":1,
+             "description":"Macro-averaged recall over all classes"
+           },
+           "confusion_matrix":{
+             "type":"array" ,
+             "items":{
+               "type":"array" ,
+               "items":{
                  "type":"number",
-                 "minimum":0,
-                 "maximum":1,
-                 "description":"Classifier accuracy, correct/total instances"
-               },
-               "average_balanced_accuracy":{
-                 "type":"number",
-                 "minimum":0,
-                 "maximum":1,
-                 "description":"Balanced accuracy macro-averaged over all classes"
-               },
-               "average_f_measure":{
-                 "type":"number",
-                 "minimum":0,
-                 "maximum":1,
-                 "description":"Macro-averaged F1 score over all classes"
-               },
-               "average_phi":{
-                 "type":"number",
-                 "minimum":-1,
-                 "maximum":1,
-                 "description":"Macro-averaged Phi coefficient over all classes"
-               },
-               "average_precision":{
-                 "type":"number",
-                 "minimum":0,
-                 "maximum":1,
-                 "description":"Macro-averaged precision over all classes"
-               },
-               "average_recall":{
-                 "type":"number",
-                 "minimum":0,
-                 "maximum":1,
-                 "description":"Macro-averaged recall over all classes"
-               },
-               "confusion_matrix":{
-                 "type":"array" ,
-                 "items":{
-                   "type":"array" ,
-                   "items":{
-                     "type":"number",
-                     "minimum":0
-                   }
-                 }
-               },
-               "mean_absolute_error":{
-                 "type":"number",
-                 "minimum":0,
-                 "description":"Average of absolute values of prediction errors"
-               },
-               "mean_squared_error":{
-                 "type":"number",
-                 "minimum":0,
-                 "description":"Average of squared values of prediction errors"
-               },
-               "per_class_statistics":{
-                 "type":"array" ,
-                 "items":{
-                   "type":"object",
-                   "properties":{
-                     "accuracy":{
-                       "type":"number",
-                       "minimum":0,
-                       "maximum":1,
-                       "description":"Accuracy (correct/total) for this class"
-                     },
-                     "area_under_pr_curve":{
-                       "type":"number",
-                       "minimum":0,
-                       "maximum":1,
-                       "description":"Area under the precision/recall curve for this class"
-                     },
-                     "area_under_roc_curve":{
-                       "type":"number",
-                       "minimum":0,
-                       "maximum":1,
-                       "description":"Area under the ROC curve for this class"
-                     },
-                     "balanced_accuracy":{
-                       "type":"number",
-                       "minimum":0,
-                       "maximum":1,
-                       "description":"Balanced accuracy for this class"
-                     },
-                     "class_name":{
-                       "type":"string",
-                       "description":"String name for this class"
-                     },
-                     "f_measure":{
-                       "type":"number",
-                       "minimum":0,
-                       "maximum":1,
-                       "description":"F1 Score for this class"
-                     },
-                     "ks_statistic":{
-                       "type":"array" ,
-                       "items":[
-                         {
-                           "type":"number"
-                         },
-                         {
-                           "anyOf":[
-                             {
-                               "type":"null"
-                             },
-                             {
-                               "type":"number"
-                             }
-                           ]
-                         }
-                       ],
-                       "description":"The max value for phi at any threshold for this class"
-                     },
-                     "max_phi":{
-                       "type":"array" ,
-                       "items":[
-                         {
-                           "type":"number"
-                         },
-                         {
-                           "anyOf":[
-                             {
-                               "type":"null"
-                             },
-                             {
-                               "type":"number"
-                             }
-                           ]
-                         }
-                       ],
-                       "description":"The max value for phi at any threshold for this class"
-                     },
-                     "per_threshold_confusion_matrices":{
-                       "type":"array" ,
-                       "items":{
-                         "type":"array" ,
-                         "items":[
-                           {
-                             "type":"array" ,
-                             "items":{
-                               "type":"integer",
-                               "minimum":0
-                             }
-                           },
-                           {
-                             "anyOf":[
-                               {
-                                 "type":"null"
-                               },
-                               {
-                                 "type":"number"
-                               }
-                             ]
-                           }
-                         ]
-                       },
-                       "description":"Confusion matrices at multiple thresholds"
-                     },
-                     "phi_coefficient":{
-                       "type":"number",
-                       "minimum":-1,
-                       "maximum":1,
-                       "description":"Phi coefficient for this class"
-                     },
-                     "precision":{
-                       "type":"number",
-                       "minimum":0,
-                       "maximum":1,
-                       "description":"Precision for this class"
-                     },
-                     "present_in_test_data":{
-                       "type":"boolean",
-                       "description":"Whether or not this class was seen in the test data for the evaluation"
-                     },
-                     "recall":{
-                       "type":"number",
-                       "minimum":0,
-                       "maximum":1,
-                       "description":"Recall for this class"
-                     }
-                   }
-                 }
-               },
-               "r_squared":{
-                 "type":"number",
-                 "maximum":1,
-                 "description":"R^2 (Coefficient of Determination)"
+                 "minimum":0
                }
              }
            },
-           {
+           "mean_absolute_error":{
+             "type":"number",
+             "minimum":0,
+             "description":"Average of absolute values of prediction errors"
+           },
+           "mean_squared_error":{
+             "type":"number",
+             "minimum":0,
+             "description":"Average of squared values of prediction errors"
+           },
+           "per_class_statistics":{
              "type":"array" ,
              "items":{
                "type":"object",
                "properties":{
-                 "mean_absolute_error":{
+                 "accuracy":{
                    "type":"number",
                    "minimum":0,
-                   "description":"Average of absolute values of prediction errors"
-                 },
-                 "mean_absolute_scaled_error":{
-                   "type":"number",
-                   "minimum":0,
-                   "description":"MASE of forecasts"
-                 },
-                 "mean_directional_accuracy":{
-                   "type":"number",
-                   "minimum":0,
-                   "description":"MDA of forecasts"
-                 },
-                 "mean_squared_error":{
-                   "type":"number",
-                   "minimum":0,
-                   "description":"Average of squared values of prediction errors"
-                 },
-                 "model":{
-                   "type":"string",
-                   "description":"Timeseries submodel name"
-                 },
-                 "r_squared":{
-                   "type":"number",
                    "maximum":1,
-                   "description":"R^2 (Coefficient of Determination)"
+                   "description":"Accuracy (correct/total) for this class"
                  },
-                 "symmetric_mean_absolute_percentage_error":{
+                 "area_under_pr_curve":{
                    "type":"number",
                    "minimum":0,
-                   "description":"sMAPE of forecasts"
+                   "maximum":1,
+                   "description":"Area under the precision/recall curve for this class"
                  },
-                 "time_ranges":{
-                   "type":"object",
-                   "additionalProperties": false,
-                   "description":"Timing information for each objective"
+                 "area_under_roc_curve":{
+                   "type":"number",
+                   "minimum":0,
+                   "maximum":1,
+                   "description":"Area under the ROC curve for this class"
+                 },
+                 "balanced_accuracy":{
+                   "type":"number",
+                   "minimum":0,
+                   "maximum":1,
+                   "description":"Balanced accuracy for this class"
+                 },
+                 "class_name":{
+                   "type":"string",
+                   "description":"String name for this class"
+                 },
+                 "f_measure":{
+                   "type":"number",
+                   "minimum":0,
+                   "maximum":1,
+                   "description":"F1 Score for this class"
+                 },
+                 "ks_statistic":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "anyOf":[
+                         {
+                           "type":"null"
+                         },
+                         {
+                           "type":"number"
+                         }
+                       ]
+                     }
+                   ],
+                   "description":"The max value for phi at any threshold for this class"
+                 },
+                 "max_phi":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "anyOf":[
+                         {
+                           "type":"null"
+                         },
+                         {
+                           "type":"number"
+                         }
+                       ]
+                     }
+                   ],
+                   "description":"The max value for phi at any threshold for this class"
+                 },
+                 "per_threshold_confusion_matrices":{
+                   "type":"array" ,
+                   "items":{
+                     "type":"array" ,
+                     "items":[
+                       {
+                         "type":"array" ,
+                         "items":{
+                           "type":"integer",
+                           "minimum":0
+                         }
+                       },
+                       {
+                         "anyOf":[
+                           {
+                             "type":"null"
+                           },
+                           {
+                             "type":"number"
+                           }
+                         ]
+                       }
+                     ]
+                   },
+                   "description":"Confusion matrices at multiple thresholds"
+                 },
+                 "phi_coefficient":{
+                   "type":"number",
+                   "minimum":-1,
+                   "maximum":1,
+                   "description":"Phi coefficient for this class"
+                 },
+                 "precision":{
+                   "type":"number",
+                   "minimum":0,
+                   "maximum":1,
+                   "description":"Precision for this class"
+                 },
+                 "present_in_test_data":{
+                   "type":"boolean",
+                   "description":"Whether or not this class was seen in the test data for the evaluation"
+                 },
+                 "recall":{
+                   "type":"number",
+                   "minimum":0,
+                   "maximum":1,
+                   "description":"Recall for this class"
                  }
                }
              }
+           },
+           "r_square":{
+             "type":"number",
+             "minimum":0,
+             "maximum":1,
+             "description":"R^2 (Coefficient of Determination)"
            }
-         ],
+         },
          "description":"Performance measures on training data"
        },
        "type":{
@@ -2313,10 +2829,15 @@
        "weight_field":{
          "type":"string",
          "description":"Weight field identifier"
+       },
+       "z_statistic":{
+         "type":"number",
+         "default": 1,
+         "description":"PRIVATE - Parameter for stat pruning"
        }
      },
      "required":[
-       "kind"
+       "kind", "size"
      ]
    }
  },

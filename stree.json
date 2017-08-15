@@ -4,6 +4,29 @@
    "model":{
      "type":"object",
      "properties":{
+       "boosting":{
+         "type":"object",
+         "properties":{
+           "lambda":{
+             "type":"number",
+             "description":"Used when generating predictions with missing data"
+           },
+           "objective_class":{
+             "type":"string",
+             "description":"The class that this tree targets, used when boosting for classification"
+           },
+           "objective_field":{
+             "type":"string",
+             "description":"The field id of the original objective field when boosting is enabled"
+           },
+           "weight":{
+             "type":"number",
+             "description":"The tree's weight when boosting (learning rate + step size)"
+           }
+         },
+         "additionalProperties": false,
+         "description":"Parameters for boosted trees"
+       },
        "callbacks":{
          "type":"array" ,
          "items":{
@@ -29,9 +52,31 @@
                "default": "GET",
                "description":"The HTTP method to use"
              },
+             "order":{
+               "anyOf":[
+                 {
+                   "type":"null"
+                 },
+                 {
+                   "type":"integer",
+                   "minimum":0
+                 }
+               ],
+               "description":"Trigger ordering.  Smaller (or nil) orders are triggered first, with progress callbacks taking preference over state callbacks.  Synchronous and asynchronous callbacks are ordered independently.  Callbacks with the same order, states and synchronicity are triggered in the order they are received."
+             },
              "payload":{
                "type":"object",
                "description":"The payload to be used as a message body"
+             },
+             "progress_variation":{
+               "type":"number",
+               "exclusiveMinimum":0,
+               "exclusiveMaximum":1,
+               "description":"A number in (0, 1) which gives the variation in progress that will trigger this callback."
+             },
+             "register-address":{
+               "type":"boolean",
+               "description":"For MSG callbacks, whether to register the requested address if it does not yet exist (i.e., whether to create the associated message queue when the mailbox is RabbitMQ)"
              },
              "retries":{
                "type":"integer",
@@ -47,7 +92,7 @@
                "items":{
                  "type":"string"
                },
-               "description":"A list of states for which the callback should be called. If not given, the callback will be called for all state changes"
+               "description":"A list of states for which the callback should be called. If not given, the callback will be called for either the given progress variation or, if that's not provided, for all state changes"
              },
              "synchronous":{
                "type":"boolean",
@@ -94,6 +139,39 @@
          "type":"integer",
          "minimum":1,
          "description":"The depth limit for a tree"
+       },
+       "discretization":{
+         "type":"object",
+         "properties":{
+           "pretty":{
+             "type":"boolean",
+             "default": true,
+             "description":"Whether edge boundaries are rounded values"
+           },
+           "size":{
+             "type":"integer",
+             "minimum":1,
+             "default": 5,
+             "description":"Number of bins to create"
+           },
+           "trim":{
+             "type":"number",
+             "minimum":0,
+             "maximum":0.1,
+             "default": 0.0,
+             "description":"Proportion of data to trim from outer edges of distribution"
+           },
+           "type":{
+             "type":"string" ,
+             "enum":[
+               "width", "population"
+             ],
+             "default": "population",
+             "description":"Discretize into bins of equal width or population"
+           }
+         },
+         "additionalProperties": false,
+         "description":"Parameters to control the discetization of numeric fields"
        },
        "distribution":{
          "type":"object",
@@ -263,6 +341,19 @@
          },
          "description":"List of field identifiers, names or columns to exclude from input"
        },
+       "excluded_input_fields_regexps":{
+         "type":"array" ,
+         "items":{
+           "type":"string",
+           "description":"A valid regular expression"
+         },
+         "description":"List of regular expressions, excluding input fields  by name"
+       },
+       "field_discretizations":{
+         "type":"object",
+         "additionalProperties": false,
+         "description":"Per-field discretization parameters"
+       },
        "field_histogram_size":{
          "type":"integer",
          "default": 64,
@@ -323,6 +414,14 @@
          },
          "description":"List of input field identifiers, names or columns"
        },
+       "input_fields_regexps":{
+         "type":"array" ,
+         "items":{
+           "type":"string",
+           "description":"A valid regular expression"
+         },
+         "description":"List of regular expressions, selecting input fields  by name"
+       },
        "kind":{
          "type":"string" ,
          "enum":[
@@ -355,11 +454,848 @@
        },
        "node_threshold":{
          "type":"integer",
+         "minimum":1,
          "default": 512,
-         "description":"PRIVATE - The soft limit for number of nodes in the tree"
+         "description":"The soft limit for number of nodes in the tree"
        },
        "objective_field":{
-         "type":"string",
+         "anyOf":[
+           {
+             "type":"string"
+           },
+           {
+             "anyOf":[
+               {
+                 "type":"object",
+                 "properties":{
+                   "auto_generated":{
+                     "type":"boolean",
+                     "description":"True if the field was generated from another field"
+                   },
+                   "child_ids":{
+                     "type":"array" ,
+                     "items":{
+                       "type":"string"
+                     },
+                     "description":"IDs of the children if this generates other fields"
+                   },
+                   "column_number":{
+                     "type":"integer",
+                     "minimum":0,
+                     "description":"Column from the data source"
+                   },
+                   "datatype":{
+                     "type":"string" ,
+                     "enum":[
+                       "float", "int16", "millisecond", "int32", "int64", "day-of-month", "second", "hour", "integer", "int8", "year", "double", "minute", "month", "day", "day-of-week"
+                     ],
+                     "description":"The storage type of the field"
+                   },
+                   "description":{
+                     "type":"string",
+                     "description":"Free text description of the field"
+                   },
+                   "label":{
+                     "type":"string",
+                     "description":"A label for the field (free text for use by clients)"
+                   },
+                   "locale":{
+                     "type":"string",
+                     "description":"Overrides global locale"
+                   },
+                   "missing_tokens":{
+                     "type":"array" ,
+                     "items":{
+                       "type":"string"
+                     },
+                     "description":"Overrides global missing tokens"
+                   },
+                   "name":{
+                     "type":"string",
+                     "description":"Name for the field"
+                   },
+                   "optype":{
+                     "type":"string" ,
+                     "enum":[
+                       "numeric"
+                     ],
+                     "description":"Operational type of this field"
+                   },
+                   "parent_ids":{
+                     "type":"array" ,
+                     "items":{
+                       "type":"string"
+                     },
+                     "description":"IDs of the parents if this is a generated field"
+                   },
+                   "preferred":{
+                     "anyOf":[
+                       {
+                         "type":"null"
+                       },
+                       {
+                         "type":"boolean"
+                       }
+                     ],
+                     "default": true,
+                     "description":"Whether the field is used by default for model creation"
+                   },
+                   "summary":{
+                     "type":"object",
+                     "properties":{
+                       "bins":{
+                         "type":"array" ,
+                         "items":{
+                           "type":"array" ,
+                           "items":[
+                             {
+                               "type":"number"
+                             },
+                             {
+                               "type":"integer"
+                             }
+                           ]
+                         },
+                         "description":"Captures the distribution for the field.  Each tuple represents a bin from an approximate histogram.  Each bin contains the bin mean and a membership count.  Used when there are more than 32 unique numeric values"
+                       },
+                       "counts":{
+                         "type":"array" ,
+                         "items":{
+                           "type":"array" ,
+                           "items":[
+                             {
+                               "type":"number"
+                             },
+                             {
+                               "type":"integer"
+                             }
+                           ]
+                         },
+                         "description":"Captures the distribution for the field.  Contains tuples of the unique values and their occurrence counts. Used when there are 32 or less unique numeric values"
+                       },
+                       "kurtosis":{
+                         "anyOf":[
+                           {
+                             "type":"null"
+                           },
+                           {
+                             "type":"number"
+                           }
+                         ],
+                         "description":"The sample kurtosis for numeric fields"
+                       },
+                       "maximum":{
+                         "anyOf":[
+                           {
+                             "type":"null"
+                           },
+                           {
+                             "type":"number"
+                           }
+                         ],
+                         "description":"Maximum value for numeric fields"
+                       },
+                       "mean":{
+                         "anyOf":[
+                           {
+                             "type":"null"
+                           },
+                           {
+                             "type":"number"
+                           }
+                         ],
+                         "description":"The sample mean for numeric fields"
+                       },
+                       "median":{
+                         "anyOf":[
+                           {
+                             "type":"null"
+                           },
+                           {
+                             "type":"number"
+                           }
+                         ],
+                         "description":"The approximate median for numeric fields"
+                       },
+                       "minimum":{
+                         "anyOf":[
+                           {
+                             "type":"null"
+                           },
+                           {
+                             "type":"number"
+                           }
+                         ],
+                         "description":"Minimum value for numeric fields"
+                       },
+                       "missing_count":{
+                         "type":"integer",
+                         "description":"# of missing instances"
+                       },
+                       "population":{
+                         "type":"integer",
+                         "description":"# of instances containing data for this field"
+                       },
+                       "skewness":{
+                         "anyOf":[
+                           {
+                             "type":"null"
+                           },
+                           {
+                             "type":"number"
+                           }
+                         ],
+                         "description":"The sample skewness for numeric fields"
+                       },
+                       "standard_deviation":{
+                         "anyOf":[
+                           {
+                             "type":"null"
+                           },
+                           {
+                             "type":"number"
+                           }
+                         ],
+                         "description":"The sample standard deviation for numeric fields"
+                       },
+                       "sum":{
+                         "type":"number",
+                         "description":"Sum of values (for mean calculation)"
+                       },
+                       "sum_squares":{
+                         "type":"number",
+                         "description":"Sum of squared values (for variance calculation)"
+                       },
+                       "variance":{
+                         "anyOf":[
+                           {
+                             "type":"null"
+                           },
+                           {
+                             "type":"number"
+                           }
+                         ],
+                         "description":"The sample variance for numeric fields"
+                       }
+                     }
+                   }
+                 }
+               },
+               {
+                 "type":"object",
+                 "properties":{
+                   "auto_generated":{
+                     "type":"boolean",
+                     "description":"True if the field was generated from another field"
+                   },
+                   "child_ids":{
+                     "type":"array" ,
+                     "items":{
+                       "type":"string"
+                     },
+                     "description":"IDs of the children if this generates other fields"
+                   },
+                   "column_number":{
+                     "type":"integer",
+                     "minimum":0,
+                     "description":"Column from the data source"
+                   },
+                   "datatype":{
+                     "type":"string" ,
+                     "enum":[
+                       "string"
+                     ],
+                     "description":"The storage type of the field"
+                   },
+                   "description":{
+                     "type":"string",
+                     "description":"Free text description of the field"
+                   },
+                   "label":{
+                     "type":"string",
+                     "description":"A label for the field (free text for use by clients)"
+                   },
+                   "locale":{
+                     "type":"string",
+                     "description":"Overrides global locale"
+                   },
+                   "missing_tokens":{
+                     "type":"array" ,
+                     "items":{
+                       "type":"string"
+                     },
+                     "description":"Overrides global missing tokens"
+                   },
+                   "name":{
+                     "type":"string",
+                     "description":"Name for the field"
+                   },
+                   "optype":{
+                     "type":"string" ,
+                     "enum":[
+                       "text"
+                     ],
+                     "description":"Operational type of this field"
+                   },
+                   "parent_ids":{
+                     "type":"array" ,
+                     "items":{
+                       "type":"string"
+                     },
+                     "description":"IDs of the parents if this is a generated field"
+                   },
+                   "preferred":{
+                     "anyOf":[
+                       {
+                         "type":"null"
+                       },
+                       {
+                         "type":"boolean"
+                       }
+                     ],
+                     "default": true,
+                     "description":"Whether the field is used by default for model creation"
+                   },
+                   "summary":{
+                     "type":"object",
+                     "properties":{
+                       "average_length":{
+                         "type":"number",
+                         "description":"The average # of chars for non-missing values"
+                       },
+                       "missing_count":{
+                         "type":"integer",
+                         "description":"# of missing instances"
+                       },
+                       "tag_cloud":{
+                         "type":"array" ,
+                         "items":{
+                           "type":"array" ,
+                           "items":[
+                             {
+                               "type":"string"
+                             },
+                             {
+                               "type":"number"
+                             }
+                           ]
+                         },
+                         "description":"Top terms with number of occurences"
+                       },
+                       "term_forms":{
+                         "type":"object",
+                         "description":"Dictionary of multi-form terms to all forms seen"
+                       }
+                     }
+                   },
+                   "term_analysis":{
+                     "type":"object",
+                     "properties":{
+                       "case_sensitive":{
+                         "anyOf":[
+                           {
+                             "type":"null"
+                           },
+                           {
+                             "type":"boolean"
+                           }
+                         ],
+                         "description":"Defines whether the term analysis is case sensitive"
+                       },
+                       "enabled":{
+                         "type":"boolean",
+                         "description":"Enable/disables term analysis for this field"
+                       },
+                       "excluded_terms":{
+                         "anyOf":[
+                           {
+                             "type":"null"
+                           },
+                           {
+                             "type":"array" ,
+                             "items":{
+                               "type":"string"
+                             }
+                           }
+                         ],
+                         "description":"A list of terms to ignore when performing term analysis"
+                       },
+                       "language":{
+                         "anyOf":[
+                           {
+                             "type":"null"
+                           },
+                           {
+                             "type":"string" ,
+                             "enum":[
+                               "nl", "pt", "en", "none", "ca", "fr", "de", "es"
+                             ]
+                           }
+                         ],
+                         "default": "none",
+                         "description":"Language code for detected language, or 'none' for no detection, or nil to let us detect it."
+                       },
+                       "stem_words":{
+                         "anyOf":[
+                           {
+                             "type":"null"
+                           },
+                           {
+                             "type":"boolean"
+                           }
+                         ],
+                         "description":"Defines whether the term analysis stems words"
+                       },
+                       "token_mode":{
+                         "type":"string" ,
+                         "enum":[
+                           "full_terms_only", "tokens_only", "all"
+                         ],
+                         "default": "all",
+                         "description":"Defines whether the term analysis uses full terms, tokenized terms, or both"
+                       },
+                       "use_stopwords":{
+                         "anyOf":[
+                           {
+                             "type":"null"
+                           },
+                           {
+                             "type":"boolean"
+                           }
+                         ],
+                         "description":"Defines whether the term analysis uses stop words"
+                       }
+                     }
+                   }
+                 }
+               },
+               {
+                 "type":"object",
+                 "properties":{
+                   "auto_generated":{
+                     "type":"boolean",
+                     "description":"True if the field was generated from another field"
+                   },
+                   "child_ids":{
+                     "type":"array" ,
+                     "items":{
+                       "type":"string"
+                     },
+                     "description":"IDs of the children if this generates other fields"
+                   },
+                   "column_number":{
+                     "type":"integer",
+                     "minimum":0,
+                     "description":"Column from the data source"
+                   },
+                   "datatype":{
+                     "type":"string" ,
+                     "enum":[
+                       "string"
+                     ],
+                     "description":"The storage type of the field"
+                   },
+                   "description":{
+                     "type":"string",
+                     "description":"Free text description of the field"
+                   },
+                   "label":{
+                     "type":"string",
+                     "description":"A label for the field (free text for use by clients)"
+                   },
+                   "locale":{
+                     "type":"string",
+                     "description":"Overrides global locale"
+                   },
+                   "missing_tokens":{
+                     "type":"array" ,
+                     "items":{
+                       "type":"string"
+                     },
+                     "description":"Overrides global missing tokens"
+                   },
+                   "name":{
+                     "type":"string",
+                     "description":"Name for the field"
+                   },
+                   "optype":{
+                     "type":"string" ,
+                     "enum":[
+                       "datetime"
+                     ],
+                     "description":"Operational type of this field"
+                   },
+                   "parent_ids":{
+                     "type":"array" ,
+                     "items":{
+                       "type":"string"
+                     },
+                     "description":"IDs of the parents if this is a generated field"
+                   },
+                   "preferred":{
+                     "anyOf":[
+                       {
+                         "type":"null"
+                       },
+                       {
+                         "type":"boolean"
+                       }
+                     ],
+                     "default": true,
+                     "description":"Whether the field is used by default for model creation"
+                   },
+                   "summary":{
+                     "type":"object",
+                     "properties":{
+                       "missing_count":{
+                         "type":"integer",
+                         "description":"# of missing instances"
+                       }
+                     },
+                     "additionalProperties": false
+                   },
+                   "time_formats":{
+                     "type":"array" ,
+                     "items":{
+                       "type":"string"
+                     },
+                     "description":"Formats of times in this field from clj-time"
+                   }
+                 }
+               },
+               {
+                 "type":"object",
+                 "properties":{
+                   "auto_generated":{
+                     "type":"boolean",
+                     "description":"True if the field was generated from another field"
+                   },
+                   "child_ids":{
+                     "type":"array" ,
+                     "items":{
+                       "type":"string"
+                     },
+                     "description":"IDs of the children if this generates other fields"
+                   },
+                   "column_number":{
+                     "type":"integer",
+                     "minimum":0,
+                     "description":"Column from the data source"
+                   },
+                   "datatype":{
+                     "type":"string" ,
+                     "enum":[
+                       "string"
+                     ],
+                     "description":"The storage type of the field"
+                   },
+                   "description":{
+                     "type":"string",
+                     "description":"Free text description of the field"
+                   },
+                   "item_analysis":{
+                     "type":"object",
+                     "properties":{
+                       "limit":{
+                         "type":"number",
+                         "minimum":1,
+                         "default": 10000,
+                         "description":"Maximum number of items considered."
+                       },
+                       "pruning_strategy":{
+                         "type":"string" ,
+                         "enum":[
+                           "nearest_to_frequency", "most_frequent"
+                         ],
+                         "default": "nearest_to_frequency",
+                         "description":"Strategy used to select items when item_limit is surpassed"
+                       },
+                       "separator":{
+                         "anyOf":[
+                           {
+                             "type":"null"
+                           },
+                           {
+                             "type":"string"
+                           }
+                         ],
+                         "description":"Character delimiting items in the field. Set to null to autodetect if there is no regular expression."
+                       },
+                       "separator_regexp":{
+                         "anyOf":[
+                           {
+                             "type":"null"
+                           },
+                           {
+                             "type":"string"
+                           }
+                         ],
+                         "description":"Regular expression delimiting items in the field. Overrides item_separator."
+                       },
+                       "target_frequency":{
+                         "type":"number",
+                         "minimum":0,
+                         "maximum":1,
+                         "default": 0.3333333333333333,
+                         "description":"A ratio in (0, 1] with the occurence rate used when the prunning_strategy is nearest_to_frequency"
+                       }
+                     },
+                     "description":"Parameters controlling how items are extracted from text"
+                   },
+                   "label":{
+                     "type":"string",
+                     "description":"A label for the field (free text for use by clients)"
+                   },
+                   "locale":{
+                     "type":"string",
+                     "description":"Overrides global locale"
+                   },
+                   "missing_tokens":{
+                     "type":"array" ,
+                     "items":{
+                       "type":"string"
+                     },
+                     "description":"Overrides global missing tokens"
+                   },
+                   "name":{
+                     "type":"string",
+                     "description":"Name for the field"
+                   },
+                   "optype":{
+                     "type":"string" ,
+                     "enum":[
+                       "items"
+                     ],
+                     "description":"Operational type of this field"
+                   },
+                   "parent_ids":{
+                     "type":"array" ,
+                     "items":{
+                       "type":"string"
+                     },
+                     "description":"IDs of the parents if this is a generated field"
+                   },
+                   "preferred":{
+                     "anyOf":[
+                       {
+                         "type":"null"
+                       },
+                       {
+                         "type":"boolean"
+                       }
+                     ],
+                     "default": true,
+                     "description":"Whether the field is used by default for model creation"
+                   },
+                   "summary":{
+                     "type":"object",
+                     "properties":{
+                       "average_length":{
+                         "type":"number",
+                         "description":"The average # of chars for non-missing values"
+                       },
+                       "items":{
+                         "type":"array" ,
+                         "items":{
+                           "type":"array" ,
+                           "items":[
+                             {
+                               "type":"string"
+                             },
+                             {
+                               "type":"number"
+                             }
+                           ]
+                         },
+                         "description":"Top items with number of occurences"
+                       }
+                     }
+                   }
+                 }
+               },
+               {
+                 "type":"object",
+                 "properties":{
+                   "auto_generated":{
+                     "type":"boolean",
+                     "description":"True if the field was generated from another field"
+                   },
+                   "child_ids":{
+                     "type":"array" ,
+                     "items":{
+                       "type":"string"
+                     },
+                     "description":"IDs of the children if this generates other fields"
+                   },
+                   "column_number":{
+                     "type":"integer",
+                     "minimum":0,
+                     "description":"Column from the data source"
+                   },
+                   "datatype":{
+                     "type":"string" ,
+                     "enum":[
+                       "string"
+                     ],
+                     "description":"The storage type of the field"
+                   },
+                   "description":{
+                     "type":"string",
+                     "description":"Free text description of the field"
+                   },
+                   "label":{
+                     "type":"string",
+                     "description":"A label for the field (free text for use by clients)"
+                   },
+                   "locale":{
+                     "type":"string",
+                     "description":"Overrides global locale"
+                   },
+                   "missing_tokens":{
+                     "type":"array" ,
+                     "items":{
+                       "type":"string"
+                     },
+                     "description":"Overrides global missing tokens"
+                   },
+                   "name":{
+                     "type":"string",
+                     "description":"Name for the field"
+                   },
+                   "optype":{
+                     "type":"string" ,
+                     "enum":[
+                       "categorical"
+                     ],
+                     "description":"Operational type of this field"
+                   },
+                   "parent_ids":{
+                     "type":"array" ,
+                     "items":{
+                       "type":"string"
+                     },
+                     "description":"IDs of the parents if this is a generated field"
+                   },
+                   "preferred":{
+                     "anyOf":[
+                       {
+                         "type":"null"
+                       },
+                       {
+                         "type":"boolean"
+                       }
+                     ],
+                     "default": true,
+                     "description":"Whether the field is used by default for model creation"
+                   },
+                   "summary":{
+                     "type":"object",
+                     "properties":{
+                       "categories":{
+                         "type":"array" ,
+                         "items":{
+                           "type":"array" ,
+                           "items":[
+                             {
+                               "type":"string"
+                             },
+                             {
+                               "type":"number"
+                             }
+                           ]
+                         },
+                         "description":"The possible categories for categorical fields"
+                       },
+                       "missing_count":{
+                         "type":"integer",
+                         "description":"# of missing instances"
+                       }
+                     }
+                   },
+                   "term_analysis":{
+                     "type":"object",
+                     "properties":{
+                       "case_sensitive":{
+                         "anyOf":[
+                           {
+                             "type":"null"
+                           },
+                           {
+                             "type":"boolean"
+                           }
+                         ],
+                         "description":"Defines whether the term analysis is case sensitive"
+                       },
+                       "enabled":{
+                         "type":"boolean",
+                         "description":"Enable/disables term analysis for this field"
+                       },
+                       "excluded_terms":{
+                         "anyOf":[
+                           {
+                             "type":"null"
+                           },
+                           {
+                             "type":"array" ,
+                             "items":{
+                               "type":"string"
+                             }
+                           }
+                         ],
+                         "description":"A list of terms to ignore when performing term analysis"
+                       },
+                       "language":{
+                         "anyOf":[
+                           {
+                             "type":"null"
+                           },
+                           {
+                             "type":"string" ,
+                             "enum":[
+                               "nl", "pt", "en", "none", "ca", "fr", "de", "es"
+                             ]
+                           }
+                         ],
+                         "default": "none",
+                         "description":"Language code for detected language, or 'none' for no detection, or nil to let us detect it."
+                       },
+                       "stem_words":{
+                         "anyOf":[
+                           {
+                             "type":"null"
+                           },
+                           {
+                             "type":"boolean"
+                           }
+                         ],
+                         "description":"Defines whether the term analysis stems words"
+                       },
+                       "token_mode":{
+                         "type":"string" ,
+                         "enum":[
+                           "full_terms_only", "tokens_only", "all"
+                         ],
+                         "default": "all",
+                         "description":"Defines whether the term analysis uses full terms, tokenized terms, or both"
+                       },
+                       "use_stopwords":{
+                         "anyOf":[
+                           {
+                             "type":"null"
+                           },
+                           {
+                             "type":"boolean"
+                           }
+                         ],
+                         "description":"Defines whether the term analysis uses stop words"
+                       }
+                     }
+                   }
+                 }
+               }
+             ]
+           }
+         ],
          "description":"Objective field (target) identifier.  Gets added to objective_fields. Useful for models with a single objective field."
        },
        "objective_field_descriptor":{
@@ -529,7 +1465,7 @@
                    },
                    "missing_count":{
                      "type":"integer",
-                     "description":"# of instances missing this field"
+                     "description":"# of missing instances"
                    },
                    "population":{
                      "type":"integer",
@@ -545,13 +1481,6 @@
                        }
                      ],
                      "description":"The sample skewness for numeric fields"
-                   },
-                   "splits":{
-                     "type":"array" ,
-                     "items":{
-                       "type":"number"
-                     },
-                     "description":"DEPRECATED - Histogram split points for field"
                    },
                    "standard_deviation":{
                      "anyOf":[
@@ -584,40 +1513,6 @@
                      "description":"The sample variance for numeric fields"
                    }
                  }
-               },
-               "term_analysis":{
-                 "type":"object",
-                 "properties":{
-                   "case_sensitive":{
-                     "type":"boolean",
-                     "description":"Defines whether the term analysis is case sensitive"
-                   },
-                   "enabled":{
-                     "type":"boolean",
-                     "description":"Enable/disables term analysis for this field"
-                   },
-                   "language":{
-                     "type":"string",
-                     "default": "none",
-                     "description":"Language code for detected language (or 'none')"
-                   },
-                   "stem_words":{
-                     "type":"boolean",
-                     "description":"Defines whether the term analysis stems words"
-                   },
-                   "token_mode":{
-                     "type":"string" ,
-                     "enum":[
-                       "full_terms_only", "tokens_only", "all"
-                     ],
-                     "default": "all",
-                     "description":"Defines whether the term analysis uses full terms, tokenized terms, or both"
-                   },
-                   "use_stopwords":{
-                     "type":"boolean",
-                     "description":"Defines whether the term analysis uses stop words"
-                   }
-                 }
                }
              }
            },
@@ -643,7 +1538,7 @@
                "datatype":{
                  "type":"string" ,
                  "enum":[
-                   "boolean", "string"
+                   "string"
                  ],
                  "description":"The storage type of the field"
                },
@@ -705,7 +1600,7 @@
                    },
                    "missing_count":{
                      "type":"integer",
-                     "description":"# of instances missing in this field"
+                     "description":"# of missing instances"
                    },
                    "tag_cloud":{
                      "type":"array" ,
@@ -732,20 +1627,58 @@
                  "type":"object",
                  "properties":{
                    "case_sensitive":{
-                     "type":"boolean",
+                     "anyOf":[
+                       {
+                         "type":"null"
+                       },
+                       {
+                         "type":"boolean"
+                       }
+                     ],
                      "description":"Defines whether the term analysis is case sensitive"
                    },
                    "enabled":{
                      "type":"boolean",
                      "description":"Enable/disables term analysis for this field"
                    },
+                   "excluded_terms":{
+                     "anyOf":[
+                       {
+                         "type":"null"
+                       },
+                       {
+                         "type":"array" ,
+                         "items":{
+                           "type":"string"
+                         }
+                       }
+                     ],
+                     "description":"A list of terms to ignore when performing term analysis"
+                   },
                    "language":{
-                     "type":"string",
+                     "anyOf":[
+                       {
+                         "type":"null"
+                       },
+                       {
+                         "type":"string" ,
+                         "enum":[
+                           "nl", "pt", "en", "none", "ca", "fr", "de", "es"
+                         ]
+                       }
+                     ],
                      "default": "none",
-                     "description":"Language code for detected language (or 'none')"
+                     "description":"Language code for detected language, or 'none' for no detection, or nil to let us detect it."
                    },
                    "stem_words":{
-                     "type":"boolean",
+                     "anyOf":[
+                       {
+                         "type":"null"
+                       },
+                       {
+                         "type":"boolean"
+                       }
+                     ],
                      "description":"Defines whether the term analysis stems words"
                    },
                    "token_mode":{
@@ -757,7 +1690,14 @@
                      "description":"Defines whether the term analysis uses full terms, tokenized terms, or both"
                    },
                    "use_stopwords":{
-                     "type":"boolean",
+                     "anyOf":[
+                       {
+                         "type":"null"
+                       },
+                       {
+                         "type":"boolean"
+                       }
+                     ],
                      "description":"Defines whether the term analysis uses stop words"
                    }
                  }
@@ -844,44 +1784,10 @@
                  "properties":{
                    "missing_count":{
                      "type":"integer",
-                     "description":"# of instances missing this field"
+                     "description":"# of missing instances"
                    }
                  },
                  "additionalProperties": false
-               },
-               "term_analysis":{
-                 "type":"object",
-                 "properties":{
-                   "case_sensitive":{
-                     "type":"boolean",
-                     "description":"Defines whether the term analysis is case sensitive"
-                   },
-                   "enabled":{
-                     "type":"boolean",
-                     "description":"Enable/disables term analysis for this field"
-                   },
-                   "language":{
-                     "type":"string",
-                     "default": "none",
-                     "description":"Language code for detected language (or 'none')"
-                   },
-                   "stem_words":{
-                     "type":"boolean",
-                     "description":"Defines whether the term analysis stems words"
-                   },
-                   "token_mode":{
-                     "type":"string" ,
-                     "enum":[
-                       "full_terms_only", "tokens_only", "all"
-                     ],
-                     "default": "all",
-                     "description":"Defines whether the term analysis uses full terms, tokenized terms, or both"
-                   },
-                   "use_stopwords":{
-                     "type":"boolean",
-                     "description":"Defines whether the term analysis uses stop words"
-                   }
-                 }
                },
                "time_formats":{
                  "type":"array" ,
@@ -889,6 +1795,156 @@
                    "type":"string"
                  },
                  "description":"Formats of times in this field from clj-time"
+               }
+             }
+           },
+           {
+             "type":"object",
+             "properties":{
+               "auto_generated":{
+                 "type":"boolean",
+                 "description":"True if the field was generated from another field"
+               },
+               "child_ids":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"string"
+                 },
+                 "description":"IDs of the children if this generates other fields"
+               },
+               "column_number":{
+                 "type":"integer",
+                 "minimum":0,
+                 "description":"Column from the data source"
+               },
+               "datatype":{
+                 "type":"string" ,
+                 "enum":[
+                   "string"
+                 ],
+                 "description":"The storage type of the field"
+               },
+               "description":{
+                 "type":"string",
+                 "description":"Free text description of the field"
+               },
+               "item_analysis":{
+                 "type":"object",
+                 "properties":{
+                   "limit":{
+                     "type":"number",
+                     "minimum":1,
+                     "default": 10000,
+                     "description":"Maximum number of items considered."
+                   },
+                   "pruning_strategy":{
+                     "type":"string" ,
+                     "enum":[
+                       "nearest_to_frequency", "most_frequent"
+                     ],
+                     "default": "nearest_to_frequency",
+                     "description":"Strategy used to select items when item_limit is surpassed"
+                   },
+                   "separator":{
+                     "anyOf":[
+                       {
+                         "type":"null"
+                       },
+                       {
+                         "type":"string"
+                       }
+                     ],
+                     "description":"Character delimiting items in the field. Set to null to autodetect if there is no regular expression."
+                   },
+                   "separator_regexp":{
+                     "anyOf":[
+                       {
+                         "type":"null"
+                       },
+                       {
+                         "type":"string"
+                       }
+                     ],
+                     "description":"Regular expression delimiting items in the field. Overrides item_separator."
+                   },
+                   "target_frequency":{
+                     "type":"number",
+                     "minimum":0,
+                     "maximum":1,
+                     "default": 0.3333333333333333,
+                     "description":"A ratio in (0, 1] with the occurence rate used when the prunning_strategy is nearest_to_frequency"
+                   }
+                 },
+                 "description":"Parameters controlling how items are extracted from text"
+               },
+               "label":{
+                 "type":"string",
+                 "description":"A label for the field (free text for use by clients)"
+               },
+               "locale":{
+                 "type":"string",
+                 "description":"Overrides global locale"
+               },
+               "missing_tokens":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"string"
+                 },
+                 "description":"Overrides global missing tokens"
+               },
+               "name":{
+                 "type":"string",
+                 "description":"Name for the field"
+               },
+               "optype":{
+                 "type":"string" ,
+                 "enum":[
+                   "items"
+                 ],
+                 "description":"Operational type of this field"
+               },
+               "parent_ids":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"string"
+                 },
+                 "description":"IDs of the parents if this is a generated field"
+               },
+               "preferred":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"boolean"
+                   }
+                 ],
+                 "default": true,
+                 "description":"Whether the field is used by default for model creation"
+               },
+               "summary":{
+                 "type":"object",
+                 "properties":{
+                   "average_length":{
+                     "type":"number",
+                     "description":"The average # of chars for non-missing values"
+                   },
+                   "items":{
+                     "type":"array" ,
+                     "items":{
+                       "type":"array" ,
+                       "items":[
+                         {
+                           "type":"string"
+                         },
+                         {
+                           "type":"number"
+                         }
+                       ]
+                     },
+                     "description":"Top items with number of occurences"
+                   }
+                 }
                }
              }
            },
@@ -971,70 +2027,82 @@
                  "type":"object",
                  "properties":{
                    "categories":{
-                     "anyOf":[
-                       {
-                         "type":"array" ,
-                         "items":{
-                           "type":"array" ,
-                           "items":[
-                             {
-                               "type":"string"
-                             },
-                             {
-                               "type":"number"
-                             }
-                           ]
+                     "type":"array" ,
+                     "items":{
+                       "type":"array" ,
+                       "items":[
+                         {
+                           "type":"string"
+                         },
+                         {
+                           "type":"number"
                          }
-                       },
-                       {
-                         "type":"array" ,
-                         "items":{
-                           "type":"array" ,
-                           "items":[
-                             {
-                               "type":"integer"
-                             },
-                             {
-                               "type":"null"
-                             }
-                           ]
-                         }
-                       }
-                     ],
+                       ]
+                     },
                      "description":"The possible categories for categorical fields"
                    },
                    "missing_count":{
-                     "anyOf":[
-                       {
-                         "type":"null"
-                       },
-                       {
-                         "type":"integer"
-                       }
-                     ],
-                     "description":"# of instances missing this field # of instances missing this field"
+                     "type":"integer",
+                     "description":"# of missing instances"
                    }
-                 },
-                 "description":"# of instances missing this field"
+                 }
                },
                "term_analysis":{
                  "type":"object",
                  "properties":{
                    "case_sensitive":{
-                     "type":"boolean",
+                     "anyOf":[
+                       {
+                         "type":"null"
+                       },
+                       {
+                         "type":"boolean"
+                       }
+                     ],
                      "description":"Defines whether the term analysis is case sensitive"
                    },
                    "enabled":{
                      "type":"boolean",
                      "description":"Enable/disables term analysis for this field"
                    },
+                   "excluded_terms":{
+                     "anyOf":[
+                       {
+                         "type":"null"
+                       },
+                       {
+                         "type":"array" ,
+                         "items":{
+                           "type":"string"
+                         }
+                       }
+                     ],
+                     "description":"A list of terms to ignore when performing term analysis"
+                   },
                    "language":{
-                     "type":"string",
+                     "anyOf":[
+                       {
+                         "type":"null"
+                       },
+                       {
+                         "type":"string" ,
+                         "enum":[
+                           "nl", "pt", "en", "none", "ca", "fr", "de", "es"
+                         ]
+                       }
+                     ],
                      "default": "none",
-                     "description":"Language code for detected language (or 'none')"
+                     "description":"Language code for detected language, or 'none' for no detection, or nil to let us detect it."
                    },
                    "stem_words":{
-                     "type":"boolean",
+                     "anyOf":[
+                       {
+                         "type":"null"
+                       },
+                       {
+                         "type":"boolean"
+                       }
+                     ],
                      "description":"Defines whether the term analysis stems words"
                    },
                    "token_mode":{
@@ -1046,7 +2114,14 @@
                      "description":"Defines whether the term analysis uses full terms, tokenized terms, or both"
                    },
                    "use_stopwords":{
-                     "type":"boolean",
+                     "anyOf":[
+                       {
+                         "type":"null"
+                       },
+                       {
+                         "type":"boolean"
+                       }
+                     ],
                      "description":"Defines whether the term analysis uses stop words"
                    }
                  }
@@ -1118,8 +2193,7 @@
              "items":{
                "$ref":"node.json"
              },
-             "unknownPredicate":"count > 0",
-             "description":"Children of this nod"
+             "description":"Children of this node"
            },
            "confidence":{
              "type":"number",
@@ -1143,7 +2217,7 @@
                  }
                ]
              },
-             "description":"DEPRECATED - Distribution of the target at this nod"
+             "description":"DEPRECATED - Distribution of the target at this node"
            },
            "id":{
              "type":"number",
@@ -1249,7 +2323,7 @@
                    "operator":{
                      "type":"string" ,
                      "enum":[
-                       "!=", "=", "lt", "<=", "notEqual", "greaterThan", "eq", "/=", "=*", "gt", "greaterOrEqual", "<=*", ">*", ">=", "!=*", "lessThan", "ge", "<", "le", "equal", "lessOrEqual", "equals", ">"
+                       "!=", "=", "lt", "<=", "notEqual", "greaterThan", "eq", "/=", "=*", "gt", "greaterOrEqual", "!in", "<=*", "or", ">*", ">=", "!=*", "lessThan", "and", "ge", "<", "le", "equal", "lessOrEqual", "equals", "in", ">"
                      ],
                      "description":"Operator used to test the field's value"
                    },
@@ -1265,10 +2339,27 @@
                        {
                          "anyOf":[
                            {
-                             "type":"number"
+                             "anyOf":[
+                               {
+                                 "type":"number"
+                               },
+                               {
+                                 "type":"string"
+                               }
+                             ]
                            },
                            {
-                             "type":"string"
+                             "type":"array" ,
+                             "items":{
+                               "anyOf":[
+                                 {
+                                   "type":"number"
+                                 },
+                                 {
+                                   "type":"string"
+                                 }
+                               ]
+                             }
                            }
                          ]
                        }
@@ -1407,13 +2498,19 @@
        },
        "selective_pruning":{
          "type":"boolean",
-         "description":"PRIVATE - When true, stat pruning will have less effect for small datasets"
+         "description":"When true, stat pruning will have less effect for small datasets"
        },
        "similarity_threshold":{
          "type":"number",
          "minimum":0,
          "maximum":1,
          "description":"PRIVATE - The threshold for early splitting (lower requires more similarity)"
+       },
+       "split_candidates":{
+         "type":"integer",
+         "minimum":1,
+         "default": 32,
+         "description":"The maximum number of split points considered for each numeric split"
        },
        "split_criterion":{
          "type":"string" ,
@@ -1453,127 +2550,205 @@
          "description":"For a split to be valid, each child's support (instances / total instances) must be greater than this threshold"
        },
        "training_performance_measure":{
-         "anyOf":[
-           {
-             "type":"object",
-             "properties":{
-               "accuracy":{
-                 "type":"number",
-                 "minimum":0,
-                 "maximum":1,
-                 "description":"Classifier accuracy, correct/total instances"
-               },
-               "average_f_measure":{
-                 "type":"number",
-                 "minimum":0,
-                 "maximum":1,
-                 "description":"Macro-averaged F1 score over all classes"
-               },
-               "average_phi":{
-                 "type":"number",
-                 "minimum":-1,
-                 "maximum":1,
-                 "description":"Macro-averaged Phi coefficient over all classes"
-               },
-               "average_precision":{
-                 "type":"number",
-                 "minimum":0,
-                 "maximum":1,
-                 "description":"Macro-averaged precision over all classes"
-               },
-               "average_recall":{
-                 "type":"number",
-                 "minimum":0,
-                 "maximum":1,
-                 "description":"Macro-averaged recall over all classes"
-               },
-               "confusion_matrix":{
-                 "type":"array" ,
-                 "items":{
-                   "type":"array" ,
-                   "items":{
-                     "type":"number",
-                     "minimum":0
-                   }
-                 }
-               },
-               "per_class_statistics":{
-                 "type":"array" ,
-                 "items":{
-                   "type":"object",
-                   "properties":{
-                     "accuracy":{
-                       "type":"number",
-                       "minimum":0,
-                       "maximum":1,
-                       "description":"Accuracy (correct/total) for this class"
-                     },
-                     "class_name":{
-                       "type":"string",
-                       "description":"String name for this class"
-                     },
-                     "f_measure":{
-                       "type":"number",
-                       "minimum":0,
-                       "maximum":1,
-                       "description":"F1 Score for this class"
-                     },
-                     "phi_coefficient":{
-                       "type":"number",
-                       "minimum":-1,
-                       "maximum":1,
-                       "description":"Phi coefficient for this class"
-                     },
-                     "precision":{
-                       "type":"number",
-                       "minimum":0,
-                       "maximum":1,
-                       "description":"Precision for this class"
-                     },
-                     "present_in_test_data":{
-                       "type":"boolean",
-                       "description":"Whether or not this class was seen in the test data for the evaluation"
-                     },
-                     "recall":{
-                       "type":"number",
-                       "minimum":0,
-                       "maximum":1,
-                       "description":"Recall for this class"
-                     }
-                   }
-                 }
-               }
-             },
-             "additionalProperties": false
+         "type":"object",
+         "properties":{
+           "accuracy":{
+             "type":"number",
+             "minimum":0,
+             "maximum":1,
+             "description":"Classifier accuracy, correct/total instances"
            },
-           {
-             "type":"object",
-             "properties":{
-               "mean_absolute_error":{
+           "average_balanced_accuracy":{
+             "type":"number",
+             "minimum":0,
+             "maximum":1,
+             "description":"Balanced accuracy macro-averaged over all classes"
+           },
+           "average_f_measure":{
+             "type":"number",
+             "minimum":0,
+             "maximum":1,
+             "description":"Macro-averaged F1 score over all classes"
+           },
+           "average_phi":{
+             "type":"number",
+             "minimum":-1,
+             "maximum":1,
+             "description":"Macro-averaged Phi coefficient over all classes"
+           },
+           "average_precision":{
+             "type":"number",
+             "minimum":0,
+             "maximum":1,
+             "description":"Macro-averaged precision over all classes"
+           },
+           "average_recall":{
+             "type":"number",
+             "minimum":0,
+             "maximum":1,
+             "description":"Macro-averaged recall over all classes"
+           },
+           "confusion_matrix":{
+             "type":"array" ,
+             "items":{
+               "type":"array" ,
+               "items":{
                  "type":"number",
-                 "minimum":0,
-                 "description":"Average of absolute values of prediction errors"
-               },
-               "mean_squared_error":{
-                 "type":"number",
-                 "minimum":0,
-                 "description":"Average of squared values of prediction errors"
-               },
-               "r_square":{
-                 "type":"number",
-                 "minimum":0,
-                 "maximum":1,
-                 "description":"R^2 (Coefficient of Determination)"
+                 "minimum":0
                }
              }
+           },
+           "mean_absolute_error":{
+             "type":"number",
+             "minimum":0,
+             "description":"Average of absolute values of prediction errors"
+           },
+           "mean_squared_error":{
+             "type":"number",
+             "minimum":0,
+             "description":"Average of squared values of prediction errors"
+           },
+           "per_class_statistics":{
+             "type":"array" ,
+             "items":{
+               "type":"object",
+               "properties":{
+                 "accuracy":{
+                   "type":"number",
+                   "minimum":0,
+                   "maximum":1,
+                   "description":"Accuracy (correct/total) for this class"
+                 },
+                 "area_under_pr_curve":{
+                   "type":"number",
+                   "minimum":0,
+                   "maximum":1,
+                   "description":"Area under the precision/recall curve for this class"
+                 },
+                 "area_under_roc_curve":{
+                   "type":"number",
+                   "minimum":0,
+                   "maximum":1,
+                   "description":"Area under the ROC curve for this class"
+                 },
+                 "balanced_accuracy":{
+                   "type":"number",
+                   "minimum":0,
+                   "maximum":1,
+                   "description":"Balanced accuracy for this class"
+                 },
+                 "class_name":{
+                   "type":"string",
+                   "description":"String name for this class"
+                 },
+                 "f_measure":{
+                   "type":"number",
+                   "minimum":0,
+                   "maximum":1,
+                   "description":"F1 Score for this class"
+                 },
+                 "ks_statistic":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "anyOf":[
+                         {
+                           "type":"null"
+                         },
+                         {
+                           "type":"number"
+                         }
+                       ]
+                     }
+                   ],
+                   "description":"The max value for phi at any threshold for this class"
+                 },
+                 "max_phi":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "anyOf":[
+                         {
+                           "type":"null"
+                         },
+                         {
+                           "type":"number"
+                         }
+                       ]
+                     }
+                   ],
+                   "description":"The max value for phi at any threshold for this class"
+                 },
+                 "per_threshold_confusion_matrices":{
+                   "type":"array" ,
+                   "items":{
+                     "type":"array" ,
+                     "items":[
+                       {
+                         "type":"array" ,
+                         "items":{
+                           "type":"integer",
+                           "minimum":0
+                         }
+                       },
+                       {
+                         "anyOf":[
+                           {
+                             "type":"null"
+                           },
+                           {
+                             "type":"number"
+                           }
+                         ]
+                       }
+                     ]
+                   },
+                   "description":"Confusion matrices at multiple thresholds"
+                 },
+                 "phi_coefficient":{
+                   "type":"number",
+                   "minimum":-1,
+                   "maximum":1,
+                   "description":"Phi coefficient for this class"
+                 },
+                 "precision":{
+                   "type":"number",
+                   "minimum":0,
+                   "maximum":1,
+                   "description":"Precision for this class"
+                 },
+                 "present_in_test_data":{
+                   "type":"boolean",
+                   "description":"Whether or not this class was seen in the test data for the evaluation"
+                 },
+                 "recall":{
+                   "type":"number",
+                   "minimum":0,
+                   "maximum":1,
+                   "description":"Recall for this class"
+                 }
+               }
+             }
+           },
+           "r_square":{
+             "type":"number",
+             "minimum":0,
+             "maximum":1,
+             "description":"R^2 (Coefficient of Determination)"
            }
-         ],
+         },
          "description":"Performance measures on training data"
        },
        "type":{
          "type":"string" ,
          "enum":[
-           "unsupervised", "statistics", "classification", "regression"
+           "unsupervised", "timeseries", "statistics", "classification", "regression"
          ],
          "description":"Identifier of this model's type (e.g., regression)"
        },

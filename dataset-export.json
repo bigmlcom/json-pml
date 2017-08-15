@@ -21,9 +21,10 @@
        "format":{
          "type":"string" ,
          "enum":[
-           "csv"
+           "csv", "tde"
          ],
-         "description":"The externalization forma"
+         "default": "csv",
+         "description":"The externalization format"
        },
        "header":{
          "type":"boolean",
@@ -49,6 +50,14 @@
            "export"
          ]
        },
+       "newline":{
+         "type":"string" ,
+         "enum":[
+           "LF", "CRLF", "crlf", "lf"
+         ],
+         "default": "lf",
+         "description":"Newline character: either lf (default) or crlf"
+       },
        "origin_id":{
          "type":"string",
          "description":"The dataset to be exported to CS"
@@ -73,13 +82,17 @@
        },
        "preview_rows":{
          "type":"integer",
-         "minimum":,
+         "minimum":0,
          "description":"Maximum number of preview rows in response"
        },
        "separator":{
          "type":"string",
          "default": ",",
          "description":"Separator to use for the output CSV (only the first character is used)"
+       },
+       "table_name":{
+         "type":"string",
+         "description":"Name of the exported table name, for tabular formats (such as tde).  Currently unsupported by Tableau's SDK."
        }
      },
      "required":[

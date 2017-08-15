@@ -29,9 +29,31 @@
                "default": "GET",
                "description":"The HTTP method to use"
              },
+             "order":{
+               "anyOf":[
+                 {
+                   "type":"null"
+                 },
+                 {
+                   "type":"integer",
+                   "minimum":0
+                 }
+               ],
+               "description":"Trigger ordering.  Smaller (or nil) orders are triggered first, with progress callbacks taking preference over state callbacks.  Synchronous and asynchronous callbacks are ordered independently.  Callbacks with the same order, states and synchronicity are triggered in the order they are received."
+             },
              "payload":{
                "type":"object",
                "description":"The payload to be used as a message body"
+             },
+             "progress_variation":{
+               "type":"number",
+               "exclusiveMinimum":0,
+               "exclusiveMaximum":1,
+               "description":"A number in (0, 1) which gives the variation in progress that will trigger this callback."
+             },
+             "register-address":{
+               "type":"boolean",
+               "description":"For MSG callbacks, whether to register the requested address if it does not yet exist (i.e., whether to create the associated message queue when the mailbox is RabbitMQ)"
              },
              "retries":{
                "type":"integer",
@@ -47,7 +69,7 @@
                "items":{
                  "type":"string"
                },
-               "description":"A list of states for which the callback should be called. If not given, the callback will be called for all state changes"
+               "description":"A list of states for which the callback should be called. If not given, the callback will be called for either the given progress variation or, if that's not provided, for all state changes"
              },
              "synchronous":{
                "type":"boolean",
@@ -98,6 +120,10 @@
            "type":"string"
          },
          "description":"List of the identifiers of libraries imported by this one."
+       },
+       "name":{
+         "type":"string",
+         "description":"The library's name, set by the user."
        },
        "origin_id":{
          "anyOf":[

@@ -34,9 +34,31 @@
                "default": "GET",
                "description":"The HTTP method to use"
              },
+             "order":{
+               "anyOf":[
+                 {
+                   "type":"null"
+                 },
+                 {
+                   "type":"integer",
+                   "minimum":0
+                 }
+               ],
+               "description":"Trigger ordering.  Smaller (or nil) orders are triggered first, with progress callbacks taking preference over state callbacks.  Synchronous and asynchronous callbacks are ordered independently.  Callbacks with the same order, states and synchronicity are triggered in the order they are received."
+             },
              "payload":{
                "type":"object",
                "description":"The payload to be used as a message body"
+             },
+             "progress_variation":{
+               "type":"number",
+               "exclusiveMinimum":0,
+               "exclusiveMaximum":1,
+               "description":"A number in (0, 1) which gives the variation in progress that will trigger this callback."
+             },
+             "register-address":{
+               "type":"boolean",
+               "description":"For MSG callbacks, whether to register the requested address if it does not yet exist (i.e., whether to create the associated message queue when the mailbox is RabbitMQ)"
              },
              "retries":{
                "type":"integer",
@@ -52,7 +74,7 @@
                "items":{
                  "type":"string"
                },
-               "description":"A list of states for which the callback should be called. If not given, the callback will be called for all state changes"
+               "description":"A list of states for which the callback should be called. If not given, the callback will be called for either the given progress variation or, if that's not provided, for all state changes"
              },
              "synchronous":{
                "type":"boolean",
@@ -100,6 +122,14 @@
          },
          "description":"List of field identifiers, names or columns to exclude from inputs"
        },
+       "excluded_input_fields_regexps":{
+         "type":"array" ,
+         "items":{
+           "type":"string",
+           "description":"A valid regular expression"
+         },
+         "description":"List of regular expressions, excluding input fields  by name"
+       },
        "fields":{
          "type":"object",
          "additionalProperties": false,
@@ -123,6 +153,14 @@
            ]
          },
          "description":"List of datasource field identifiers, names or columns to use"
+       },
+       "input_fields_regexps":{
+         "type":"array" ,
+         "items":{
+           "type":"string",
+           "description":"A valid regular expression"
+         },
+         "description":"List of regular expressions, selecting input fields  by name"
        },
        "input_offset":{
          "type":"integer",
@@ -220,40 +258,6 @@
                  ],
                  "default": true,
                  "description":"Whether the field is used by default for model creation"
-               },
-               "term_analysis":{
-                 "type":"object",
-                 "properties":{
-                   "case_sensitive":{
-                     "type":"boolean",
-                     "description":"Defines whether the term analysis is case sensitive"
-                   },
-                   "enabled":{
-                     "type":"boolean",
-                     "description":"Enable/disables term analysis for this field"
-                   },
-                   "language":{
-                     "type":"string",
-                     "default": "none",
-                     "description":"Language code for detected language (or 'none')"
-                   },
-                   "stem_words":{
-                     "type":"boolean",
-                     "description":"Defines whether the term analysis stems words"
-                   },
-                   "token_mode":{
-                     "type":"string" ,
-                     "enum":[
-                       "full_terms_only", "tokens_only", "all"
-                     ],
-                     "default": "all",
-                     "description":"Defines whether the term analysis uses full terms, tokenized terms, or both"
-                   },
-                   "use_stopwords":{
-                     "type":"boolean",
-                     "description":"Defines whether the term analysis uses stop words"
-                   }
-                 }
                }
              }
            }
@@ -264,12 +268,30 @@
          "type":"string",
          "description":"Identifier of the dataset to be cloned"
        },
-       "origina_ids":{
+       "origin_ids":{
          "type":"array" ,
          "items":{
            "type":"string"
          },
          "description":"A list of identifier of datasets to be cloned"
+       },
+       "output_all_inputs":{
+         "type":"boolean",
+         "description":"If `true`, all input fields will be prepended to output_fields. Prepended fields retain their original identifier in the new dataset, but other than that it behaves as if the (all) generator had been added to output_fields."
+       },
+       "output_all_inputs_but":{
+         "type":"array" ,
+         "items":{
+           "anyOf":[
+             {
+               "type":"integer"
+             },
+             {
+               "type":"string"
+             }
+           ]
+         },
+         "description":"If set to a list of identifiers, names or columns, uses (all-but) to prepend to output_fields all input fields except the ones being specified"
        },
        "output_fields":{
          "type":"array" ,
@@ -295,13 +317,13 @@
                  "generator":{
                    "anyOf":[
                      {
+                       "type":"string"
+                     },
+                     {
                        "type":"array" ,
                        "items":{
                          "type":"any"
                        }
-                     },
-                     {
-                       "type":"string"
                      }
                    ],
                    "description":"A Flatline expression that generates one or more fields"
@@ -345,7 +367,7 @@
                  "optype":{
                    "type":"string" ,
                    "enum":[
-                     "numeric", "text", "datetime", "categorical"
+                     "numeric", "items", "text", "datetime", "categorical"
                    ],
                    "description":"For a single generated field, its optype. If many fields are generated by this entry, all will have this default"
                  },
@@ -354,7 +376,7 @@
                    "items":{
                      "type":"string" ,
                      "enum":[
-                       "numeric", "text", "datetime", "categorical"
+                       "numeric", "items", "text", "datetime", "categorical"
                      ]
                    },
                    "description":"A list of optypes, one per generated field"
@@ -365,18 +387,19 @@
                ]
              }
            ]
-         }
+         },
+         "description":"List of fields to be added, via Flatline, to the dataset"
        },
        "output_row_filter":{
          "anyOf":[
+           {
+             "type":"string"
+           },
            {
              "type":"array" ,
              "items":{
                "type":"any"
              }
-           },
-           {
-             "type":"string"
            }
          ],
          "description":"Expression specifying the generated rows to be included in the dataset"
@@ -396,13 +419,13 @@
        "row_filter":{
          "anyOf":[
            {
+             "type":"string"
+           },
+           {
              "type":"array" ,
              "items":{
                "type":"any"
              }
-           },
-           {
-             "type":"string"
            }
          ],
          "description":"Expression specifying the rows to be included in the dataset"

@@ -1,0 +1,175 @@
+{
+ "type":"object",
+ "properties":{
+   "prediction":{
+     "type":"object",
+     "properties":{
+       "combiner":{
+         "anyOf":[
+           {
+             "type":"string" ,
+             "enum":[
+               "probability_weighted", "plurality", "confidence_weighted"
+             ]
+           },
+           {
+             "type":"object",
+             "properties":{
+               "class":{
+                 "type":"string",
+                 "description":"Category to be considered the positive class"
+               },
+               "k":{
+                 "type":"integer",
+                 "description":"Minimum number of occurrences of positive class"
+               },
+               "kind":{
+                 "type":"string" ,
+                 "enum":[
+                   "threshold"
+                 ]
+               }
+             },
+             "required":[
+               "k", "kind"
+             ]
+           }
+         ],
+         "default": "plurality",
+         "description":"The strategy for combining predictions"
+       },
+       "combiners":{
+         "type":"array" ,
+         "items":{
+           "anyOf":[
+             {
+               "type":"string" ,
+               "enum":[
+                 "probability_weighted", "plurality", "confidence_weighted"
+               ]
+             },
+             {
+               "type":"object",
+               "properties":{
+                 "class":{
+                   "type":"string",
+                   "description":"Category to be considered the positive class"
+                 },
+                 "k":{
+                   "type":"integer",
+                   "description":"Minimum number of occurrences of positive class"
+                 },
+                 "kind":{
+                   "type":"string" ,
+                   "enum":[
+                     "threshold"
+                   ]
+                 }
+               },
+               "required":[
+                 "k", "kind"
+               ]
+             }
+           ]
+         },
+         "description":"A list of combiner instances"
+       },
+       "fields":{
+         "type":"object",
+         "additionalProperties": false,
+         "description":"List of descriptors for fields used in this message"
+       },
+       "fields_map":{
+         "type":"object",
+         "description":"Mapping of dataset field ids to model field id"
+       },
+       "fields_maps":{
+         "type":"array" ,
+         "items":{
+           "type":"array" ,
+           "items":[
+             {
+               "type":"string"
+             },
+             {
+               "type":"object"
+             }
+           ]
+         },
+         "description":"List of two-element arrays, where the first is a model ID and the second is a field map; to be used with model_id"
+       },
+       "inputs":{
+         "anyOf":[
+           {
+             "type":"object"
+           },
+           {
+             "type":"array" ,
+             "items":{
+               "type":"string"
+             }
+           }
+         ],
+         "description":"Map of inputs to use for the prediction"
+       },
+       "k":{
+         "type":"integer",
+         "minimum":0,
+         "description":"The number of predictions found."
+       },
+       "max_k":{
+         "type":"integer",
+         "minimum":1,
+         "default": 100,
+         "description":"Maximum number of predictions to return per input."
+       },
+       "missing_strategies":{
+         "type":"array" ,
+         "items":{
+           "type":"array" ,
+           "items":[
+             {
+               "type":"string"
+             },
+             {
+               "type":"string" ,
+               "enum":[
+                 "last_prediction", "proportional"
+               ]
+             }
+           ]
+         },
+         "description":"List of two-element arrays, where the first is a model ID and the second is a missing_strategy; to be used with model_ids"
+       },
+       "missing_strategy":{
+         "type":"string" ,
+         "enum":[
+           "last_prediction", "proportional"
+         ],
+         "description":"A missing strategy to supplant that of all models"
+       },
+       "model_id":{
+         "type":"string",
+         "description":"Identifier of the model evaluated"
+       },
+       "model_ids":{
+         "type":"array" ,
+         "items":{
+           "type":"string"
+         },
+         "description":"Identifiers of the models to be evaluated, combining their predictions with the combiners specified by :combiner or :combiners"
+       },
+       "score_by":{
+         "type":"string" ,
+         "enum":[
+           "coverage", "confidence", "leverage", "lift", "support", "lhs_cover"
+         ],
+         "description":"Rule metric used to rank predicted items. coverage (DEPRECATED) is synonomous with lhs_cover."
+       }
+     }
+   }
+ },
+ "required":[
+   "prediction"
+ ]
+}

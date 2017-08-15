@@ -29,9 +29,31 @@
                "default": "GET",
                "description":"The HTTP method to use"
              },
+             "order":{
+               "anyOf":[
+                 {
+                   "type":"null"
+                 },
+                 {
+                   "type":"integer",
+                   "minimum":0
+                 }
+               ],
+               "description":"Trigger ordering.  Smaller (or nil) orders are triggered first, with progress callbacks taking preference over state callbacks.  Synchronous and asynchronous callbacks are ordered independently.  Callbacks with the same order, states and synchronicity are triggered in the order they are received."
+             },
              "payload":{
                "type":"object",
                "description":"The payload to be used as a message body"
+             },
+             "progress_variation":{
+               "type":"number",
+               "exclusiveMinimum":0,
+               "exclusiveMaximum":1,
+               "description":"A number in (0, 1) which gives the variation in progress that will trigger this callback."
+             },
+             "register-address":{
+               "type":"boolean",
+               "description":"For MSG callbacks, whether to register the requested address if it does not yet exist (i.e., whether to create the associated message queue when the mailbox is RabbitMQ)"
              },
              "retries":{
                "type":"integer",
@@ -47,7 +69,7 @@
                "items":{
                  "type":"string"
                },
-               "description":"A list of states for which the callback should be called. If not given, the callback will be called for all state changes"
+               "description":"A list of states for which the callback should be called. If not given, the callback will be called for either the given progress variation or, if that's not provided, for all state changes"
              },
              "synchronous":{
                "type":"boolean",
@@ -152,40 +174,6 @@
                ],
                "default": true,
                "description":"Whether the field is used by default for model creation"
-             },
-             "term_analysis":{
-               "type":"object",
-               "properties":{
-                 "case_sensitive":{
-                   "type":"boolean",
-                   "description":"Defines whether the term analysis is case sensitive"
-                 },
-                 "enabled":{
-                   "type":"boolean",
-                   "description":"Enable/disables term analysis for this field"
-                 },
-                 "language":{
-                   "type":"string",
-                   "default": "none",
-                   "description":"Language code for detected language (or 'none')"
-                 },
-                 "stem_words":{
-                   "type":"boolean",
-                   "description":"Defines whether the term analysis stems words"
-                 },
-                 "token_mode":{
-                   "type":"string" ,
-                   "enum":[
-                     "full_terms_only", "tokens_only", "all"
-                   ],
-                   "default": "all",
-                   "description":"Defines whether the term analysis uses full terms, tokenized terms, or both"
-                 },
-                 "use_stopwords":{
-                   "type":"boolean",
-                   "description":"Defines whether the term analysis uses stop words"
-                 }
-               }
              }
            }
          },
@@ -198,7 +186,7 @@
        "format":{
          "type":"string" ,
          "enum":[
-           "json", "csv", "excel", "arff"
+           "json", "csv", "json_rows", "excel", "arff"
          ],
          "description":"Data format"
        },
@@ -217,8 +205,64 @@
          "description":"Number of rows in peeked head"
        },
        "header":{
-         "type":"boolean",
+         "anyOf":[
+           {
+             "type":"null"
+           },
+           {
+             "type":"boolean"
+           }
+         ],
          "description":"Result of the header autodetection"
+       },
+       "item_analysis":{
+         "type":"object",
+         "properties":{
+           "limit":{
+             "type":"number",
+             "minimum":1,
+             "default": 10000,
+             "description":"Maximum number of items considered."
+           },
+           "pruning_strategy":{
+             "type":"string" ,
+             "enum":[
+               "nearest_to_frequency", "most_frequent"
+             ],
+             "default": "nearest_to_frequency",
+             "description":"Strategy used to select items when item_limit is surpassed"
+           },
+           "separator":{
+             "anyOf":[
+               {
+                 "type":"null"
+               },
+               {
+                 "type":"string"
+               }
+             ],
+             "description":"Character delimiting items in the field. Set to null to autodetect if there is no regular expression."
+           },
+           "separator_regexp":{
+             "anyOf":[
+               {
+                 "type":"null"
+               },
+               {
+                 "type":"string"
+               }
+             ],
+             "description":"Regular expression delimiting items in the field. Overrides item_separator."
+           },
+           "target_frequency":{
+             "type":"number",
+             "minimum":0,
+             "maximum":1,
+             "default": 0.3333333333333333,
+             "description":"A ratio in (0, 1] with the occurence rate used when the prunning_strategy is nearest_to_frequency"
+           }
+         },
+         "description":"Default values for items fields parameters"
        },
        "json_key":{
          "type":"string",
@@ -259,20 +303,58 @@
          "type":"object",
          "properties":{
            "case_sensitive":{
-             "type":"boolean",
+             "anyOf":[
+               {
+                 "type":"null"
+               },
+               {
+                 "type":"boolean"
+               }
+             ],
              "description":"Defines whether the term analysis is case sensitive"
            },
            "enabled":{
              "type":"boolean",
              "description":"Enable/disables term analysis for this field"
            },
+           "excluded_terms":{
+             "anyOf":[
+               {
+                 "type":"null"
+               },
+               {
+                 "type":"array" ,
+                 "items":{
+                   "type":"string"
+                 }
+               }
+             ],
+             "description":"A list of terms to ignore when performing term analysis"
+           },
            "language":{
-             "type":"string",
+             "anyOf":[
+               {
+                 "type":"null"
+               },
+               {
+                 "type":"string" ,
+                 "enum":[
+                   "nl", "pt", "en", "none", "ca", "fr", "de", "es"
+                 ]
+               }
+             ],
              "default": "none",
-             "description":"Language code for detected language (or 'none')"
+             "description":"Language code for detected language, or 'none' for no detection, or nil to let us detect it."
            },
            "stem_words":{
-             "type":"boolean",
+             "anyOf":[
+               {
+                 "type":"null"
+               },
+               {
+                 "type":"boolean"
+               }
+             ],
              "description":"Defines whether the term analysis stems words"
            },
            "token_mode":{
@@ -284,7 +366,14 @@
              "description":"Defines whether the term analysis uses full terms, tokenized terms, or both"
            },
            "use_stopwords":{
-             "type":"boolean",
+             "anyOf":[
+               {
+                 "type":"null"
+               },
+               {
+                 "type":"boolean"
+               }
+             ],
              "description":"Defines whether the term analysis uses stop words"
            }
          },

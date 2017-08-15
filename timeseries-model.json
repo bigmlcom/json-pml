@@ -94,6 +94,9 @@
            ]
          }
        },
+       "damped_trend":{
+         "type":"boolean"
+       },
        "dataset_id":{
          "type":"string",
          "description":"Identifier of this model's main dataset"
@@ -104,6 +107,11 @@
            "type":"string"
          },
          "description":"Identifiers of this model's additional datasets"
+       },
+       "datasets":{
+         "type":"object",
+         "additionalProperties": false,
+         "description":"Map from objective field id to dataset id"
        },
        "default_numeric_value":{
          "type":"string" ,
@@ -149,6 +157,17 @@
          "additionalProperties": false,
          "description":"Parameters to control the discetization of numeric fields"
        },
+       "error":{
+         "type":"string" ,
+         "enum":[
+           "multiplicative", "additive"
+         ]
+       },
+       "ets_models":{
+         "type":"object",
+         "additionalProperties": false,
+         "description":"ETS model fit results"
+       },
        "excluded_input_fields":{
          "type":"array" ,
          "items":{
@@ -176,6 +195,12 @@
          "additionalProperties": false,
          "description":"Per-field discretization parameters"
        },
+       "field_parameters":{
+         "type":"object",
+         "additionalProperties": false,
+         "default": {},
+         "description":"Per-field ETS parameters."
+       },
        "fields":{
          "type":"object",
          "additionalProperties": false,
@@ -195,6 +220,17 @@
            ]
          },
          "description":"List of two-element arrays, where the first is a dataset ID and the second is a field map; to be used with dataset_ids"
+       },
+       "forecast":{
+         "type":"object",
+         "additionalProperties": false,
+         "description":"A map from objective id to a list of forecasts"
+       },
+       "horizon":{
+         "type":"integer",
+         "minimum":0,
+         "default": 20,
+         "description":"Horizon for the default forecast"
        },
        "input_fields":{
          "type":"array" ,
@@ -219,7 +255,10 @@
          "description":"List of regular expressions, selecting input fields  by name"
        },
        "kind":{
-         "type":"string",
+         "type":"string" ,
+         "enum":[
+           "timeseries"
+         ],
          "description":"The kind of this message's body"
        },
        "locale":{
@@ -1941,6 +1980,12 @@
          ],
          "default": "deterministic"
        },
+       "period":{
+         "type":"integer",
+         "minimum":0,
+         "default": 0,
+         "description":"Number of data points in one period"
+       },
        "row_range":{
          "type":"object",
          "properties":{
@@ -2056,6 +2101,41 @@
            ]
          },
          "description":"A list of sample specifications, as pairs dataset id and sample"
+       },
+       "seasonality":{
+         "type":"string" ,
+         "enum":[
+           "multiplicative", "none", "additive"
+         ]
+       },
+       "time_range":{
+         "type":"object",
+         "properties":{
+           "end":{
+             "type":"integer",
+             "description":"Epoch for the last value in the timeseries (msecs)"
+           },
+           "interval":{
+             "type":"number",
+             "minimum":0,
+             "exclusiveMinimum":true,
+             "description":"Interval between two consecutive timeseries values,  in the units given in interval_unit."
+           },
+           "interval_unit":{
+             "type":"string" ,
+             "enum":[
+               "d", "w", "s", "milliseconds", "index", "millisecond", "hours", "months", "second", "M", "hour", "H", "ms", "minutes", "seconds", "week", "years", "year", "days", "y", "minute", "month", "weeks", "h", "day", "m", "W", "D"
+             ],
+             "default": "milliseconds",
+             "description":"Unit in which the time lapse `interval` is expressed."
+           },
+           "start":{
+             "type":"integer",
+             "description":"Epoch for the first value in the timeseries (msecs)"
+           }
+         },
+         "additionalProperties": false,
+         "description":"Timing information"
        },
        "training_performance_measure":{
          "anyOf":[
@@ -2302,6 +2382,12 @@
            }
          ],
          "description":"Performance measures on training data"
+       },
+       "trend":{
+         "type":"string" ,
+         "enum":[
+           "multiplicative", "none", "additive"
+         ]
        },
        "type":{
          "type":"string" ,

@@ -4,10 +4,6 @@
    "model":{
      "type":"object",
      "properties":{
-       "all_numeric_objectives":{
-         "type":"boolean",
-         "description":"If true, appends all numeric fields to objective_fields."
-       },
        "callbacks":{
          "type":"array" ,
          "items":{
@@ -93,6 +89,10 @@
              "url"
            ]
          }
+       },
+       "complement":{
+         "type":"boolean",
+         "description":"Amend dataset with complementary items?"
        },
        "dataset_id":{
          "type":"string",
@@ -218,13 +218,123 @@
          },
          "description":"List of regular expressions, selecting input fields  by name"
        },
+       "items":{
+         "type":"array" ,
+         "items":{
+           "type":"object",
+           "properties":{
+             "bin_end":{
+               "anyOf":[
+                 {
+                   "type":"null"
+                 },
+                 {
+                   "type":"number"
+                 }
+               ],
+               "description":"The inclusive upper bound of this bin."
+             },
+             "bin_start":{
+               "anyOf":[
+                 {
+                   "type":"null"
+                 },
+                 {
+                   "type":"number"
+                 }
+               ],
+               "description":"The exclusive lower bound of this bin."
+             },
+             "complement":{
+               "type":"boolean",
+               "description":"Whether this item is a complement"
+             },
+             "count":{
+               "type":"integer",
+               "minimum":1,
+               "description":"The number of dataset instances where this item occurs"
+             },
+             "field_id":{
+               "type":"string",
+               "description":"ID of field that contains this item"
+             },
+             "name":{
+               "anyOf":[
+                 {
+                   "type":"null"
+                 },
+                 {
+                   "type":"string"
+                 }
+               ],
+               "description":"For categorical, items, and text fields: the categorical  value or tag corresponding to this item. For numeric fields:  a name describing a discretization bin."
+             }
+           },
+           "required":[
+             "complement", "count", "field_id", "name"
+           ],
+           "additionalProperties": false
+         },
+         "description":"Collection of items found in dataset"
+       },
        "kind":{
-         "type":"string",
+         "type":"string" ,
+         "enum":[
+           "arules"
+         ],
          "description":"The kind of this message's body"
        },
        "locale":{
          "type":"string",
          "description":"Default locale for field value"
+       },
+       "max_k":{
+         "type":"integer",
+         "minimum":1,
+         "default": 100,
+         "description":"Maximum number of rules to find."
+       },
+       "max_lhs":{
+         "type":"integer",
+         "minimum":1,
+         "default": 4,
+         "description":"Maximum number of items on left-hand side of rules"
+       },
+       "min_confidence":{
+         "type":"number",
+         "minimum":0,
+         "maximum":1,
+         "default": 0.0,
+         "description":"Minimum confidence"
+       },
+       "min_leverage":{
+         "type":"number",
+         "minimum":-1,
+         "maximum":1,
+         "default": 0,
+         "description":"Minimum leverage"
+       },
+       "min_lhs_cover":{
+         "type":"number",
+         "minimum":0,
+         "default": 1,
+         "description":"Minimum left-hand side cover"
+       },
+       "min_lift":{
+         "type":"number",
+         "minimum":0,
+         "default": 1.0,
+         "description":"Minimum lift"
+       },
+       "min_support":{
+         "type":"number",
+         "minimum":0,
+         "default": 1,
+         "description":"Minimum support"
+       },
+       "missing_items":{
+         "type":"boolean",
+         "description":"Include items for missing field values."
        },
        "missing_tokens":{
          "type":"array" ,
@@ -1941,6 +2051,70 @@
          ],
          "default": "deterministic"
        },
+       "prune":{
+         "type":"boolean",
+         "default": true,
+         "description":"Apply pruning rules during search?"
+       },
+       "rhs_predicate":{
+         "type":"array" ,
+         "items":{
+           "type":"object",
+           "properties":{
+             "field":{
+               "type":"string",
+               "description":"Identifier of the field used for this decision"
+             },
+             "operator":{
+               "type":"string" ,
+               "enum":[
+                 "!=", "=", "lt", "<=", "notEqual", "greaterThan", "eq", "/=", "=*", "gt", "greaterOrEqual", "!in", "<=*", "or", ">*", ">=", "!=*", "lessThan", "and", "ge", "<", "le", "equal", "lessOrEqual", "equals", "in", ">"
+               ],
+               "description":"Operator used to test the field's value"
+             },
+             "term":{
+               "type":"string",
+               "description":"The term/word of interest for the predicate. The occurance count of this term will be the value that is split on."
+             },
+             "value":{
+               "anyOf":[
+                 {
+                   "type":"null"
+                 },
+                 {
+                   "anyOf":[
+                     {
+                       "anyOf":[
+                         {
+                           "type":"number"
+                         },
+                         {
+                           "type":"string"
+                         }
+                       ]
+                     },
+                     {
+                       "type":"array" ,
+                       "items":{
+                         "anyOf":[
+                           {
+                             "type":"number"
+                           },
+                           {
+                             "type":"string"
+                           }
+                         ]
+                       }
+                     }
+                   ]
+                 }
+               ],
+               "description":"Value used, besides the field's, for this decision"
+             }
+           }
+         },
+         "description":"Only consider rules containing these right-hand side values"
+       },
        "row_range":{
          "type":"object",
          "properties":{
@@ -1980,6 +2154,1107 @@
            ]
          },
          "description":"Rows used to build this model, per dataset"
+       },
+       "rules":{
+         "type":"array" ,
+         "items":{
+           "type":"object",
+           "properties":{
+             "confidence":{
+               "type":"number",
+               "minimum":0,
+               "maximum":1,
+               "description":"Confidence of the rule"
+             },
+             "id":{
+               "type":"string",
+               "description":"Unique rule ID"
+             },
+             "leverage":{
+               "type":"number",
+               "minimum":-1,
+               "maximum":1,
+               "description":"Leverage of the rule"
+             },
+             "lhs":{
+               "type":"array" ,
+               "items":{
+                 "type":"integer"
+               },
+               "description":"Item indices in the rule antecedent"
+             },
+             "lhs_cover":{
+               "type":"array" ,
+               "items":[
+                 {
+                   "type":"number",
+                   "minimum":0,
+                   "maximum":1
+                 },
+                 {
+                   "type":"integer",
+                   "minimum":0
+                 }
+               ],
+               "description":"Coverage of the LHS"
+             },
+             "lift":{
+               "type":"number",
+               "minimum":0,
+               "description":"Lift of the rule"
+             },
+             "p_value":{
+               "type":"number",
+               "minimum":0,
+               "maximum":1,
+               "description":"p-value from productivity test"
+             },
+             "rhs":{
+               "type":"array" ,
+               "items":{
+                 "type":"integer"
+               },
+               "description":"Item indices in the rule consequent"
+             },
+             "rhs_cover":{
+               "type":"array" ,
+               "items":[
+                 {
+                   "type":"number",
+                   "minimum":0,
+                   "maximum":1
+                 },
+                 {
+                   "type":"integer",
+                   "minimum":0
+                 }
+               ],
+               "description":"Coverage of the RHS"
+             },
+             "support":{
+               "type":"array" ,
+               "items":[
+                 {
+                   "type":"number",
+                   "minimum":0,
+                   "maximum":1
+                 },
+                 {
+                   "type":"integer",
+                   "minimum":0
+                 }
+               ],
+               "description":"Support of the rule."
+             }
+           },
+           "required":[
+             "confidence", "id", "leverage", "lhs", "lhs_cover", "lift", "p_value", "rhs", "rhs_cover", "support"
+           ],
+           "additionalProperties": false
+         },
+         "description":"Collection of discovered rules"
+       },
+       "rules_summary":{
+         "type":"object",
+         "properties":{
+           "confidence":{
+             "type":"object",
+             "properties":{
+               "bins":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "type":"integer"
+                     }
+                   ]
+                 },
+                 "description":"Captures the distribution for the field.  Each tuple represents a bin from an approximate histogram.  Each bin contains the bin mean and a membership count.  Used when there are more than 32 unique numeric values"
+               },
+               "counts":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "type":"integer"
+                     }
+                   ]
+                 },
+                 "description":"Captures the distribution for the field.  Contains tuples of the unique values and their occurrence counts. Used when there are 32 or less unique numeric values"
+               },
+               "kurtosis":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample kurtosis for numeric fields"
+               },
+               "maximum":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"Maximum value for numeric fields"
+               },
+               "mean":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample mean for numeric fields"
+               },
+               "median":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The approximate median for numeric fields"
+               },
+               "minimum":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"Minimum value for numeric fields"
+               },
+               "missing_count":{
+                 "type":"integer",
+                 "description":"# of missing instances"
+               },
+               "population":{
+                 "type":"integer",
+                 "description":"# of instances containing data for this field"
+               },
+               "skewness":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample skewness for numeric fields"
+               },
+               "standard_deviation":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample standard deviation for numeric fields"
+               },
+               "sum":{
+                 "type":"number",
+                 "description":"Sum of values (for mean calculation)"
+               },
+               "sum_squares":{
+                 "type":"number",
+                 "description":"Sum of squared values (for variance calculation)"
+               },
+               "variance":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample variance for numeric fields"
+               }
+             }
+           },
+           "k":{
+             "type":"integer",
+             "minimum":0,
+             "description":"Number of discovered rules"
+           },
+           "leverage":{
+             "type":"object",
+             "properties":{
+               "bins":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "type":"integer"
+                     }
+                   ]
+                 },
+                 "description":"Captures the distribution for the field.  Each tuple represents a bin from an approximate histogram.  Each bin contains the bin mean and a membership count.  Used when there are more than 32 unique numeric values"
+               },
+               "counts":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "type":"integer"
+                     }
+                   ]
+                 },
+                 "description":"Captures the distribution for the field.  Contains tuples of the unique values and their occurrence counts. Used when there are 32 or less unique numeric values"
+               },
+               "kurtosis":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample kurtosis for numeric fields"
+               },
+               "maximum":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"Maximum value for numeric fields"
+               },
+               "mean":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample mean for numeric fields"
+               },
+               "median":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The approximate median for numeric fields"
+               },
+               "minimum":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"Minimum value for numeric fields"
+               },
+               "missing_count":{
+                 "type":"integer",
+                 "description":"# of missing instances"
+               },
+               "population":{
+                 "type":"integer",
+                 "description":"# of instances containing data for this field"
+               },
+               "skewness":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample skewness for numeric fields"
+               },
+               "standard_deviation":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample standard deviation for numeric fields"
+               },
+               "sum":{
+                 "type":"number",
+                 "description":"Sum of values (for mean calculation)"
+               },
+               "sum_squares":{
+                 "type":"number",
+                 "description":"Sum of squared values (for variance calculation)"
+               },
+               "variance":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample variance for numeric fields"
+               }
+             }
+           },
+           "lhs_cover":{
+             "type":"object",
+             "properties":{
+               "bins":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "type":"integer"
+                     }
+                   ]
+                 },
+                 "description":"Captures the distribution for the field.  Each tuple represents a bin from an approximate histogram.  Each bin contains the bin mean and a membership count.  Used when there are more than 32 unique numeric values"
+               },
+               "counts":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "type":"integer"
+                     }
+                   ]
+                 },
+                 "description":"Captures the distribution for the field.  Contains tuples of the unique values and their occurrence counts. Used when there are 32 or less unique numeric values"
+               },
+               "kurtosis":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample kurtosis for numeric fields"
+               },
+               "maximum":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"Maximum value for numeric fields"
+               },
+               "mean":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample mean for numeric fields"
+               },
+               "median":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The approximate median for numeric fields"
+               },
+               "minimum":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"Minimum value for numeric fields"
+               },
+               "missing_count":{
+                 "type":"integer",
+                 "description":"# of missing instances"
+               },
+               "population":{
+                 "type":"integer",
+                 "description":"# of instances containing data for this field"
+               },
+               "skewness":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample skewness for numeric fields"
+               },
+               "standard_deviation":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample standard deviation for numeric fields"
+               },
+               "sum":{
+                 "type":"number",
+                 "description":"Sum of values (for mean calculation)"
+               },
+               "sum_squares":{
+                 "type":"number",
+                 "description":"Sum of squared values (for variance calculation)"
+               },
+               "variance":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample variance for numeric fields"
+               }
+             }
+           },
+           "lift":{
+             "type":"object",
+             "properties":{
+               "bins":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "type":"integer"
+                     }
+                   ]
+                 },
+                 "description":"Captures the distribution for the field.  Each tuple represents a bin from an approximate histogram.  Each bin contains the bin mean and a membership count.  Used when there are more than 32 unique numeric values"
+               },
+               "counts":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "type":"integer"
+                     }
+                   ]
+                 },
+                 "description":"Captures the distribution for the field.  Contains tuples of the unique values and their occurrence counts. Used when there are 32 or less unique numeric values"
+               },
+               "kurtosis":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample kurtosis for numeric fields"
+               },
+               "maximum":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"Maximum value for numeric fields"
+               },
+               "mean":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample mean for numeric fields"
+               },
+               "median":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The approximate median for numeric fields"
+               },
+               "minimum":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"Minimum value for numeric fields"
+               },
+               "missing_count":{
+                 "type":"integer",
+                 "description":"# of missing instances"
+               },
+               "population":{
+                 "type":"integer",
+                 "description":"# of instances containing data for this field"
+               },
+               "skewness":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample skewness for numeric fields"
+               },
+               "standard_deviation":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample standard deviation for numeric fields"
+               },
+               "sum":{
+                 "type":"number",
+                 "description":"Sum of values (for mean calculation)"
+               },
+               "sum_squares":{
+                 "type":"number",
+                 "description":"Sum of squared values (for variance calculation)"
+               },
+               "variance":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample variance for numeric fields"
+               }
+             }
+           },
+           "p_value":{
+             "type":"object",
+             "properties":{
+               "bins":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "type":"integer"
+                     }
+                   ]
+                 },
+                 "description":"Captures the distribution for the field.  Each tuple represents a bin from an approximate histogram.  Each bin contains the bin mean and a membership count.  Used when there are more than 32 unique numeric values"
+               },
+               "counts":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "type":"integer"
+                     }
+                   ]
+                 },
+                 "description":"Captures the distribution for the field.  Contains tuples of the unique values and their occurrence counts. Used when there are 32 or less unique numeric values"
+               },
+               "kurtosis":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample kurtosis for numeric fields"
+               },
+               "maximum":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"Maximum value for numeric fields"
+               },
+               "mean":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample mean for numeric fields"
+               },
+               "median":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The approximate median for numeric fields"
+               },
+               "minimum":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"Minimum value for numeric fields"
+               },
+               "missing_count":{
+                 "type":"integer",
+                 "description":"# of missing instances"
+               },
+               "population":{
+                 "type":"integer",
+                 "description":"# of instances containing data for this field"
+               },
+               "skewness":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample skewness for numeric fields"
+               },
+               "standard_deviation":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample standard deviation for numeric fields"
+               },
+               "sum":{
+                 "type":"number",
+                 "description":"Sum of values (for mean calculation)"
+               },
+               "sum_squares":{
+                 "type":"number",
+                 "description":"Sum of squared values (for variance calculation)"
+               },
+               "variance":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample variance for numeric fields"
+               }
+             }
+           },
+           "population":{
+             "type":"integer",
+             "minimum":1,
+             "description":"Number of transactions in training set"
+           },
+           "rhs_cover":{
+             "type":"object",
+             "properties":{
+               "bins":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "type":"integer"
+                     }
+                   ]
+                 },
+                 "description":"Captures the distribution for the field.  Each tuple represents a bin from an approximate histogram.  Each bin contains the bin mean and a membership count.  Used when there are more than 32 unique numeric values"
+               },
+               "counts":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "type":"integer"
+                     }
+                   ]
+                 },
+                 "description":"Captures the distribution for the field.  Contains tuples of the unique values and their occurrence counts. Used when there are 32 or less unique numeric values"
+               },
+               "kurtosis":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample kurtosis for numeric fields"
+               },
+               "maximum":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"Maximum value for numeric fields"
+               },
+               "mean":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample mean for numeric fields"
+               },
+               "median":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The approximate median for numeric fields"
+               },
+               "minimum":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"Minimum value for numeric fields"
+               },
+               "missing_count":{
+                 "type":"integer",
+                 "description":"# of missing instances"
+               },
+               "population":{
+                 "type":"integer",
+                 "description":"# of instances containing data for this field"
+               },
+               "skewness":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample skewness for numeric fields"
+               },
+               "standard_deviation":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample standard deviation for numeric fields"
+               },
+               "sum":{
+                 "type":"number",
+                 "description":"Sum of values (for mean calculation)"
+               },
+               "sum_squares":{
+                 "type":"number",
+                 "description":"Sum of squared values (for variance calculation)"
+               },
+               "variance":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample variance for numeric fields"
+               }
+             }
+           },
+           "support":{
+             "type":"object",
+             "properties":{
+               "bins":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "type":"integer"
+                     }
+                   ]
+                 },
+                 "description":"Captures the distribution for the field.  Each tuple represents a bin from an approximate histogram.  Each bin contains the bin mean and a membership count.  Used when there are more than 32 unique numeric values"
+               },
+               "counts":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "type":"integer"
+                     }
+                   ]
+                 },
+                 "description":"Captures the distribution for the field.  Contains tuples of the unique values and their occurrence counts. Used when there are 32 or less unique numeric values"
+               },
+               "kurtosis":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample kurtosis for numeric fields"
+               },
+               "maximum":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"Maximum value for numeric fields"
+               },
+               "mean":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample mean for numeric fields"
+               },
+               "median":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The approximate median for numeric fields"
+               },
+               "minimum":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"Minimum value for numeric fields"
+               },
+               "missing_count":{
+                 "type":"integer",
+                 "description":"# of missing instances"
+               },
+               "population":{
+                 "type":"integer",
+                 "description":"# of instances containing data for this field"
+               },
+               "skewness":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample skewness for numeric fields"
+               },
+               "standard_deviation":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample standard deviation for numeric fields"
+               },
+               "sum":{
+                 "type":"number",
+                 "description":"Sum of values (for mean calculation)"
+               },
+               "sum_squares":{
+                 "type":"number",
+                 "description":"Sum of squared values (for variance calculation)"
+               },
+               "variance":{
+                 "anyOf":[
+                   {
+                     "type":"null"
+                   },
+                   {
+                     "type":"number"
+                   }
+                 ],
+                 "description":"The sample variance for numeric fields"
+               }
+             }
+           }
+         },
+         "additionalProperties": false,
+         "description":"Summary statistics for rule metrics"
+       },
+       "runtime_limit":{
+         "anyOf":[
+           {
+             "type":"null"
+           },
+           {
+             "type":"integer"
+           }
+         ],
+         "default": 7200,
+         "description":"Rule search time limit in seconds."
        },
        "sample":{
          "type":"object",
@@ -2057,250 +3332,215 @@
          },
          "description":"A list of sample specifications, as pairs dataset id and sample"
        },
+       "search_strategy":{
+         "type":"string" ,
+         "enum":[
+           "coverage", "confidence", "leverage", "lift", "support", "lhs_cover"
+         ],
+         "default": "leverage",
+         "description":"Criteria for ranking rules"
+       },
+       "significance_level":{
+         "type":"number",
+         "minimum":0,
+         "maximum":1,
+         "default": 0.05,
+         "description":"Significance level for productivity tests"
+       },
        "training_performance_measure":{
-         "anyOf":[
-           {
-             "type":"object",
-             "properties":{
-               "accuracy":{
+         "type":"object",
+         "properties":{
+           "accuracy":{
+             "type":"number",
+             "minimum":0,
+             "maximum":1,
+             "description":"Classifier accuracy, correct/total instances"
+           },
+           "average_balanced_accuracy":{
+             "type":"number",
+             "minimum":0,
+             "maximum":1,
+             "description":"Balanced accuracy macro-averaged over all classes"
+           },
+           "average_f_measure":{
+             "type":"number",
+             "minimum":0,
+             "maximum":1,
+             "description":"Macro-averaged F1 score over all classes"
+           },
+           "average_phi":{
+             "type":"number",
+             "minimum":-1,
+             "maximum":1,
+             "description":"Macro-averaged Phi coefficient over all classes"
+           },
+           "average_precision":{
+             "type":"number",
+             "minimum":0,
+             "maximum":1,
+             "description":"Macro-averaged precision over all classes"
+           },
+           "average_recall":{
+             "type":"number",
+             "minimum":0,
+             "maximum":1,
+             "description":"Macro-averaged recall over all classes"
+           },
+           "confusion_matrix":{
+             "type":"array" ,
+             "items":{
+               "type":"array" ,
+               "items":{
                  "type":"number",
-                 "minimum":0,
-                 "maximum":1,
-                 "description":"Classifier accuracy, correct/total instances"
-               },
-               "average_balanced_accuracy":{
-                 "type":"number",
-                 "minimum":0,
-                 "maximum":1,
-                 "description":"Balanced accuracy macro-averaged over all classes"
-               },
-               "average_f_measure":{
-                 "type":"number",
-                 "minimum":0,
-                 "maximum":1,
-                 "description":"Macro-averaged F1 score over all classes"
-               },
-               "average_phi":{
-                 "type":"number",
-                 "minimum":-1,
-                 "maximum":1,
-                 "description":"Macro-averaged Phi coefficient over all classes"
-               },
-               "average_precision":{
-                 "type":"number",
-                 "minimum":0,
-                 "maximum":1,
-                 "description":"Macro-averaged precision over all classes"
-               },
-               "average_recall":{
-                 "type":"number",
-                 "minimum":0,
-                 "maximum":1,
-                 "description":"Macro-averaged recall over all classes"
-               },
-               "confusion_matrix":{
-                 "type":"array" ,
-                 "items":{
-                   "type":"array" ,
-                   "items":{
-                     "type":"number",
-                     "minimum":0
-                   }
-                 }
-               },
-               "mean_absolute_error":{
-                 "type":"number",
-                 "minimum":0,
-                 "description":"Average of absolute values of prediction errors"
-               },
-               "mean_squared_error":{
-                 "type":"number",
-                 "minimum":0,
-                 "description":"Average of squared values of prediction errors"
-               },
-               "per_class_statistics":{
-                 "type":"array" ,
-                 "items":{
-                   "type":"object",
-                   "properties":{
-                     "accuracy":{
-                       "type":"number",
-                       "minimum":0,
-                       "maximum":1,
-                       "description":"Accuracy (correct/total) for this class"
-                     },
-                     "area_under_pr_curve":{
-                       "type":"number",
-                       "minimum":0,
-                       "maximum":1,
-                       "description":"Area under the precision/recall curve for this class"
-                     },
-                     "area_under_roc_curve":{
-                       "type":"number",
-                       "minimum":0,
-                       "maximum":1,
-                       "description":"Area under the ROC curve for this class"
-                     },
-                     "balanced_accuracy":{
-                       "type":"number",
-                       "minimum":0,
-                       "maximum":1,
-                       "description":"Balanced accuracy for this class"
-                     },
-                     "class_name":{
-                       "type":"string",
-                       "description":"String name for this class"
-                     },
-                     "f_measure":{
-                       "type":"number",
-                       "minimum":0,
-                       "maximum":1,
-                       "description":"F1 Score for this class"
-                     },
-                     "ks_statistic":{
-                       "type":"array" ,
-                       "items":[
-                         {
-                           "type":"number"
-                         },
-                         {
-                           "anyOf":[
-                             {
-                               "type":"null"
-                             },
-                             {
-                               "type":"number"
-                             }
-                           ]
-                         }
-                       ],
-                       "description":"The max value for phi at any threshold for this class"
-                     },
-                     "max_phi":{
-                       "type":"array" ,
-                       "items":[
-                         {
-                           "type":"number"
-                         },
-                         {
-                           "anyOf":[
-                             {
-                               "type":"null"
-                             },
-                             {
-                               "type":"number"
-                             }
-                           ]
-                         }
-                       ],
-                       "description":"The max value for phi at any threshold for this class"
-                     },
-                     "per_threshold_confusion_matrices":{
-                       "type":"array" ,
-                       "items":{
-                         "type":"array" ,
-                         "items":[
-                           {
-                             "type":"array" ,
-                             "items":{
-                               "type":"integer",
-                               "minimum":0
-                             }
-                           },
-                           {
-                             "anyOf":[
-                               {
-                                 "type":"null"
-                               },
-                               {
-                                 "type":"number"
-                               }
-                             ]
-                           }
-                         ]
-                       },
-                       "description":"Confusion matrices at multiple thresholds"
-                     },
-                     "phi_coefficient":{
-                       "type":"number",
-                       "minimum":-1,
-                       "maximum":1,
-                       "description":"Phi coefficient for this class"
-                     },
-                     "precision":{
-                       "type":"number",
-                       "minimum":0,
-                       "maximum":1,
-                       "description":"Precision for this class"
-                     },
-                     "present_in_test_data":{
-                       "type":"boolean",
-                       "description":"Whether or not this class was seen in the test data for the evaluation"
-                     },
-                     "recall":{
-                       "type":"number",
-                       "minimum":0,
-                       "maximum":1,
-                       "description":"Recall for this class"
-                     }
-                   }
-                 }
-               },
-               "r_squared":{
-                 "type":"number",
-                 "maximum":1,
-                 "description":"R^2 (Coefficient of Determination)"
+                 "minimum":0
                }
              }
            },
-           {
+           "mean_absolute_error":{
+             "type":"number",
+             "minimum":0,
+             "description":"Average of absolute values of prediction errors"
+           },
+           "mean_squared_error":{
+             "type":"number",
+             "minimum":0,
+             "description":"Average of squared values of prediction errors"
+           },
+           "per_class_statistics":{
              "type":"array" ,
              "items":{
                "type":"object",
                "properties":{
-                 "mean_absolute_error":{
+                 "accuracy":{
                    "type":"number",
                    "minimum":0,
-                   "description":"Average of absolute values of prediction errors"
-                 },
-                 "mean_absolute_scaled_error":{
-                   "type":"number",
-                   "minimum":0,
-                   "description":"MASE of forecasts"
-                 },
-                 "mean_directional_accuracy":{
-                   "type":"number",
-                   "minimum":0,
-                   "description":"MDA of forecasts"
-                 },
-                 "mean_squared_error":{
-                   "type":"number",
-                   "minimum":0,
-                   "description":"Average of squared values of prediction errors"
-                 },
-                 "model":{
-                   "type":"string",
-                   "description":"Timeseries submodel name"
-                 },
-                 "r_squared":{
-                   "type":"number",
                    "maximum":1,
-                   "description":"R^2 (Coefficient of Determination)"
+                   "description":"Accuracy (correct/total) for this class"
                  },
-                 "symmetric_mean_absolute_percentage_error":{
+                 "area_under_pr_curve":{
                    "type":"number",
                    "minimum":0,
-                   "description":"sMAPE of forecasts"
+                   "maximum":1,
+                   "description":"Area under the precision/recall curve for this class"
                  },
-                 "time_ranges":{
-                   "type":"object",
-                   "additionalProperties": false,
-                   "description":"Timing information for each objective"
+                 "area_under_roc_curve":{
+                   "type":"number",
+                   "minimum":0,
+                   "maximum":1,
+                   "description":"Area under the ROC curve for this class"
+                 },
+                 "balanced_accuracy":{
+                   "type":"number",
+                   "minimum":0,
+                   "maximum":1,
+                   "description":"Balanced accuracy for this class"
+                 },
+                 "class_name":{
+                   "type":"string",
+                   "description":"String name for this class"
+                 },
+                 "f_measure":{
+                   "type":"number",
+                   "minimum":0,
+                   "maximum":1,
+                   "description":"F1 Score for this class"
+                 },
+                 "ks_statistic":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "anyOf":[
+                         {
+                           "type":"null"
+                         },
+                         {
+                           "type":"number"
+                         }
+                       ]
+                     }
+                   ],
+                   "description":"The max value for phi at any threshold for this class"
+                 },
+                 "max_phi":{
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"number"
+                     },
+                     {
+                       "anyOf":[
+                         {
+                           "type":"null"
+                         },
+                         {
+                           "type":"number"
+                         }
+                       ]
+                     }
+                   ],
+                   "description":"The max value for phi at any threshold for this class"
+                 },
+                 "per_threshold_confusion_matrices":{
+                   "type":"array" ,
+                   "items":{
+                     "type":"array" ,
+                     "items":[
+                       {
+                         "type":"array" ,
+                         "items":{
+                           "type":"integer",
+                           "minimum":0
+                         }
+                       },
+                       {
+                         "anyOf":[
+                           {
+                             "type":"null"
+                           },
+                           {
+                             "type":"number"
+                           }
+                         ]
+                       }
+                     ]
+                   },
+                   "description":"Confusion matrices at multiple thresholds"
+                 },
+                 "phi_coefficient":{
+                   "type":"number",
+                   "minimum":-1,
+                   "maximum":1,
+                   "description":"Phi coefficient for this class"
+                 },
+                 "precision":{
+                   "type":"number",
+                   "minimum":0,
+                   "maximum":1,
+                   "description":"Precision for this class"
+                 },
+                 "present_in_test_data":{
+                   "type":"boolean",
+                   "description":"Whether or not this class was seen in the test data for the evaluation"
+                 },
+                 "recall":{
+                   "type":"number",
+                   "minimum":0,
+                   "maximum":1,
+                   "description":"Recall for this class"
                  }
                }
              }
+           },
+           "r_square":{
+             "type":"number",
+             "minimum":0,
+             "maximum":1,
+             "description":"R^2 (Coefficient of Determination)"
            }
-         ],
+         },
          "description":"Performance measures on training data"
        },
        "type":{
@@ -2322,6 +3562,5 @@
  },
  "required":[
    "model"
- ],
- "additionalProperties": false
+ ]
 }

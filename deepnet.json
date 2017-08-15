@@ -8,6 +8,20 @@
          "type":"boolean",
          "description":"If true, appends all numeric fields to objective_fields."
        },
+       "beta1":{
+         "type":"number",
+         "minimum":0,
+         "maximum":1,
+         "default": 0.9,
+         "description":"The beta_1 parameter for adam"
+       },
+       "beta2":{
+         "type":"number",
+         "minimum":0,
+         "maximum":1,
+         "default": 0.999,
+         "description":"The beta_2 parameter for adam"
+       },
        "callbacks":{
          "type":"array" ,
          "items":{
@@ -105,6 +119,13 @@
          },
          "description":"Identifiers of this model's additional datasets"
        },
+       "decay":{
+         "type":"number",
+         "minimum":0,
+         "maximum":1,
+         "default": 0.1,
+         "description":"The decay parameter for rms_prop"
+       },
        "default_numeric_value":{
          "type":"string" ,
          "enum":[
@@ -115,6 +136,14 @@
        "default_values":{
          "type":"object",
          "description":"A map for field identifiers to values for missing entries."
+       },
+       "descent_algorithm":{
+         "type":"string" ,
+         "enum":[
+           "rms_prop", "adam", "adagrad", "momentum", "ftrl"
+         ],
+         "default": "adam",
+         "description":"The optimization algorithm for learning network weights"
        },
        "discretization":{
          "type":"object",
@@ -148,6 +177,20 @@
          },
          "additionalProperties": false,
          "description":"Parameters to control the discetization of numeric fields"
+       },
+       "dropout_rate":{
+         "type":"number",
+         "minimum":0,
+         "maximum":1,
+         "default": 0.0,
+         "description":"Dropout rate for control of overfitting"
+       },
+       "epsilon":{
+         "type":"number",
+         "minimum":0,
+         "maximum":1,
+         "default": 1.0E-8,
+         "description":"The epsilon parameter for adam and rms_prop"
        },
        "excluded_input_fields":{
          "type":"array" ,
@@ -196,6 +239,46 @@
          },
          "description":"List of two-element arrays, where the first is a dataset ID and the second is a field map; to be used with dataset_ids"
        },
+       "hidden_layers":{
+         "type":"array" ,
+         "items":{
+           "type":"object",
+           "properties":{
+             "activation_function":{
+               "type":"string" ,
+               "enum":[
+                 "sigmoid", "identity", "softmax", "softplus", "ReLU", "tanh"
+               ],
+               "default": "tanh",
+               "description":"The activation function applied to each node in the layer"
+             },
+             "number_of_nodes":{
+               "type":"integer",
+               "minimum":1,
+               "maximum":2048,
+               "default": 64,
+               "description":"Number of nodes in this layer"
+             },
+             "type":{
+               "type":"string" ,
+               "enum":[
+                 "fully_connected"
+               ],
+               "default": "fully_connected",
+               "description":"The type of the layer"
+             }
+           }
+         },
+         "default": [{"number_of_nodes":64,"activation_function":"tanh","type":"fully_connected"}],
+         "description":"List of maps specifying the network topology"
+       },
+       "initial_accumulator_value":{
+         "type":"number",
+         "minimum":0,
+         "maximum":1,
+         "default": 0.1,
+         "description":"The initial accumulator value for adagrad and ftrl"
+       },
        "input_fields":{
          "type":"array" ,
          "items":{
@@ -219,12 +302,59 @@
          "description":"List of regular expressions, selecting input fields  by name"
        },
        "kind":{
-         "type":"string",
+         "type":"string" ,
+         "enum":[
+           "deepnet"
+         ],
          "description":"The kind of this message's body"
+       },
+       "l1_regularization":{
+         "type":"number",
+         "minimum":0,
+         "maximum":1,
+         "default": 0.0,
+         "description":"The L_1 regularization penalty for ftrl"
+       },
+       "l2_regularization":{
+         "type":"number",
+         "minimum":0,
+         "maximum":1,
+         "default": 1.0E-4,
+         "description":"The L_2 regularization penalty for ftrl"
+       },
+       "laminar_version":{
+         "type":"string",
+         "default": "0.2.0",
+         "description":"The expected/used version of the laminar server"
+       },
+       "learning_rate":{
+         "type":"number",
+         "minimum":0,
+         "maximum":1,
+         "default": 0.01,
+         "description":"The learning rate for gradient descent"
+       },
+       "learning_rate_power":{
+         "type":"number",
+         "minimum":-1,
+         "maximum":0,
+         "default": -0.5,
+         "description":"The learning rate power for ftrl"
        },
        "locale":{
          "type":"string",
          "description":"Default locale for field value"
+       },
+       "max_iterations":{
+         "type":"integer",
+         "minimum":1,
+         "description":"The number of iterations for gradient descent"
+       },
+       "max_training_time":{
+         "type":"number",
+         "minimum":-1,
+         "default": 1800,
+         "description":"Wall-clock time for which to train the network"
        },
        "missing_tokens":{
          "type":"array" ,
@@ -238,6 +368,13 @@
          "type":"object",
          "additionalProperties": false,
          "description":"Map of descriptors for fields actually appearing in the model, without summaries"
+       },
+       "momentum":{
+         "type":"number",
+         "minimum":0,
+         "maximum":1,
+         "default": 0.9,
+         "description":"Momentum value for momentum and rms_prop"
        },
        "objective_field":{
          "anyOf":[
@@ -2056,6 +2193,15 @@
            ]
          },
          "description":"A list of sample specifications, as pairs dataset id and sample"
+       },
+       "search":{
+         "type":"boolean",
+         "description":"Whether to train a single network or do parameter search"
+       },
+       "seed":{
+         "type":"string",
+         "default": "bigml_deepnet",
+         "description":"The number of iterations for gradient descent"
        },
        "training_performance_measure":{
          "anyOf":[
