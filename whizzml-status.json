@@ -1,0 +1,66 @@
+{
+ "type":"object",
+ "properties":{
+   "status":{
+     "type":"object",
+     "properties":{
+       "elapsed_time":{
+         "type":"integer",
+         "description":"Milliseconds spent in construction so far"
+       },
+       "elapsed_times":{
+         "type":"object",
+         "properties":{
+           "in-progress":{
+             "type":"integer"
+           },
+           "queued":{
+             "type":"integer"
+           },
+           "started":{
+             "type":"integer"
+           },
+           "summarized":{
+             "type":"integer"
+           }
+         },
+         "required":[
+           "queued"
+         ],
+         "additionalProperties": false,
+         "description":"Amounts of time in non-terminal states"
+       },
+       "kind":{
+         "type":"string" ,
+         "enum":[
+           "whizzml"
+         ],
+         "description":"The kind of this message's body"
+       },
+       "last_update":{
+         "type":"integer",
+         "description":"Date for the last status update"
+       },
+       "progress":{
+         "type":"number",
+         "minimum":0,
+         "maximum":1,
+         "description":"0-1 Progress towards completion"
+       },
+       "status":{
+         "type":"string" ,
+         "enum":[
+           "started", "error", "queued", "summarized", "in-progress", "finished"
+         ]
+       }
+     },
+     "required":[
+       "kind", "status"
+     ]
+   }
+ },
+ "required":[
+   "status"
+ ],
+ "additionalProperties": false
+}

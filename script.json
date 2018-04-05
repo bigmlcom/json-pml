@@ -115,7 +115,7 @@
                  {
                    "type":"string" ,
                    "enum":[
-                     "list-of-map", "boolean", "map", "batchcentroid-id", "numeric", "list", "string", "batchprediction-id", "model-id", "list-of-integer", "resource-id", "list-of-string", "centroid-id", "project-id", "sample-id", "script-id", "source-id", "library-id", "list-of-boolean", "list-of-number", "items", "logisticregression-id", "text", "number", "evaluation-id", "statisticaltest-id", "batchanomalyscore-id", "cluster-id", "function", "integer", "topicdistribution-id", "execution-id", "dataset-id", "configuration-id", "prediction-id", "anomaly-id", "anomalyscore-id", "categorical", "ensemble-id", "batchtopicdistribution-id", "correlation-id", "associationset-id", "association-id", "supervised-model-id", "topicmodel-id"
+                     "list-of-map", "boolean", "map", "batchcentroid-id", "numeric", "list", "string", "batchprediction-id", "model-id", "list-of-integer", "resource-id", "list-of-string", "centroid-id", "project-id", "sample-id", "script-id", "source-id", "library-id", "list-of-boolean", "list-of-number", "items", "forecast-id", "logisticregression-id", "text", "number", "evaluation-id", "statisticaltest-id", "batchanomalyscore-id", "cluster-id", "function", "integer", "topicdistribution-id", "execution-id", "dataset-id", "configuration-id", "prediction-id", "timeseries-id", "anomaly-id", "anomalyscore-id", "categorical", "ensemble-id", "batchtopicdistribution-id", "correlation-id", "associationset-id", "association-id", "supervised-model-id", "topicmodel-id", "deepnet-id"
                    ]
                  },
                  {

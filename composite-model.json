@@ -1,0 +1,63 @@
+{
+ "type":"object",
+ "properties":{
+   "model":{
+     "type":"object",
+     "properties":{
+       "kind":{
+         "type":"string" ,
+         "enum":[
+           "composite"
+         ],
+         "description":"The kind of this message's body"
+       },
+       "kinds":{
+         "type":"array" ,
+         "items":{
+           "type":"string"
+         },
+         "description":"Kind of each component model"
+       },
+       "models":{
+         "type":"array" ,
+         "items":{
+           "type":"string"
+         },
+         "description":"Identifiers' of this composite's components"
+       },
+       "type":{
+         "anyOf":[
+           {
+             "type":"null"
+           },
+           {
+             "type":"string" ,
+             "enum":[
+               "unsupervised", "timeseries", "statistics", "classification", "regression"
+             ]
+           }
+         ],
+         "description":"Identifier of this model's type (e.g., regression)"
+       },
+       "types":{
+         "type":"array" ,
+         "items":{
+           "type":"string" ,
+           "enum":[
+             "unsupervised", "timeseries", "statistics", "classification", "regression"
+           ]
+         },
+         "description":"Type of each component model"
+       }
+     },
+     "required":[
+       "kind", "models"
+     ],
+     "additionalProperties": false
+   }
+ },
+ "required":[
+   "model"
+ ],
+ "additionalProperties": false
+}

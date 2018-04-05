@@ -4,6 +4,27 @@
    "execution":{
      "type":"object",
      "properties":{
+       "apian_creation_defaults":{
+         "type":"object",
+         "description":"A dictionary providing default values for resource creation set by apian"
+       },
+       "apian_delete_defaults":{
+         "type":"object",
+         "description":"A dictionary providing default values for resource deletion set by apian"
+       },
+       "apian_fetch_defaults":{
+         "type":"object",
+         "description":"A dictionary providing default values for resource fetches set by apian"
+       },
+       "apian_query_params":{
+         "type":"object",
+         "additionalProperties": false,
+         "description":"Additional query params to add to all URL requests"
+       },
+       "apian_update_defaults":{
+         "type":"object",
+         "description":"A dictionary providing default values for resource updates set by apian"
+       },
        "apian_ur":{
          "type":"string",
          "description":"The base URI to which API requests should go."
@@ -99,16 +120,15 @@
          "additionalProperties": false,
          "description":"A dictionary providing default values for resource creation."
        },
-       "dev_mode":{
-         "anyOf":[
-           {
-             "type":"null"
-           },
-           {
-             "type":"boolean"
-           }
-         ],
-         "description":"Whether resources should be created in dev mode."
+       "delete_defaults":{
+         "type":"object",
+         "additionalProperties": false,
+         "description":"A dictionary providing default values for resource deletion."
+       },
+       "fetch_defaults":{
+         "type":"object",
+         "additionalProperties": false,
+         "description":"A dictionary providing default values for resource fetches."
        },
        "inputs":{
          "anyOf":[
@@ -284,6 +304,11 @@
          "type":"integer",
          "default": 4,
          "description":"Maximum number of simultaneous, non-finished, resource creation tasks."
+       },
+       "update_defaults":{
+         "type":"object",
+         "additionalProperties": false,
+         "description":"A dictionary providing default values for resource updates."
        },
        "username":{
          "type":"string",

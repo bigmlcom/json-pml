@@ -599,9 +599,33 @@
                  "summary":{
                    "type":"object",
                    "properties":{
+                     "maximum":{
+                       "type":"string",
+                       "description":"Maximum datetime, as a string value"
+                     },
+                     "maximum_timestamp":{
+                       "type":"integer",
+                       "description":"Maximum datetime, as a numeric epoch"
+                     },
+                     "minimum":{
+                       "type":"string",
+                       "description":"Minimum datetime, as a string value"
+                     },
+                     "minimum_timestamp":{
+                       "type":"integer",
+                       "description":"Minimum datetime, as a numeric epoch"
+                     },
                      "missing_count":{
                        "type":"integer",
                        "description":"# of missing instances"
+                     },
+                     "non_decreasing":{
+                       "type":"boolean",
+                       "description":"True if times never decrease with row number"
+                     },
+                     "non_increasing":{
+                       "type":"boolean",
+                       "description":"True if times never increase with row number"
                      }
                    },
                    "additionalProperties": false

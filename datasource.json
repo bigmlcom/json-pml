@@ -190,6 +190,77 @@
          ],
          "description":"Data format"
        },
+       "generation_parameters":{
+         "type":"object",
+         "properties":{
+           "cat_padding":{
+             "type":"integer",
+             "minimum":0,
+             "default": 0,
+             "description":"Number of padding characters to prepend to category names (for testing long strings)"
+           },
+           "fields":{
+             "type":"integer",
+             "minimum":1,
+             "description":"Number of fields to include in synthetic datasource"
+           },
+           "frac_cat":{
+             "type":"number",
+             "minimum":0,
+             "maximum":1,
+             "default": 0.5,
+             "description":"Fraction of attributes that are categorical"
+           },
+           "frac_time":{
+             "type":"number",
+             "minimum":0,
+             "maximum":1,
+             "default": 0.0,
+             "description":"Fraction of attributes that represent times"
+           },
+           "missing":{
+             "type":"number",
+             "minimum":0,
+             "maximum":1,
+             "default": 0.0,
+             "description":"Fraction of missing (nil) values that occur in the data"
+           },
+           "noise":{
+             "type":"number",
+             "minimum":0,
+             "maximum":1,
+             "default": 0.0,
+             "description":"Fraction of attributes not correlated with the class attribute"
+           },
+           "num_cats":{
+             "type":"integer",
+             "default": 3,
+             "description":"Number of categories for categorical attributes."
+           },
+           "num_classes":{
+             "type":"integer",
+             "default": 3,
+             "description":"Number of classes for the final 'class' attribute"
+           },
+           "rows":{
+             "type":"integer",
+             "minimum":1,
+             "description":"Number of rows to include in synthetic datasource"
+           },
+           "sparsity":{
+             "type":"number",
+             "minimum":0,
+             "maximum":1,
+             "default": 0.0,
+             "description":"Fraction of rows that will have a value of zero for each numeric field"
+           }
+         },
+         "required":[
+           "fields", "rows"
+         ],
+         "additionalProperties": false,
+         "description":"Parameters for controlling the creation of generated data for use with kind 'synthetic'"
+       },
        "head":{
          "type":"string",
          "description":"First blocks of decoded data"
@@ -271,7 +342,7 @@
        "kind":{
          "type":"string" ,
          "enum":[
-           "internal", "inline", "clone", "file", "external"
+           "internal", "inline", "synthetic", "clone", "file", "external"
          ],
          "description":"The kind of this message's body"
        },

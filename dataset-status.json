@@ -1,0 +1,123 @@
+{
+ "type":"object",
+ "properties":{
+   "status":{
+     "type":"object",
+     "properties":{
+       "byte_count":{
+         "type":"integer",
+         "minimum":0,
+         "description":"Number of source bytes processed so far"
+       },
+       "elapsed_time":{
+         "type":"integer",
+         "description":"Milliseconds spent in construction so far"
+       },
+       "elapsed_times":{
+         "type":"object",
+         "properties":{
+           "in-progress":{
+             "type":"integer"
+           },
+           "queued":{
+             "type":"integer"
+           },
+           "started":{
+             "type":"integer"
+           },
+           "summarized":{
+             "type":"integer"
+           }
+         },
+         "required":[
+           "queued"
+         ],
+         "additionalProperties": false,
+         "description":"Amounts of time in non-terminal states"
+       },
+       "field_errors":{
+         "type":"object",
+         "properties":{
+           "sample":{
+             "type":"array" ,
+             "items":{
+               "type":"array" ,
+               "items":{
+                 "anyOf":[
+                   {
+                     "type":"integer"
+                   },
+                   {
+                     "type":"string"
+                   }
+                 ]
+               }
+             },
+             "description":"A sampling of the ill-formatted token"
+           },
+           "total":{
+             "type":"integer",
+             "description":"Information about ill-formatted fields The total format errors for the field"
+           }
+         },
+         "description":"Information about ill-formatted fields"
+       },
+       "kind":{
+         "type":"string" ,
+         "enum":[
+           "dataset"
+         ],
+         "description":"The kind of this message's body"
+       },
+       "last_update":{
+         "type":"integer",
+         "description":"Date for the last status update"
+       },
+       "progress":{
+         "type":"number",
+         "minimum":0,
+         "maximum":1,
+         "description":"0-1 Progress towards completion"
+       },
+       "row_format_errors":{
+         "type":"object",
+         "properties":{
+           "sample":{
+             "type":"array" ,
+             "items":{
+               "type":"array" ,
+               "items":{
+                 "type":"string"
+               }
+             }
+           },
+           "total":{
+             "type":"integer",
+             "description":"Information about ill-formatted rows"
+           }
+         },
+         "additionalProperties": false,
+         "description":"Information about ill-formatted rows"
+       },
+       "serialized_rows":{
+         "type":"integer",
+         "minimum":0,
+         "description":"Number of datasource rows serialized so far"
+       },
+       "status":{
+         "type":"string" ,
+         "enum":[
+           "started", "error", "queued", "summarized", "in-progress", "finished"
+         ]
+       }
+     },
+     "required":[
+       "byte_count", "kind", "status"
+     ]
+   }
+ },
+ "required":[
+   "status"
+ ],
+ "additionalProperties": false
+}
