@@ -88,6 +88,10 @@
              "minimum":0,
              "description":"Probability of correctness for classification and an estimate of the error for regression (single model only)"
            },
+           "confidence_bounds":{
+             "type":"object",
+             "description":"Prediction confidence bounds"
+           },
            "confidence_values":{
              "type":"boolean",
              "description":"Include confidences in multi-inputs results"
@@ -272,6 +276,13 @@
                            ],
                            "default": true,
                            "description":"Whether the field is used by default for model creation"
+                         },
+                         "provenance":{
+                           "type":"string" ,
+                           "enum":[
+                             "forecast", "confidence", "flatline", "probability", "query", "forecast_timestamp", "vote_count", "vote", "forecast_upper_bound", "datetime", "prediction", "anomaly_score", "projection", "forecast_trend", "topic_distribution", "forecast_level", "forecast_seasonality", "forecast_lower_bound", "centroid", "batch_input", "importance", "node"
+                           ],
+                           "description":"Field value origin (when the value is generated)"
                          },
                          "summary":{
                            "type":"object",
@@ -489,6 +500,13 @@
                            "default": true,
                            "description":"Whether the field is used by default for model creation"
                          },
+                         "provenance":{
+                           "type":"string" ,
+                           "enum":[
+                             "forecast", "confidence", "flatline", "probability", "query", "forecast_timestamp", "vote_count", "vote", "forecast_upper_bound", "datetime", "prediction", "anomaly_score", "projection", "forecast_trend", "topic_distribution", "forecast_level", "forecast_seasonality", "forecast_lower_bound", "centroid", "batch_input", "importance", "node"
+                           ],
+                           "description":"Field value origin (when the value is generated)"
+                         },
                          "summary":{
                            "type":"object",
                            "properties":{
@@ -524,6 +542,10 @@
                          "term_analysis":{
                            "type":"object",
                            "properties":{
+                             "bigrams":{
+                               "type":"boolean",
+                               "description":"Allow terms to be bigrams"
+                             },
                              "case_sensitive":{
                                "anyOf":[
                                  {
@@ -537,7 +559,7 @@
                              },
                              "enabled":{
                                "type":"boolean",
-                               "description":"Enable/disables term analysis for this field"
+                               "description":"Enable/disables term analysis for this field.  Has no effect except for dataset creation."
                              },
                              "excluded_terms":{
                                "anyOf":[
@@ -561,12 +583,17 @@
                                  {
                                    "type":"string" ,
                                    "enum":[
-                                     "nl", "pt", "en", "none", "ca", "fr", "de", "es"
+                                     "nl", "pt", "en", "none", "zh", "ro", "tr", "it", "fa", "pl", "fi", "ca", "sv", "fr", "da", "hu", "de", "ru", "es", "ja", "cs", "ar", "ko"
                                    ]
                                  }
                                ],
                                "default": "none",
                                "description":"Language code for detected language, or 'none' for no detection, or nil to let us detect it."
+                             },
+                             "ngrams":{
+                               "type":"integer",
+                               "minimum":1,
+                               "description":"The maximum length of consecutive tokens to consider as terms"
                              },
                              "stem_words":{
                                "anyOf":[
@@ -578,6 +605,58 @@
                                  }
                                ],
                                "description":"Defines whether the term analysis stems words"
+                             },
+                             "stopword_diligence":{
+                               "anyOf":[
+                                 {
+                                   "type":"null"
+                                 },
+                                 {
+                                   "type":"string" ,
+                                   "enum":[
+                                     "light", "aggressive", "normal"
+                                   ]
+                                 }
+                               ],
+                               "description":"Defines whether the term analysis uses stop words"
+                             },
+                             "stopword_removal":{
+                               "type":"string" ,
+                               "enum":[
+                                 "none", "all_languages", "selected_language"
+                               ],
+                               "description":"Remove words that are stopwords in any language."
+                             },
+                             "term_filters":{
+                               "anyOf":[
+                                 {
+                                   "type":"null"
+                                 },
+                                 {
+                                   "type":"array" ,
+                                   "items":{
+                                     "type":"string" ,
+                                     "enum":[
+                                       "numeric_digits", "non_dictionary", "non_language_characters", "single_tokens", "html_keywords"
+                                     ]
+                                   }
+                                 }
+                               ],
+                               "description":"A list of filters to apply when choosing the termset"
+                             },
+                             "term_regexps":{
+                               "anyOf":[
+                                 {
+                                   "type":"null"
+                                 },
+                                 {
+                                   "type":"array" ,
+                                   "items":{
+                                     "type":"string"
+                                   }
+                                 }
+                               ],
+                               "description":"A list of regular expressions to consider as terms"
                              },
                              "token_mode":{
                                "type":"string" ,
@@ -676,6 +755,13 @@
                            ],
                            "default": true,
                            "description":"Whether the field is used by default for model creation"
+                         },
+                         "provenance":{
+                           "type":"string" ,
+                           "enum":[
+                             "forecast", "confidence", "flatline", "probability", "query", "forecast_timestamp", "vote_count", "vote", "forecast_upper_bound", "datetime", "prediction", "anomaly_score", "projection", "forecast_trend", "topic_distribution", "forecast_level", "forecast_seasonality", "forecast_lower_bound", "centroid", "batch_input", "importance", "node"
+                           ],
+                           "description":"Field value origin (when the value is generated)"
                          },
                          "summary":{
                            "type":"object",
@@ -844,6 +930,13 @@
                            "default": true,
                            "description":"Whether the field is used by default for model creation"
                          },
+                         "provenance":{
+                           "type":"string" ,
+                           "enum":[
+                             "forecast", "confidence", "flatline", "probability", "query", "forecast_timestamp", "vote_count", "vote", "forecast_upper_bound", "datetime", "prediction", "anomaly_score", "projection", "forecast_trend", "topic_distribution", "forecast_level", "forecast_seasonality", "forecast_lower_bound", "centroid", "batch_input", "importance", "node"
+                           ],
+                           "description":"Field value origin (when the value is generated)"
+                         },
                          "summary":{
                            "type":"object",
                            "properties":{
@@ -945,6 +1038,13 @@
                            "default": true,
                            "description":"Whether the field is used by default for model creation"
                          },
+                         "provenance":{
+                           "type":"string" ,
+                           "enum":[
+                             "forecast", "confidence", "flatline", "probability", "query", "forecast_timestamp", "vote_count", "vote", "forecast_upper_bound", "datetime", "prediction", "anomaly_score", "projection", "forecast_trend", "topic_distribution", "forecast_level", "forecast_seasonality", "forecast_lower_bound", "centroid", "batch_input", "importance", "node"
+                           ],
+                           "description":"Field value origin (when the value is generated)"
+                         },
                          "summary":{
                            "type":"object",
                            "properties":{
@@ -972,6 +1072,10 @@
                          "term_analysis":{
                            "type":"object",
                            "properties":{
+                             "bigrams":{
+                               "type":"boolean",
+                               "description":"Allow terms to be bigrams"
+                             },
                              "case_sensitive":{
                                "anyOf":[
                                  {
@@ -985,7 +1089,7 @@
                              },
                              "enabled":{
                                "type":"boolean",
-                               "description":"Enable/disables term analysis for this field"
+                               "description":"Enable/disables term analysis for this field.  Has no effect except for dataset creation."
                              },
                              "excluded_terms":{
                                "anyOf":[
@@ -1009,12 +1113,17 @@
                                  {
                                    "type":"string" ,
                                    "enum":[
-                                     "nl", "pt", "en", "none", "ca", "fr", "de", "es"
+                                     "nl", "pt", "en", "none", "zh", "ro", "tr", "it", "fa", "pl", "fi", "ca", "sv", "fr", "da", "hu", "de", "ru", "es", "ja", "cs", "ar", "ko"
                                    ]
                                  }
                                ],
                                "default": "none",
                                "description":"Language code for detected language, or 'none' for no detection, or nil to let us detect it."
+                             },
+                             "ngrams":{
+                               "type":"integer",
+                               "minimum":1,
+                               "description":"The maximum length of consecutive tokens to consider as terms"
                              },
                              "stem_words":{
                                "anyOf":[
@@ -1026,6 +1135,58 @@
                                  }
                                ],
                                "description":"Defines whether the term analysis stems words"
+                             },
+                             "stopword_diligence":{
+                               "anyOf":[
+                                 {
+                                   "type":"null"
+                                 },
+                                 {
+                                   "type":"string" ,
+                                   "enum":[
+                                     "light", "aggressive", "normal"
+                                   ]
+                                 }
+                               ],
+                               "description":"Defines whether the term analysis uses stop words"
+                             },
+                             "stopword_removal":{
+                               "type":"string" ,
+                               "enum":[
+                                 "none", "all_languages", "selected_language"
+                               ],
+                               "description":"Remove words that are stopwords in any language."
+                             },
+                             "term_filters":{
+                               "anyOf":[
+                                 {
+                                   "type":"null"
+                                 },
+                                 {
+                                   "type":"array" ,
+                                   "items":{
+                                     "type":"string" ,
+                                     "enum":[
+                                       "numeric_digits", "non_dictionary", "non_language_characters", "single_tokens", "html_keywords"
+                                     ]
+                                   }
+                                 }
+                               ],
+                               "description":"A list of filters to apply when choosing the termset"
+                             },
+                             "term_regexps":{
+                               "anyOf":[
+                                 {
+                                   "type":"null"
+                                 },
+                                 {
+                                   "type":"array" ,
+                                   "items":{
+                                     "type":"string"
+                                   }
+                                 }
+                               ],
+                               "description":"A list of regular expressions to consider as terms"
                              },
                              "token_mode":{
                                "type":"string" ,
@@ -1063,17 +1224,33 @@
            "fields_maps":{
              "type":"array" ,
              "items":{
-               "type":"array" ,
-               "items":[
+               "anyOf":[
                  {
-                   "type":"string"
+                   "anyOf":[
+                     {
+                       "type":"null"
+                     },
+                     {
+                       "type":"object",
+                       "additionalProperties": false
+                     }
+                   ]
                  },
                  {
-                   "type":"object"
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"string"
+                     },
+                     {
+                       "type":"object",
+                       "additionalProperties": false
+                     }
+                   ]
                  }
                ]
              },
-             "description":"List of two-element arrays, where the first is a model ID and the second is a field map; to be used with model_id"
+             "description":"List of maps per dataset in dataset_ids"
            },
            "input_values":{
              "type":"boolean",
@@ -1082,7 +1259,7 @@
            "inputs":{
              "type":"object",
              "additionalProperties": false,
-             "description":"Map of inputs to use for the prediction"
+             "description":"Prediction inputs"
            },
            "missing_strategies":{
              "type":"array" ,
@@ -1107,6 +1284,7 @@
              "enum":[
                "last_prediction", "proportional"
              ],
+             "default": "last_prediction",
              "description":"A missing strategy to supplant that of all models"
            },
            "model_id":{
@@ -1323,7 +1501,7 @@
                "threshold"
              ],
              "additionalProperties": false,
-             "description":"An operating point to perform predictions based on a threshold"
+             "description":"An operating point for performing the prediction"
            },
            "operating_points":{
              "type":"array" ,
@@ -1469,8 +1647,15 @@
                      "type":"object",
                      "properties":{
                        "confidence":{
-                         "type":"number",
-                         "minimum":0,
+                         "anyOf":[
+                           {
+                             "type":"null"
+                           },
+                           {
+                             "type":"number",
+                             "minimum":0
+                           }
+                         ],
                          "description":"Probability of correctness for and an estimate of the error for regression"
                        },
                        "count":{
@@ -1770,6 +1955,10 @@
              "minimum":0,
              "description":"Probability of correctness for classification and an estimate of the error for regression (single model only)"
            },
+           "confidence_bounds":{
+             "type":"object",
+             "description":"Prediction confidence bounds"
+           },
            "confidence_values":{
              "type":"boolean",
              "description":"Include confidences in multi-inputs results"
@@ -1954,6 +2143,13 @@
                            ],
                            "default": true,
                            "description":"Whether the field is used by default for model creation"
+                         },
+                         "provenance":{
+                           "type":"string" ,
+                           "enum":[
+                             "forecast", "confidence", "flatline", "probability", "query", "forecast_timestamp", "vote_count", "vote", "forecast_upper_bound", "datetime", "prediction", "anomaly_score", "projection", "forecast_trend", "topic_distribution", "forecast_level", "forecast_seasonality", "forecast_lower_bound", "centroid", "batch_input", "importance", "node"
+                           ],
+                           "description":"Field value origin (when the value is generated)"
                          },
                          "summary":{
                            "type":"object",
@@ -2171,6 +2367,13 @@
                            "default": true,
                            "description":"Whether the field is used by default for model creation"
                          },
+                         "provenance":{
+                           "type":"string" ,
+                           "enum":[
+                             "forecast", "confidence", "flatline", "probability", "query", "forecast_timestamp", "vote_count", "vote", "forecast_upper_bound", "datetime", "prediction", "anomaly_score", "projection", "forecast_trend", "topic_distribution", "forecast_level", "forecast_seasonality", "forecast_lower_bound", "centroid", "batch_input", "importance", "node"
+                           ],
+                           "description":"Field value origin (when the value is generated)"
+                         },
                          "summary":{
                            "type":"object",
                            "properties":{
@@ -2206,6 +2409,10 @@
                          "term_analysis":{
                            "type":"object",
                            "properties":{
+                             "bigrams":{
+                               "type":"boolean",
+                               "description":"Allow terms to be bigrams"
+                             },
                              "case_sensitive":{
                                "anyOf":[
                                  {
@@ -2219,7 +2426,7 @@
                              },
                              "enabled":{
                                "type":"boolean",
-                               "description":"Enable/disables term analysis for this field"
+                               "description":"Enable/disables term analysis for this field.  Has no effect except for dataset creation."
                              },
                              "excluded_terms":{
                                "anyOf":[
@@ -2243,12 +2450,17 @@
                                  {
                                    "type":"string" ,
                                    "enum":[
-                                     "nl", "pt", "en", "none", "ca", "fr", "de", "es"
+                                     "nl", "pt", "en", "none", "zh", "ro", "tr", "it", "fa", "pl", "fi", "ca", "sv", "fr", "da", "hu", "de", "ru", "es", "ja", "cs", "ar", "ko"
                                    ]
                                  }
                                ],
                                "default": "none",
                                "description":"Language code for detected language, or 'none' for no detection, or nil to let us detect it."
+                             },
+                             "ngrams":{
+                               "type":"integer",
+                               "minimum":1,
+                               "description":"The maximum length of consecutive tokens to consider as terms"
                              },
                              "stem_words":{
                                "anyOf":[
@@ -2260,6 +2472,58 @@
                                  }
                                ],
                                "description":"Defines whether the term analysis stems words"
+                             },
+                             "stopword_diligence":{
+                               "anyOf":[
+                                 {
+                                   "type":"null"
+                                 },
+                                 {
+                                   "type":"string" ,
+                                   "enum":[
+                                     "light", "aggressive", "normal"
+                                   ]
+                                 }
+                               ],
+                               "description":"Defines whether the term analysis uses stop words"
+                             },
+                             "stopword_removal":{
+                               "type":"string" ,
+                               "enum":[
+                                 "none", "all_languages", "selected_language"
+                               ],
+                               "description":"Remove words that are stopwords in any language."
+                             },
+                             "term_filters":{
+                               "anyOf":[
+                                 {
+                                   "type":"null"
+                                 },
+                                 {
+                                   "type":"array" ,
+                                   "items":{
+                                     "type":"string" ,
+                                     "enum":[
+                                       "numeric_digits", "non_dictionary", "non_language_characters", "single_tokens", "html_keywords"
+                                     ]
+                                   }
+                                 }
+                               ],
+                               "description":"A list of filters to apply when choosing the termset"
+                             },
+                             "term_regexps":{
+                               "anyOf":[
+                                 {
+                                   "type":"null"
+                                 },
+                                 {
+                                   "type":"array" ,
+                                   "items":{
+                                     "type":"string"
+                                   }
+                                 }
+                               ],
+                               "description":"A list of regular expressions to consider as terms"
                              },
                              "token_mode":{
                                "type":"string" ,
@@ -2358,6 +2622,13 @@
                            ],
                            "default": true,
                            "description":"Whether the field is used by default for model creation"
+                         },
+                         "provenance":{
+                           "type":"string" ,
+                           "enum":[
+                             "forecast", "confidence", "flatline", "probability", "query", "forecast_timestamp", "vote_count", "vote", "forecast_upper_bound", "datetime", "prediction", "anomaly_score", "projection", "forecast_trend", "topic_distribution", "forecast_level", "forecast_seasonality", "forecast_lower_bound", "centroid", "batch_input", "importance", "node"
+                           ],
+                           "description":"Field value origin (when the value is generated)"
                          },
                          "summary":{
                            "type":"object",
@@ -2526,6 +2797,13 @@
                            "default": true,
                            "description":"Whether the field is used by default for model creation"
                          },
+                         "provenance":{
+                           "type":"string" ,
+                           "enum":[
+                             "forecast", "confidence", "flatline", "probability", "query", "forecast_timestamp", "vote_count", "vote", "forecast_upper_bound", "datetime", "prediction", "anomaly_score", "projection", "forecast_trend", "topic_distribution", "forecast_level", "forecast_seasonality", "forecast_lower_bound", "centroid", "batch_input", "importance", "node"
+                           ],
+                           "description":"Field value origin (when the value is generated)"
+                         },
                          "summary":{
                            "type":"object",
                            "properties":{
@@ -2627,6 +2905,13 @@
                            "default": true,
                            "description":"Whether the field is used by default for model creation"
                          },
+                         "provenance":{
+                           "type":"string" ,
+                           "enum":[
+                             "forecast", "confidence", "flatline", "probability", "query", "forecast_timestamp", "vote_count", "vote", "forecast_upper_bound", "datetime", "prediction", "anomaly_score", "projection", "forecast_trend", "topic_distribution", "forecast_level", "forecast_seasonality", "forecast_lower_bound", "centroid", "batch_input", "importance", "node"
+                           ],
+                           "description":"Field value origin (when the value is generated)"
+                         },
                          "summary":{
                            "type":"object",
                            "properties":{
@@ -2654,6 +2939,10 @@
                          "term_analysis":{
                            "type":"object",
                            "properties":{
+                             "bigrams":{
+                               "type":"boolean",
+                               "description":"Allow terms to be bigrams"
+                             },
                              "case_sensitive":{
                                "anyOf":[
                                  {
@@ -2667,7 +2956,7 @@
                              },
                              "enabled":{
                                "type":"boolean",
-                               "description":"Enable/disables term analysis for this field"
+                               "description":"Enable/disables term analysis for this field.  Has no effect except for dataset creation."
                              },
                              "excluded_terms":{
                                "anyOf":[
@@ -2691,12 +2980,17 @@
                                  {
                                    "type":"string" ,
                                    "enum":[
-                                     "nl", "pt", "en", "none", "ca", "fr", "de", "es"
+                                     "nl", "pt", "en", "none", "zh", "ro", "tr", "it", "fa", "pl", "fi", "ca", "sv", "fr", "da", "hu", "de", "ru", "es", "ja", "cs", "ar", "ko"
                                    ]
                                  }
                                ],
                                "default": "none",
                                "description":"Language code for detected language, or 'none' for no detection, or nil to let us detect it."
+                             },
+                             "ngrams":{
+                               "type":"integer",
+                               "minimum":1,
+                               "description":"The maximum length of consecutive tokens to consider as terms"
                              },
                              "stem_words":{
                                "anyOf":[
@@ -2708,6 +3002,58 @@
                                  }
                                ],
                                "description":"Defines whether the term analysis stems words"
+                             },
+                             "stopword_diligence":{
+                               "anyOf":[
+                                 {
+                                   "type":"null"
+                                 },
+                                 {
+                                   "type":"string" ,
+                                   "enum":[
+                                     "light", "aggressive", "normal"
+                                   ]
+                                 }
+                               ],
+                               "description":"Defines whether the term analysis uses stop words"
+                             },
+                             "stopword_removal":{
+                               "type":"string" ,
+                               "enum":[
+                                 "none", "all_languages", "selected_language"
+                               ],
+                               "description":"Remove words that are stopwords in any language."
+                             },
+                             "term_filters":{
+                               "anyOf":[
+                                 {
+                                   "type":"null"
+                                 },
+                                 {
+                                   "type":"array" ,
+                                   "items":{
+                                     "type":"string" ,
+                                     "enum":[
+                                       "numeric_digits", "non_dictionary", "non_language_characters", "single_tokens", "html_keywords"
+                                     ]
+                                   }
+                                 }
+                               ],
+                               "description":"A list of filters to apply when choosing the termset"
+                             },
+                             "term_regexps":{
+                               "anyOf":[
+                                 {
+                                   "type":"null"
+                                 },
+                                 {
+                                   "type":"array" ,
+                                   "items":{
+                                     "type":"string"
+                                   }
+                                 }
+                               ],
+                               "description":"A list of regular expressions to consider as terms"
                              },
                              "token_mode":{
                                "type":"string" ,
@@ -2745,17 +3091,33 @@
            "fields_maps":{
              "type":"array" ,
              "items":{
-               "type":"array" ,
-               "items":[
+               "anyOf":[
                  {
-                   "type":"string"
+                   "anyOf":[
+                     {
+                       "type":"null"
+                     },
+                     {
+                       "type":"object",
+                       "additionalProperties": false
+                     }
+                   ]
                  },
                  {
-                   "type":"object"
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"string"
+                     },
+                     {
+                       "type":"object",
+                       "additionalProperties": false
+                     }
+                   ]
                  }
                ]
              },
-             "description":"List of two-element arrays, where the first is a model ID and the second is a field map; to be used with model_id"
+             "description":"List of maps per dataset in dataset_ids"
            },
            "input_values":{
              "type":"boolean",
@@ -2823,6 +3185,7 @@
              "enum":[
                "last_prediction", "proportional"
              ],
+             "default": "last_prediction",
              "description":"A missing strategy to supplant that of all models"
            },
            "model_id":{
@@ -3039,7 +3402,7 @@
                "threshold"
              ],
              "additionalProperties": false,
-             "description":"An operating point to perform predictions based on a threshold"
+             "description":"An operating point for performing the prediction"
            },
            "operating_points":{
              "type":"array" ,
@@ -3185,8 +3548,15 @@
                      "type":"object",
                      "properties":{
                        "confidence":{
-                         "type":"number",
-                         "minimum":0,
+                         "anyOf":[
+                           {
+                             "type":"null"
+                           },
+                           {
+                             "type":"number",
+                             "minimum":0
+                           }
+                         ],
                          "description":"Probability of correctness for and an estimate of the error for regression"
                        },
                        "count":{
@@ -3493,6 +3863,10 @@
              "minimum":0,
              "description":"Probability of correctness for classification and an estimate of the error for regression (single model only)"
            },
+           "confidence_bounds":{
+             "type":"object",
+             "description":"Prediction confidence bounds"
+           },
            "confidence_values":{
              "type":"boolean",
              "description":"Include confidences in multi-inputs results"
@@ -3677,6 +4051,13 @@
                            ],
                            "default": true,
                            "description":"Whether the field is used by default for model creation"
+                         },
+                         "provenance":{
+                           "type":"string" ,
+                           "enum":[
+                             "forecast", "confidence", "flatline", "probability", "query", "forecast_timestamp", "vote_count", "vote", "forecast_upper_bound", "datetime", "prediction", "anomaly_score", "projection", "forecast_trend", "topic_distribution", "forecast_level", "forecast_seasonality", "forecast_lower_bound", "centroid", "batch_input", "importance", "node"
+                           ],
+                           "description":"Field value origin (when the value is generated)"
                          },
                          "summary":{
                            "type":"object",
@@ -3894,6 +4275,13 @@
                            "default": true,
                            "description":"Whether the field is used by default for model creation"
                          },
+                         "provenance":{
+                           "type":"string" ,
+                           "enum":[
+                             "forecast", "confidence", "flatline", "probability", "query", "forecast_timestamp", "vote_count", "vote", "forecast_upper_bound", "datetime", "prediction", "anomaly_score", "projection", "forecast_trend", "topic_distribution", "forecast_level", "forecast_seasonality", "forecast_lower_bound", "centroid", "batch_input", "importance", "node"
+                           ],
+                           "description":"Field value origin (when the value is generated)"
+                         },
                          "summary":{
                            "type":"object",
                            "properties":{
@@ -3929,6 +4317,10 @@
                          "term_analysis":{
                            "type":"object",
                            "properties":{
+                             "bigrams":{
+                               "type":"boolean",
+                               "description":"Allow terms to be bigrams"
+                             },
                              "case_sensitive":{
                                "anyOf":[
                                  {
@@ -3942,7 +4334,7 @@
                              },
                              "enabled":{
                                "type":"boolean",
-                               "description":"Enable/disables term analysis for this field"
+                               "description":"Enable/disables term analysis for this field.  Has no effect except for dataset creation."
                              },
                              "excluded_terms":{
                                "anyOf":[
@@ -3966,12 +4358,17 @@
                                  {
                                    "type":"string" ,
                                    "enum":[
-                                     "nl", "pt", "en", "none", "ca", "fr", "de", "es"
+                                     "nl", "pt", "en", "none", "zh", "ro", "tr", "it", "fa", "pl", "fi", "ca", "sv", "fr", "da", "hu", "de", "ru", "es", "ja", "cs", "ar", "ko"
                                    ]
                                  }
                                ],
                                "default": "none",
                                "description":"Language code for detected language, or 'none' for no detection, or nil to let us detect it."
+                             },
+                             "ngrams":{
+                               "type":"integer",
+                               "minimum":1,
+                               "description":"The maximum length of consecutive tokens to consider as terms"
                              },
                              "stem_words":{
                                "anyOf":[
@@ -3983,6 +4380,58 @@
                                  }
                                ],
                                "description":"Defines whether the term analysis stems words"
+                             },
+                             "stopword_diligence":{
+                               "anyOf":[
+                                 {
+                                   "type":"null"
+                                 },
+                                 {
+                                   "type":"string" ,
+                                   "enum":[
+                                     "light", "aggressive", "normal"
+                                   ]
+                                 }
+                               ],
+                               "description":"Defines whether the term analysis uses stop words"
+                             },
+                             "stopword_removal":{
+                               "type":"string" ,
+                               "enum":[
+                                 "none", "all_languages", "selected_language"
+                               ],
+                               "description":"Remove words that are stopwords in any language."
+                             },
+                             "term_filters":{
+                               "anyOf":[
+                                 {
+                                   "type":"null"
+                                 },
+                                 {
+                                   "type":"array" ,
+                                   "items":{
+                                     "type":"string" ,
+                                     "enum":[
+                                       "numeric_digits", "non_dictionary", "non_language_characters", "single_tokens", "html_keywords"
+                                     ]
+                                   }
+                                 }
+                               ],
+                               "description":"A list of filters to apply when choosing the termset"
+                             },
+                             "term_regexps":{
+                               "anyOf":[
+                                 {
+                                   "type":"null"
+                                 },
+                                 {
+                                   "type":"array" ,
+                                   "items":{
+                                     "type":"string"
+                                   }
+                                 }
+                               ],
+                               "description":"A list of regular expressions to consider as terms"
                              },
                              "token_mode":{
                                "type":"string" ,
@@ -4081,6 +4530,13 @@
                            ],
                            "default": true,
                            "description":"Whether the field is used by default for model creation"
+                         },
+                         "provenance":{
+                           "type":"string" ,
+                           "enum":[
+                             "forecast", "confidence", "flatline", "probability", "query", "forecast_timestamp", "vote_count", "vote", "forecast_upper_bound", "datetime", "prediction", "anomaly_score", "projection", "forecast_trend", "topic_distribution", "forecast_level", "forecast_seasonality", "forecast_lower_bound", "centroid", "batch_input", "importance", "node"
+                           ],
+                           "description":"Field value origin (when the value is generated)"
                          },
                          "summary":{
                            "type":"object",
@@ -4249,6 +4705,13 @@
                            "default": true,
                            "description":"Whether the field is used by default for model creation"
                          },
+                         "provenance":{
+                           "type":"string" ,
+                           "enum":[
+                             "forecast", "confidence", "flatline", "probability", "query", "forecast_timestamp", "vote_count", "vote", "forecast_upper_bound", "datetime", "prediction", "anomaly_score", "projection", "forecast_trend", "topic_distribution", "forecast_level", "forecast_seasonality", "forecast_lower_bound", "centroid", "batch_input", "importance", "node"
+                           ],
+                           "description":"Field value origin (when the value is generated)"
+                         },
                          "summary":{
                            "type":"object",
                            "properties":{
@@ -4350,6 +4813,13 @@
                            "default": true,
                            "description":"Whether the field is used by default for model creation"
                          },
+                         "provenance":{
+                           "type":"string" ,
+                           "enum":[
+                             "forecast", "confidence", "flatline", "probability", "query", "forecast_timestamp", "vote_count", "vote", "forecast_upper_bound", "datetime", "prediction", "anomaly_score", "projection", "forecast_trend", "topic_distribution", "forecast_level", "forecast_seasonality", "forecast_lower_bound", "centroid", "batch_input", "importance", "node"
+                           ],
+                           "description":"Field value origin (when the value is generated)"
+                         },
                          "summary":{
                            "type":"object",
                            "properties":{
@@ -4377,6 +4847,10 @@
                          "term_analysis":{
                            "type":"object",
                            "properties":{
+                             "bigrams":{
+                               "type":"boolean",
+                               "description":"Allow terms to be bigrams"
+                             },
                              "case_sensitive":{
                                "anyOf":[
                                  {
@@ -4390,7 +4864,7 @@
                              },
                              "enabled":{
                                "type":"boolean",
-                               "description":"Enable/disables term analysis for this field"
+                               "description":"Enable/disables term analysis for this field.  Has no effect except for dataset creation."
                              },
                              "excluded_terms":{
                                "anyOf":[
@@ -4414,12 +4888,17 @@
                                  {
                                    "type":"string" ,
                                    "enum":[
-                                     "nl", "pt", "en", "none", "ca", "fr", "de", "es"
+                                     "nl", "pt", "en", "none", "zh", "ro", "tr", "it", "fa", "pl", "fi", "ca", "sv", "fr", "da", "hu", "de", "ru", "es", "ja", "cs", "ar", "ko"
                                    ]
                                  }
                                ],
                                "default": "none",
                                "description":"Language code for detected language, or 'none' for no detection, or nil to let us detect it."
+                             },
+                             "ngrams":{
+                               "type":"integer",
+                               "minimum":1,
+                               "description":"The maximum length of consecutive tokens to consider as terms"
                              },
                              "stem_words":{
                                "anyOf":[
@@ -4431,6 +4910,58 @@
                                  }
                                ],
                                "description":"Defines whether the term analysis stems words"
+                             },
+                             "stopword_diligence":{
+                               "anyOf":[
+                                 {
+                                   "type":"null"
+                                 },
+                                 {
+                                   "type":"string" ,
+                                   "enum":[
+                                     "light", "aggressive", "normal"
+                                   ]
+                                 }
+                               ],
+                               "description":"Defines whether the term analysis uses stop words"
+                             },
+                             "stopword_removal":{
+                               "type":"string" ,
+                               "enum":[
+                                 "none", "all_languages", "selected_language"
+                               ],
+                               "description":"Remove words that are stopwords in any language."
+                             },
+                             "term_filters":{
+                               "anyOf":[
+                                 {
+                                   "type":"null"
+                                 },
+                                 {
+                                   "type":"array" ,
+                                   "items":{
+                                     "type":"string" ,
+                                     "enum":[
+                                       "numeric_digits", "non_dictionary", "non_language_characters", "single_tokens", "html_keywords"
+                                     ]
+                                   }
+                                 }
+                               ],
+                               "description":"A list of filters to apply when choosing the termset"
+                             },
+                             "term_regexps":{
+                               "anyOf":[
+                                 {
+                                   "type":"null"
+                                 },
+                                 {
+                                   "type":"array" ,
+                                   "items":{
+                                     "type":"string"
+                                   }
+                                 }
+                               ],
+                               "description":"A list of regular expressions to consider as terms"
                              },
                              "token_mode":{
                                "type":"string" ,
@@ -4468,17 +4999,33 @@
            "fields_maps":{
              "type":"array" ,
              "items":{
-               "type":"array" ,
-               "items":[
+               "anyOf":[
                  {
-                   "type":"string"
+                   "anyOf":[
+                     {
+                       "type":"null"
+                     },
+                     {
+                       "type":"object",
+                       "additionalProperties": false
+                     }
+                   ]
                  },
                  {
-                   "type":"object"
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"string"
+                     },
+                     {
+                       "type":"object",
+                       "additionalProperties": false
+                     }
+                   ]
                  }
                ]
              },
-             "description":"List of two-element arrays, where the first is a model ID and the second is a field map; to be used with model_id"
+             "description":"List of maps per dataset in dataset_ids"
            },
            "input_values":{
              "type":"boolean",
@@ -4535,6 +5082,7 @@
              "enum":[
                "last_prediction", "proportional"
              ],
+             "default": "last_prediction",
              "description":"A missing strategy to supplant that of all models"
            },
            "model_id":{
@@ -4751,7 +5299,7 @@
                "threshold"
              ],
              "additionalProperties": false,
-             "description":"An operating point to perform predictions based on a threshold"
+             "description":"An operating point for performing the prediction"
            },
            "operating_points":{
              "type":"array" ,
@@ -4897,8 +5445,15 @@
                      "type":"object",
                      "properties":{
                        "confidence":{
-                         "type":"number",
-                         "minimum":0,
+                         "anyOf":[
+                           {
+                             "type":"null"
+                           },
+                           {
+                             "type":"number",
+                             "minimum":0
+                           }
+                         ],
                          "description":"Probability of correctness for and an estimate of the error for regression"
                        },
                        "count":{

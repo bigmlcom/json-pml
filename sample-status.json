@@ -30,6 +30,42 @@
          "additionalProperties": false,
          "description":"Amounts of time in non-terminal states"
        },
+       "errors":{
+         "type":"array" ,
+         "items":{
+           "type":"object",
+           "properties":{
+             "code":{
+               "type":"integer",
+               "description":"Error code"
+             },
+             "error":{
+               "type":"string",
+               "description":"Error descriptor"
+             },
+             "info":{
+               "type":"string",
+               "description":"Additional error information"
+             },
+             "message":{
+               "type":"string",
+               "description":"Error message"
+             },
+             "trace":{
+               "type":"array" ,
+               "items":{
+                 "type":"string"
+               },
+               "description":"Error trace"
+             }
+           },
+           "required":[
+             "code", "error", "info", "message", "trace"
+           ],
+           "additionalProperties": false
+         },
+         "description":"Errors"
+       },
        "kind":{
          "type":"string" ,
          "enum":[

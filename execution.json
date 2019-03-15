@@ -25,7 +25,7 @@
          "type":"object",
          "description":"A dictionary providing default values for resource updates set by apian"
        },
-       "apian_ur":{
+       "apian_uri":{
          "type":"string",
          "description":"The base URI to which API requests should go."
        },
@@ -277,13 +277,191 @@
              "type":"string"
            },
            {
+             "type":"object",
+             "properties":{
+               "imports":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"string"
+                 },
+                 "description":"List of the identifiers of libraries imported by this script."
+               },
+               "inputs":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"object",
+                   "properties":{
+                     "default":{
+                       "type":"any",
+                       "description":"Default value for the input during execution. Must match its type."
+                     },
+                     "name":{
+                       "type":"string",
+                       "description":"The input's name"
+                     },
+                     "type":{
+                       "anyOf":[
+                         {
+                           "type":"string" ,
+                           "enum":[
+                             "list-of-map", "boolean", "map", "composite-id", "batchcentroid-id", "numeric", "list", "string", "batchprediction-id", "model-id", "list-of-integer", "projection-id", "resource-id", "list-of-string", "centroid-id", "project-id", "pca-id", "sample-id", "script-id", "source-id", "library-id", "list-of-boolean", "fusion-id", "list-of-number", "items", "forecast-id", "logisticregression-id", "text", "number", "evaluation-id", "optiml-id", "statisticaltest-id", "batchanomalyscore-id", "cluster-id", "function", "integer", "topicdistribution-id", "execution-id", "dataset-id", "configuration-id", "prediction-id", "timeseries-id", "anomaly-id", "anomalyscore-id", "categorical", "ensemble-id", "batchtopicdistribution-id", "correlation-id", "associationset-id", "batchprojection-id", "association-id", "supervised-model-id", "topicmodel-id", "deepnet-id"
+                           ]
+                         },
+                         {
+                           "type":"array" ,
+                           "items":{
+                             "type":"any"
+                           }
+                         }
+                       ],
+                       "description":"The input's data type"
+                     }
+                   },
+                   "required":[
+                     "name", "type"
+                   ]
+                 },
+                 "description":"A list of inputs, with names, types and defaults."
+               },
+               "name":{
+                 "type":"string",
+                 "description":"The script's name, set by the user."
+               },
+               "origin_id":{
+                 "anyOf":[
+                   {
+                     "type":"string"
+                   },
+                   {
+                     "type":"array" ,
+                     "items":{
+                       "type":"string"
+                     }
+                   }
+                 ],
+                 "description":"The identifier of the script to be cloned, if any."
+               },
+               "outputs":{
+                 "type":"array" ,
+                 "items":{
+                   "type":"object",
+                   "properties":{
+                     "name":{
+                       "type":"string",
+                       "description":"The output variable's name"
+                     }
+                   },
+                   "required":[
+                     "name"
+                   ]
+                 },
+                 "description":"List of output values, named by variable names defined in the script"
+               },
+               "source_code":{
+                 "type":"string"
+               }
+             },
+             "additionalProperties": false
+           },
+           {
              "type":"array" ,
              "items":{
-               "type":"string"
+               "anyOf":[
+                 {
+                   "type":"string"
+                 },
+                 {
+                   "type":"object",
+                   "properties":{
+                     "imports":{
+                       "type":"array" ,
+                       "items":{
+                         "type":"string"
+                       },
+                       "description":"List of the identifiers of libraries imported by this script."
+                     },
+                     "inputs":{
+                       "type":"array" ,
+                       "items":{
+                         "type":"object",
+                         "properties":{
+                           "default":{
+                             "type":"any",
+                             "description":"Default value for the input during execution. Must match its type."
+                           },
+                           "name":{
+                             "type":"string",
+                             "description":"The input's name"
+                           },
+                           "type":{
+                             "anyOf":[
+                               {
+                                 "type":"string" ,
+                                 "enum":[
+                                   "list-of-map", "boolean", "map", "composite-id", "batchcentroid-id", "numeric", "list", "string", "batchprediction-id", "model-id", "list-of-integer", "projection-id", "resource-id", "list-of-string", "centroid-id", "project-id", "pca-id", "sample-id", "script-id", "source-id", "library-id", "list-of-boolean", "fusion-id", "list-of-number", "items", "forecast-id", "logisticregression-id", "text", "number", "evaluation-id", "optiml-id", "statisticaltest-id", "batchanomalyscore-id", "cluster-id", "function", "integer", "topicdistribution-id", "execution-id", "dataset-id", "configuration-id", "prediction-id", "timeseries-id", "anomaly-id", "anomalyscore-id", "categorical", "ensemble-id", "batchtopicdistribution-id", "correlation-id", "associationset-id", "batchprojection-id", "association-id", "supervised-model-id", "topicmodel-id", "deepnet-id"
+                                 ]
+                               },
+                               {
+                                 "type":"array" ,
+                                 "items":{
+                                   "type":"any"
+                                 }
+                               }
+                             ],
+                             "description":"The input's data type"
+                           }
+                         },
+                         "required":[
+                           "name", "type"
+                         ]
+                       },
+                       "description":"A list of inputs, with names, types and defaults."
+                     },
+                     "name":{
+                       "type":"string",
+                       "description":"The script's name, set by the user."
+                     },
+                     "origin_id":{
+                       "anyOf":[
+                         {
+                           "type":"string"
+                         },
+                         {
+                           "type":"array" ,
+                           "items":{
+                             "type":"string"
+                           }
+                         }
+                       ],
+                       "description":"The identifier of the script to be cloned, if any."
+                     },
+                     "outputs":{
+                       "type":"array" ,
+                       "items":{
+                         "type":"object",
+                         "properties":{
+                           "name":{
+                             "type":"string",
+                             "description":"The output variable's name"
+                           }
+                         },
+                         "required":[
+                           "name"
+                         ]
+                       },
+                       "description":"List of output values, named by variable names defined in the script"
+                     },
+                     "source_code":{
+                       "type":"string"
+                     }
+                   },
+                   "additionalProperties": false
+                 }
+               ]
              }
            }
          ],
-         "description":"The identifier or list of identifiers of the script to execute."
+         "description":"The identifier, list of identifiers or explicit script(s)"
        },
        "sources":{
          "type":"array" ,

@@ -215,6 +215,13 @@
                        "default": true,
                        "description":"Whether the field is used by default for model creation"
                      },
+                     "provenance":{
+                       "type":"string" ,
+                       "enum":[
+                         "forecast", "confidence", "flatline", "probability", "query", "forecast_timestamp", "vote_count", "vote", "forecast_upper_bound", "datetime", "prediction", "anomaly_score", "projection", "forecast_trend", "topic_distribution", "forecast_level", "forecast_seasonality", "forecast_lower_bound", "centroid", "batch_input", "importance", "node"
+                       ],
+                       "description":"Field value origin (when the value is generated)"
+                     },
                      "summary":{
                        "type":"object",
                        "properties":{
@@ -431,6 +438,13 @@
                        "default": true,
                        "description":"Whether the field is used by default for model creation"
                      },
+                     "provenance":{
+                       "type":"string" ,
+                       "enum":[
+                         "forecast", "confidence", "flatline", "probability", "query", "forecast_timestamp", "vote_count", "vote", "forecast_upper_bound", "datetime", "prediction", "anomaly_score", "projection", "forecast_trend", "topic_distribution", "forecast_level", "forecast_seasonality", "forecast_lower_bound", "centroid", "batch_input", "importance", "node"
+                       ],
+                       "description":"Field value origin (when the value is generated)"
+                     },
                      "summary":{
                        "type":"object",
                        "properties":{
@@ -466,6 +480,10 @@
                      "term_analysis":{
                        "type":"object",
                        "properties":{
+                         "bigrams":{
+                           "type":"boolean",
+                           "description":"Allow terms to be bigrams"
+                         },
                          "case_sensitive":{
                            "anyOf":[
                              {
@@ -479,7 +497,7 @@
                          },
                          "enabled":{
                            "type":"boolean",
-                           "description":"Enable/disables term analysis for this field"
+                           "description":"Enable/disables term analysis for this field.  Has no effect except for dataset creation."
                          },
                          "excluded_terms":{
                            "anyOf":[
@@ -503,12 +521,17 @@
                              {
                                "type":"string" ,
                                "enum":[
-                                 "nl", "pt", "en", "none", "ca", "fr", "de", "es"
+                                 "nl", "pt", "en", "none", "zh", "ro", "tr", "it", "fa", "pl", "fi", "ca", "sv", "fr", "da", "hu", "de", "ru", "es", "ja", "cs", "ar", "ko"
                                ]
                              }
                            ],
                            "default": "none",
                            "description":"Language code for detected language, or 'none' for no detection, or nil to let us detect it."
+                         },
+                         "ngrams":{
+                           "type":"integer",
+                           "minimum":1,
+                           "description":"The maximum length of consecutive tokens to consider as terms"
                          },
                          "stem_words":{
                            "anyOf":[
@@ -520,6 +543,58 @@
                              }
                            ],
                            "description":"Defines whether the term analysis stems words"
+                         },
+                         "stopword_diligence":{
+                           "anyOf":[
+                             {
+                               "type":"null"
+                             },
+                             {
+                               "type":"string" ,
+                               "enum":[
+                                 "light", "aggressive", "normal"
+                               ]
+                             }
+                           ],
+                           "description":"Defines whether the term analysis uses stop words"
+                         },
+                         "stopword_removal":{
+                           "type":"string" ,
+                           "enum":[
+                             "none", "all_languages", "selected_language"
+                           ],
+                           "description":"Remove words that are stopwords in any language."
+                         },
+                         "term_filters":{
+                           "anyOf":[
+                             {
+                               "type":"null"
+                             },
+                             {
+                               "type":"array" ,
+                               "items":{
+                                 "type":"string" ,
+                                 "enum":[
+                                   "numeric_digits", "non_dictionary", "non_language_characters", "single_tokens", "html_keywords"
+                                 ]
+                               }
+                             }
+                           ],
+                           "description":"A list of filters to apply when choosing the termset"
+                         },
+                         "term_regexps":{
+                           "anyOf":[
+                             {
+                               "type":"null"
+                             },
+                             {
+                               "type":"array" ,
+                               "items":{
+                                 "type":"string"
+                               }
+                             }
+                           ],
+                           "description":"A list of regular expressions to consider as terms"
                          },
                          "token_mode":{
                            "type":"string" ,
@@ -618,6 +693,13 @@
                        ],
                        "default": true,
                        "description":"Whether the field is used by default for model creation"
+                     },
+                     "provenance":{
+                       "type":"string" ,
+                       "enum":[
+                         "forecast", "confidence", "flatline", "probability", "query", "forecast_timestamp", "vote_count", "vote", "forecast_upper_bound", "datetime", "prediction", "anomaly_score", "projection", "forecast_trend", "topic_distribution", "forecast_level", "forecast_seasonality", "forecast_lower_bound", "centroid", "batch_input", "importance", "node"
+                       ],
+                       "description":"Field value origin (when the value is generated)"
                      },
                      "summary":{
                        "type":"object",
@@ -786,6 +868,13 @@
                        "default": true,
                        "description":"Whether the field is used by default for model creation"
                      },
+                     "provenance":{
+                       "type":"string" ,
+                       "enum":[
+                         "forecast", "confidence", "flatline", "probability", "query", "forecast_timestamp", "vote_count", "vote", "forecast_upper_bound", "datetime", "prediction", "anomaly_score", "projection", "forecast_trend", "topic_distribution", "forecast_level", "forecast_seasonality", "forecast_lower_bound", "centroid", "batch_input", "importance", "node"
+                       ],
+                       "description":"Field value origin (when the value is generated)"
+                     },
                      "summary":{
                        "type":"object",
                        "properties":{
@@ -887,6 +976,13 @@
                        "default": true,
                        "description":"Whether the field is used by default for model creation"
                      },
+                     "provenance":{
+                       "type":"string" ,
+                       "enum":[
+                         "forecast", "confidence", "flatline", "probability", "query", "forecast_timestamp", "vote_count", "vote", "forecast_upper_bound", "datetime", "prediction", "anomaly_score", "projection", "forecast_trend", "topic_distribution", "forecast_level", "forecast_seasonality", "forecast_lower_bound", "centroid", "batch_input", "importance", "node"
+                       ],
+                       "description":"Field value origin (when the value is generated)"
+                     },
                      "summary":{
                        "type":"object",
                        "properties":{
@@ -914,6 +1010,10 @@
                      "term_analysis":{
                        "type":"object",
                        "properties":{
+                         "bigrams":{
+                           "type":"boolean",
+                           "description":"Allow terms to be bigrams"
+                         },
                          "case_sensitive":{
                            "anyOf":[
                              {
@@ -927,7 +1027,7 @@
                          },
                          "enabled":{
                            "type":"boolean",
-                           "description":"Enable/disables term analysis for this field"
+                           "description":"Enable/disables term analysis for this field.  Has no effect except for dataset creation."
                          },
                          "excluded_terms":{
                            "anyOf":[
@@ -951,12 +1051,17 @@
                              {
                                "type":"string" ,
                                "enum":[
-                                 "nl", "pt", "en", "none", "ca", "fr", "de", "es"
+                                 "nl", "pt", "en", "none", "zh", "ro", "tr", "it", "fa", "pl", "fi", "ca", "sv", "fr", "da", "hu", "de", "ru", "es", "ja", "cs", "ar", "ko"
                                ]
                              }
                            ],
                            "default": "none",
                            "description":"Language code for detected language, or 'none' for no detection, or nil to let us detect it."
+                         },
+                         "ngrams":{
+                           "type":"integer",
+                           "minimum":1,
+                           "description":"The maximum length of consecutive tokens to consider as terms"
                          },
                          "stem_words":{
                            "anyOf":[
@@ -968,6 +1073,58 @@
                              }
                            ],
                            "description":"Defines whether the term analysis stems words"
+                         },
+                         "stopword_diligence":{
+                           "anyOf":[
+                             {
+                               "type":"null"
+                             },
+                             {
+                               "type":"string" ,
+                               "enum":[
+                                 "light", "aggressive", "normal"
+                               ]
+                             }
+                           ],
+                           "description":"Defines whether the term analysis uses stop words"
+                         },
+                         "stopword_removal":{
+                           "type":"string" ,
+                           "enum":[
+                             "none", "all_languages", "selected_language"
+                           ],
+                           "description":"Remove words that are stopwords in any language."
+                         },
+                         "term_filters":{
+                           "anyOf":[
+                             {
+                               "type":"null"
+                             },
+                             {
+                               "type":"array" ,
+                               "items":{
+                                 "type":"string" ,
+                                 "enum":[
+                                   "numeric_digits", "non_dictionary", "non_language_characters", "single_tokens", "html_keywords"
+                                 ]
+                               }
+                             }
+                           ],
+                           "description":"A list of filters to apply when choosing the termset"
+                         },
+                         "term_regexps":{
+                           "anyOf":[
+                             {
+                               "type":"null"
+                             },
+                             {
+                               "type":"array" ,
+                               "items":{
+                                 "type":"string"
+                               }
+                             }
+                           ],
+                           "description":"A list of regular expressions to consider as terms"
                          },
                          "token_mode":{
                            "type":"string" ,
@@ -1035,6 +1192,639 @@
          "minimum":1,
          "default": 1,
          "description":"Step when traversing input rows to generate fields."
+       },
+       "json_query":{
+         "type":"object",
+         "properties":{
+           "distinct":{
+             "type":"boolean",
+             "description":"True for DISTINCT modifier in SELECT"
+           },
+           "from":{
+             "type":"array" ,
+             "items":{
+               "anyOf":[
+                 {
+                   keyword?
+                 },
+                 {
+                   "type":"string"
+                 }
+               ]
+             },
+             "description":"A list of dataset names to be used as tables"
+           },
+           "full_join":{
+             "type":"array" ,
+             "items":[
+               {
+                 "anyOf":[
+                   {
+                     keyword?
+                   },
+                   {
+                     "type":"string"
+                   }
+                 ]
+               },
+               {
+                 "type":"array" ,
+                 "items":[
+                   {
+                     "type":"string" ,
+                     "enum":[
+                       "covar_samp", "CHARACTER_LENGTH", "floor", "ceil", "not-null", "NULL", "!=", "SIGN", "var_pop", "PI", "SQRT", "SIMILAR", "min", "trim", "=", "OVERLAPS", "row_number", "coalesce", "TRUNCATE", "SUM", "*", "%", "strftime", "<=", "cast", "COT", "upper", "group_concat", "STDDEV_POP", "instr", "COUNT", "AVG", "COALESCE", "ATAN2", "not", "CONTAINS", "atan2", "cot", "count-distinct", "sum", "/", "rand_integer", "VARIANCE", "rand", "CEIL", "contains", "TRIM", "null", "like", "JULIANDAY", "-", "DATE", "RAND", "LENGTH", "COUNT-DISTINCT", "max", "POSITION", "MIN", "DISTINCT", "degrees", "overlaps", "count", "atan", "UPPER", "EXISTS", "ln", "LN", "collect-distinct", "NOT", "any", "POWER", "distinct", "position", "MOD", "ASIN", "sin", "MAX", "replace", "power", "pi", "radians", "AND", "similar", "stddev_pop", "ltrim", "COVAR_POP", "VAR_POP", "TIME", "exp", "SUBSTR", "ANY", "or", "COS", "substr", "stddev", "STDDEV", "log10", "var_samp", ">=", "VAR_SAMP", "sqrt", "julianday", "time", "STRFTIME", "length", "COLLECT", "tan", "datetime", "NOT-NULL", "cos", "DEGREES", "truncate", "GROUP_CONCAT", "FLOOR", "LTRIM", "CHAR_LENGTH", "and", "INSTR", "ACOS", "mod", "avg", "COLLECT-DISTINCT", "<", "abs", "between", "ATAN", "<>", "lower", "char_length", "COVAR_SAMP", "collect", "date", "group_concatd", "REPLACE", "SIN", "DATETIME", "RTRIM", "ROUND", "TAN", "variance", "OR", "all", "LOWER", "exists", "EXP", "ROW_NUMBER", "STDDEV_SAMP", "stddev_samp", "RADIANS", "GROUP_CONCATD", "RAND_INTEGER", "character_length", "ALL", "||", "LIKE", "round", "IN", "LOG10", "covar_pop", "asin", "sign", "+", "rtrim", "BETWEEN", "ABS", "CAST", "in", "acos", ">"
+                     ]
+                   },
+                   {
+                     "anyOf":[
+                       {
+                         "anyOf":[
+                           {
+                             "type":"string"
+                           },
+                           {
+                             keyword?
+                           }
+                         ]
+                       },
+                       {
+                         "type":"number"
+                       },
+                       {
+                         "$ref":"sql.json"
+                       },
+                       {
+                         "type":"array" ,
+                         "items":{
+                           "anyOf":[
+                             {
+                               "anyOf":[
+                                 {
+                                   "type":"string"
+                                 },
+                                 {
+                                   keyword?
+                                 }
+                               ]
+                             },
+                             {
+                               "type":"number"
+                             },
+                             {
+                               "$ref":"sql.json"
+                             }
+                           ]
+                         }
+                       }
+                     ]
+                   }
+                 ]
+               }
+             ],
+             "description":"A FULL OUTER join specification"
+           },
+           "group_by":{
+             "type":"array" ,
+             "items":{
+               "anyOf":[
+                 {
+                   "type":"string"
+                 },
+                 {
+                   keyword?
+                 }
+               ]
+             },
+             "description":"A list of field ids to perform a GROUP BY"
+           },
+           "having":{
+             "type":"array" ,
+             "items":[
+               {
+                 "type":"string" ,
+                 "enum":[
+                   "covar_samp", "CHARACTER_LENGTH", "floor", "ceil", "not-null", "NULL", "!=", "SIGN", "var_pop", "PI", "SQRT", "SIMILAR", "min", "trim", "=", "OVERLAPS", "row_number", "coalesce", "TRUNCATE", "SUM", "*", "%", "strftime", "<=", "cast", "COT", "upper", "group_concat", "STDDEV_POP", "instr", "COUNT", "AVG", "COALESCE", "ATAN2", "not", "CONTAINS", "atan2", "cot", "count-distinct", "sum", "/", "rand_integer", "VARIANCE", "rand", "CEIL", "contains", "TRIM", "null", "like", "JULIANDAY", "-", "DATE", "RAND", "LENGTH", "COUNT-DISTINCT", "max", "POSITION", "MIN", "DISTINCT", "degrees", "overlaps", "count", "atan", "UPPER", "EXISTS", "ln", "LN", "collect-distinct", "NOT", "any", "POWER", "distinct", "position", "MOD", "ASIN", "sin", "MAX", "replace", "power", "pi", "radians", "AND", "similar", "stddev_pop", "ltrim", "COVAR_POP", "VAR_POP", "TIME", "exp", "SUBSTR", "ANY", "or", "COS", "substr", "stddev", "STDDEV", "log10", "var_samp", ">=", "VAR_SAMP", "sqrt", "julianday", "time", "STRFTIME", "length", "COLLECT", "tan", "datetime", "NOT-NULL", "cos", "DEGREES", "truncate", "GROUP_CONCAT", "FLOOR", "LTRIM", "CHAR_LENGTH", "and", "INSTR", "ACOS", "mod", "avg", "COLLECT-DISTINCT", "<", "abs", "between", "ATAN", "<>", "lower", "char_length", "COVAR_SAMP", "collect", "date", "group_concatd", "REPLACE", "SIN", "DATETIME", "RTRIM", "ROUND", "TAN", "variance", "OR", "all", "LOWER", "exists", "EXP", "ROW_NUMBER", "STDDEV_SAMP", "stddev_samp", "RADIANS", "GROUP_CONCATD", "RAND_INTEGER", "character_length", "ALL", "||", "LIKE", "round", "IN", "LOG10", "covar_pop", "asin", "sign", "+", "rtrim", "BETWEEN", "ABS", "CAST", "in", "acos", ">"
+                 ]
+               },
+               {
+                 "anyOf":[
+                   {
+                     "anyOf":[
+                       {
+                         "type":"string"
+                       },
+                       {
+                         keyword?
+                       }
+                     ]
+                   },
+                   {
+                     "type":"number"
+                   },
+                   {
+                     "$ref":"sql.json"
+                   },
+                   {
+                     "type":"array" ,
+                     "items":{
+                       "anyOf":[
+                         {
+                           "anyOf":[
+                             {
+                               "type":"string"
+                             },
+                             {
+                               keyword?
+                             }
+                           ]
+                         },
+                         {
+                           "type":"number"
+                         },
+                         {
+                           "$ref":"sql.json"
+                         }
+                       ]
+                     }
+                   }
+                 ]
+               }
+             ],
+             "description":"An SQL HAVING clause, as a function application"
+           },
+           "join":{
+             "type":"array" ,
+             "items":[
+               {
+                 "anyOf":[
+                   {
+                     keyword?
+                   },
+                   {
+                     "type":"string"
+                   }
+                 ]
+               },
+               {
+                 "type":"array" ,
+                 "items":[
+                   {
+                     "type":"string" ,
+                     "enum":[
+                       "covar_samp", "CHARACTER_LENGTH", "floor", "ceil", "not-null", "NULL", "!=", "SIGN", "var_pop", "PI", "SQRT", "SIMILAR", "min", "trim", "=", "OVERLAPS", "row_number", "coalesce", "TRUNCATE", "SUM", "*", "%", "strftime", "<=", "cast", "COT", "upper", "group_concat", "STDDEV_POP", "instr", "COUNT", "AVG", "COALESCE", "ATAN2", "not", "CONTAINS", "atan2", "cot", "count-distinct", "sum", "/", "rand_integer", "VARIANCE", "rand", "CEIL", "contains", "TRIM", "null", "like", "JULIANDAY", "-", "DATE", "RAND", "LENGTH", "COUNT-DISTINCT", "max", "POSITION", "MIN", "DISTINCT", "degrees", "overlaps", "count", "atan", "UPPER", "EXISTS", "ln", "LN", "collect-distinct", "NOT", "any", "POWER", "distinct", "position", "MOD", "ASIN", "sin", "MAX", "replace", "power", "pi", "radians", "AND", "similar", "stddev_pop", "ltrim", "COVAR_POP", "VAR_POP", "TIME", "exp", "SUBSTR", "ANY", "or", "COS", "substr", "stddev", "STDDEV", "log10", "var_samp", ">=", "VAR_SAMP", "sqrt", "julianday", "time", "STRFTIME", "length", "COLLECT", "tan", "datetime", "NOT-NULL", "cos", "DEGREES", "truncate", "GROUP_CONCAT", "FLOOR", "LTRIM", "CHAR_LENGTH", "and", "INSTR", "ACOS", "mod", "avg", "COLLECT-DISTINCT", "<", "abs", "between", "ATAN", "<>", "lower", "char_length", "COVAR_SAMP", "collect", "date", "group_concatd", "REPLACE", "SIN", "DATETIME", "RTRIM", "ROUND", "TAN", "variance", "OR", "all", "LOWER", "exists", "EXP", "ROW_NUMBER", "STDDEV_SAMP", "stddev_samp", "RADIANS", "GROUP_CONCATD", "RAND_INTEGER", "character_length", "ALL", "||", "LIKE", "round", "IN", "LOG10", "covar_pop", "asin", "sign", "+", "rtrim", "BETWEEN", "ABS", "CAST", "in", "acos", ">"
+                     ]
+                   },
+                   {
+                     "anyOf":[
+                       {
+                         "anyOf":[
+                           {
+                             "type":"string"
+                           },
+                           {
+                             keyword?
+                           }
+                         ]
+                       },
+                       {
+                         "type":"number"
+                       },
+                       {
+                         "$ref":"sql.json"
+                       },
+                       {
+                         "type":"array" ,
+                         "items":{
+                           "anyOf":[
+                             {
+                               "anyOf":[
+                                 {
+                                   "type":"string"
+                                 },
+                                 {
+                                   keyword?
+                                 }
+                               ]
+                             },
+                             {
+                               "type":"number"
+                             },
+                             {
+                               "$ref":"sql.json"
+                             }
+                           ]
+                         }
+                       }
+                     ]
+                   }
+                 ]
+               }
+             ],
+             "description":"An inner JOIN specification"
+           },
+           "left_join":{
+             "type":"array" ,
+             "items":[
+               {
+                 "anyOf":[
+                   {
+                     keyword?
+                   },
+                   {
+                     "type":"string"
+                   }
+                 ]
+               },
+               {
+                 "type":"array" ,
+                 "items":[
+                   {
+                     "type":"string" ,
+                     "enum":[
+                       "covar_samp", "CHARACTER_LENGTH", "floor", "ceil", "not-null", "NULL", "!=", "SIGN", "var_pop", "PI", "SQRT", "SIMILAR", "min", "trim", "=", "OVERLAPS", "row_number", "coalesce", "TRUNCATE", "SUM", "*", "%", "strftime", "<=", "cast", "COT", "upper", "group_concat", "STDDEV_POP", "instr", "COUNT", "AVG", "COALESCE", "ATAN2", "not", "CONTAINS", "atan2", "cot", "count-distinct", "sum", "/", "rand_integer", "VARIANCE", "rand", "CEIL", "contains", "TRIM", "null", "like", "JULIANDAY", "-", "DATE", "RAND", "LENGTH", "COUNT-DISTINCT", "max", "POSITION", "MIN", "DISTINCT", "degrees", "overlaps", "count", "atan", "UPPER", "EXISTS", "ln", "LN", "collect-distinct", "NOT", "any", "POWER", "distinct", "position", "MOD", "ASIN", "sin", "MAX", "replace", "power", "pi", "radians", "AND", "similar", "stddev_pop", "ltrim", "COVAR_POP", "VAR_POP", "TIME", "exp", "SUBSTR", "ANY", "or", "COS", "substr", "stddev", "STDDEV", "log10", "var_samp", ">=", "VAR_SAMP", "sqrt", "julianday", "time", "STRFTIME", "length", "COLLECT", "tan", "datetime", "NOT-NULL", "cos", "DEGREES", "truncate", "GROUP_CONCAT", "FLOOR", "LTRIM", "CHAR_LENGTH", "and", "INSTR", "ACOS", "mod", "avg", "COLLECT-DISTINCT", "<", "abs", "between", "ATAN", "<>", "lower", "char_length", "COVAR_SAMP", "collect", "date", "group_concatd", "REPLACE", "SIN", "DATETIME", "RTRIM", "ROUND", "TAN", "variance", "OR", "all", "LOWER", "exists", "EXP", "ROW_NUMBER", "STDDEV_SAMP", "stddev_samp", "RADIANS", "GROUP_CONCATD", "RAND_INTEGER", "character_length", "ALL", "||", "LIKE", "round", "IN", "LOG10", "covar_pop", "asin", "sign", "+", "rtrim", "BETWEEN", "ABS", "CAST", "in", "acos", ">"
+                     ]
+                   },
+                   {
+                     "anyOf":[
+                       {
+                         "anyOf":[
+                           {
+                             "type":"string"
+                           },
+                           {
+                             keyword?
+                           }
+                         ]
+                       },
+                       {
+                         "type":"number"
+                       },
+                       {
+                         "$ref":"sql.json"
+                       },
+                       {
+                         "type":"array" ,
+                         "items":{
+                           "anyOf":[
+                             {
+                               "anyOf":[
+                                 {
+                                   "type":"string"
+                                 },
+                                 {
+                                   keyword?
+                                 }
+                               ]
+                             },
+                             {
+                               "type":"number"
+                             },
+                             {
+                               "$ref":"sql.json"
+                             }
+                           ]
+                         }
+                       }
+                     ]
+                   }
+                 ]
+               }
+             ],
+             "description":"An outer LEFT JOIN specification"
+           },
+           "limit":{
+             "type":"integer",
+             "minimum":1,
+             "description":"Maximum number of output rows"
+           },
+           "offset":{
+             "type":"integer",
+             "minimum":0,
+             "default": 0,
+             "description":"Query offset (rows before skipped)"
+           },
+           "order_by":{
+             "type":"array" ,
+             "items":{
+               "anyOf":[
+                 {
+                   "anyOf":[
+                     {
+                       "type":"string"
+                     },
+                     {
+                       keyword?
+                     }
+                   ]
+                 },
+                 {
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "anyOf":[
+                         {
+                           "type":"string"
+                         },
+                         {
+                           keyword?
+                         }
+                       ]
+                     },
+                     {
+                       "type":"string" ,
+                       "enum":[
+                         "DESC", "ASC", "desc", "asc"
+                       ]
+                     }
+                   ]
+                 }
+               ]
+             },
+             "description":"A list of field names or pairs of the form [field "ASC"] or [field "DESC"]"
+           },
+           "right_join":{
+             "type":"array" ,
+             "items":[
+               {
+                 "anyOf":[
+                   {
+                     keyword?
+                   },
+                   {
+                     "type":"string"
+                   }
+                 ]
+               },
+               {
+                 "type":"array" ,
+                 "items":[
+                   {
+                     "type":"string" ,
+                     "enum":[
+                       "covar_samp", "CHARACTER_LENGTH", "floor", "ceil", "not-null", "NULL", "!=", "SIGN", "var_pop", "PI", "SQRT", "SIMILAR", "min", "trim", "=", "OVERLAPS", "row_number", "coalesce", "TRUNCATE", "SUM", "*", "%", "strftime", "<=", "cast", "COT", "upper", "group_concat", "STDDEV_POP", "instr", "COUNT", "AVG", "COALESCE", "ATAN2", "not", "CONTAINS", "atan2", "cot", "count-distinct", "sum", "/", "rand_integer", "VARIANCE", "rand", "CEIL", "contains", "TRIM", "null", "like", "JULIANDAY", "-", "DATE", "RAND", "LENGTH", "COUNT-DISTINCT", "max", "POSITION", "MIN", "DISTINCT", "degrees", "overlaps", "count", "atan", "UPPER", "EXISTS", "ln", "LN", "collect-distinct", "NOT", "any", "POWER", "distinct", "position", "MOD", "ASIN", "sin", "MAX", "replace", "power", "pi", "radians", "AND", "similar", "stddev_pop", "ltrim", "COVAR_POP", "VAR_POP", "TIME", "exp", "SUBSTR", "ANY", "or", "COS", "substr", "stddev", "STDDEV", "log10", "var_samp", ">=", "VAR_SAMP", "sqrt", "julianday", "time", "STRFTIME", "length", "COLLECT", "tan", "datetime", "NOT-NULL", "cos", "DEGREES", "truncate", "GROUP_CONCAT", "FLOOR", "LTRIM", "CHAR_LENGTH", "and", "INSTR", "ACOS", "mod", "avg", "COLLECT-DISTINCT", "<", "abs", "between", "ATAN", "<>", "lower", "char_length", "COVAR_SAMP", "collect", "date", "group_concatd", "REPLACE", "SIN", "DATETIME", "RTRIM", "ROUND", "TAN", "variance", "OR", "all", "LOWER", "exists", "EXP", "ROW_NUMBER", "STDDEV_SAMP", "stddev_samp", "RADIANS", "GROUP_CONCATD", "RAND_INTEGER", "character_length", "ALL", "||", "LIKE", "round", "IN", "LOG10", "covar_pop", "asin", "sign", "+", "rtrim", "BETWEEN", "ABS", "CAST", "in", "acos", ">"
+                     ]
+                   },
+                   {
+                     "anyOf":[
+                       {
+                         "anyOf":[
+                           {
+                             "type":"string"
+                           },
+                           {
+                             keyword?
+                           }
+                         ]
+                       },
+                       {
+                         "type":"number"
+                       },
+                       {
+                         "$ref":"sql.json"
+                       },
+                       {
+                         "type":"array" ,
+                         "items":{
+                           "anyOf":[
+                             {
+                               "anyOf":[
+                                 {
+                                   "type":"string"
+                                 },
+                                 {
+                                   keyword?
+                                 }
+                               ]
+                             },
+                             {
+                               "type":"number"
+                             },
+                             {
+                               "$ref":"sql.json"
+                             }
+                           ]
+                         }
+                       }
+                     ]
+                   }
+                 ]
+               }
+             ],
+             "description":"An outer RIGHT JOIN specification"
+           },
+           "select":{
+             "type":"array" ,
+             "items":{
+               "anyOf":[
+                 {
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "type":"string" ,
+                       "enum":[
+                         "covar_samp", "CHARACTER_LENGTH", "floor", "ceil", "not-null", "NULL", "!=", "SIGN", "var_pop", "PI", "SQRT", "SIMILAR", "min", "trim", "=", "OVERLAPS", "row_number", "coalesce", "TRUNCATE", "SUM", "*", "%", "strftime", "<=", "cast", "COT", "upper", "group_concat", "STDDEV_POP", "instr", "COUNT", "AVG", "COALESCE", "ATAN2", "not", "CONTAINS", "atan2", "cot", "count-distinct", "sum", "/", "rand_integer", "VARIANCE", "rand", "CEIL", "contains", "TRIM", "null", "like", "JULIANDAY", "-", "DATE", "RAND", "LENGTH", "COUNT-DISTINCT", "max", "POSITION", "MIN", "DISTINCT", "degrees", "overlaps", "count", "atan", "UPPER", "EXISTS", "ln", "LN", "collect-distinct", "NOT", "any", "POWER", "distinct", "position", "MOD", "ASIN", "sin", "MAX", "replace", "power", "pi", "radians", "AND", "similar", "stddev_pop", "ltrim", "COVAR_POP", "VAR_POP", "TIME", "exp", "SUBSTR", "ANY", "or", "COS", "substr", "stddev", "STDDEV", "log10", "var_samp", ">=", "VAR_SAMP", "sqrt", "julianday", "time", "STRFTIME", "length", "COLLECT", "tan", "datetime", "NOT-NULL", "cos", "DEGREES", "truncate", "GROUP_CONCAT", "FLOOR", "LTRIM", "CHAR_LENGTH", "and", "INSTR", "ACOS", "mod", "avg", "COLLECT-DISTINCT", "<", "abs", "between", "ATAN", "<>", "lower", "char_length", "COVAR_SAMP", "collect", "date", "group_concatd", "REPLACE", "SIN", "DATETIME", "RTRIM", "ROUND", "TAN", "variance", "OR", "all", "LOWER", "exists", "EXP", "ROW_NUMBER", "STDDEV_SAMP", "stddev_samp", "RADIANS", "GROUP_CONCATD", "RAND_INTEGER", "character_length", "ALL", "||", "LIKE", "round", "IN", "LOG10", "covar_pop", "asin", "sign", "+", "rtrim", "BETWEEN", "ABS", "CAST", "in", "acos", ">"
+                       ]
+                     },
+                     {
+                       "anyOf":[
+                         {
+                           "anyOf":[
+                             {
+                               "type":"string"
+                             },
+                             {
+                               keyword?
+                             }
+                           ]
+                         },
+                         {
+                           "type":"number"
+                         },
+                         {
+                           "$ref":"sql.json"
+                         },
+                         {
+                           "type":"array" ,
+                           "items":{
+                             "anyOf":[
+                               {
+                                 "anyOf":[
+                                   {
+                                     "type":"string"
+                                   },
+                                   {
+                                     keyword?
+                                   }
+                                 ]
+                               },
+                               {
+                                 "type":"number"
+                               },
+                               {
+                                 "$ref":"sql.json"
+                               }
+                             ]
+                           }
+                         }
+                       ]
+                     }
+                   ]
+                 },
+                 {
+                   "type":"array" ,
+                   "items":[
+                     {
+                       "anyOf":[
+                         {
+                           "anyOf":[
+                             {
+                               "type":"string"
+                             },
+                             {
+                               keyword?
+                             }
+                           ]
+                         },
+                         {
+                           "type":"array" ,
+                           "items":[
+                             {
+                               "type":"string" ,
+                               "enum":[
+                                 "covar_samp", "CHARACTER_LENGTH", "floor", "ceil", "not-null", "NULL", "!=", "SIGN", "var_pop", "PI", "SQRT", "SIMILAR", "min", "trim", "=", "OVERLAPS", "row_number", "coalesce", "TRUNCATE", "SUM", "*", "%", "strftime", "<=", "cast", "COT", "upper", "group_concat", "STDDEV_POP", "instr", "COUNT", "AVG", "COALESCE", "ATAN2", "not", "CONTAINS", "atan2", "cot", "count-distinct", "sum", "/", "rand_integer", "VARIANCE", "rand", "CEIL", "contains", "TRIM", "null", "like", "JULIANDAY", "-", "DATE", "RAND", "LENGTH", "COUNT-DISTINCT", "max", "POSITION", "MIN", "DISTINCT", "degrees", "overlaps", "count", "atan", "UPPER", "EXISTS", "ln", "LN", "collect-distinct", "NOT", "any", "POWER", "distinct", "position", "MOD", "ASIN", "sin", "MAX", "replace", "power", "pi", "radians", "AND", "similar", "stddev_pop", "ltrim", "COVAR_POP", "VAR_POP", "TIME", "exp", "SUBSTR", "ANY", "or", "COS", "substr", "stddev", "STDDEV", "log10", "var_samp", ">=", "VAR_SAMP", "sqrt", "julianday", "time", "STRFTIME", "length", "COLLECT", "tan", "datetime", "NOT-NULL", "cos", "DEGREES", "truncate", "GROUP_CONCAT", "FLOOR", "LTRIM", "CHAR_LENGTH", "and", "INSTR", "ACOS", "mod", "avg", "COLLECT-DISTINCT", "<", "abs", "between", "ATAN", "<>", "lower", "char_length", "COVAR_SAMP", "collect", "date", "group_concatd", "REPLACE", "SIN", "DATETIME", "RTRIM", "ROUND", "TAN", "variance", "OR", "all", "LOWER", "exists", "EXP", "ROW_NUMBER", "STDDEV_SAMP", "stddev_samp", "RADIANS", "GROUP_CONCATD", "RAND_INTEGER", "character_length", "ALL", "||", "LIKE", "round", "IN", "LOG10", "covar_pop", "asin", "sign", "+", "rtrim", "BETWEEN", "ABS", "CAST", "in", "acos", ">"
+                               ]
+                             },
+                             {
+                               "anyOf":[
+                                 {
+                                   "anyOf":[
+                                     {
+                                       "type":"string"
+                                     },
+                                     {
+                                       keyword?
+                                     }
+                                   ]
+                                 },
+                                 {
+                                   "type":"number"
+                                 },
+                                 {
+                                   "$ref":"sql.json"
+                                 },
+                                 {
+                                   "type":"array" ,
+                                   "items":{
+                                     "anyOf":[
+                                       {
+                                         "anyOf":[
+                                           {
+                                             "type":"string"
+                                           },
+                                           {
+                                             keyword?
+                                           }
+                                         ]
+                                       },
+                                       {
+                                         "type":"number"
+                                       },
+                                       {
+                                         "$ref":"sql.json"
+                                       }
+                                     ]
+                                   }
+                                 }
+                               ]
+                             }
+                           ]
+                         }
+                       ]
+                     },
+                     {
+                       "type":"string"
+                     }
+                   ]
+                 },
+                 {
+                   "type":"number"
+                 },
+                 {
+                   "anyOf":[
+                     {
+                       "type":"string"
+                     },
+                     {
+                       keyword?
+                     }
+                   ]
+                 }
+               ]
+             },
+             "description":"A list of selected values specifications.  They'll conform the fields of the new dataset."
+           },
+           "where":{
+             "type":"array" ,
+             "items":[
+               {
+                 "type":"string" ,
+                 "enum":[
+                   "covar_samp", "CHARACTER_LENGTH", "floor", "ceil", "not-null", "NULL", "!=", "SIGN", "var_pop", "PI", "SQRT", "SIMILAR", "min", "trim", "=", "OVERLAPS", "row_number", "coalesce", "TRUNCATE", "SUM", "*", "%", "strftime", "<=", "cast", "COT", "upper", "group_concat", "STDDEV_POP", "instr", "COUNT", "AVG", "COALESCE", "ATAN2", "not", "CONTAINS", "atan2", "cot", "count-distinct", "sum", "/", "rand_integer", "VARIANCE", "rand", "CEIL", "contains", "TRIM", "null", "like", "JULIANDAY", "-", "DATE", "RAND", "LENGTH", "COUNT-DISTINCT", "max", "POSITION", "MIN", "DISTINCT", "degrees", "overlaps", "count", "atan", "UPPER", "EXISTS", "ln", "LN", "collect-distinct", "NOT", "any", "POWER", "distinct", "position", "MOD", "ASIN", "sin", "MAX", "replace", "power", "pi", "radians", "AND", "similar", "stddev_pop", "ltrim", "COVAR_POP", "VAR_POP", "TIME", "exp", "SUBSTR", "ANY", "or", "COS", "substr", "stddev", "STDDEV", "log10", "var_samp", ">=", "VAR_SAMP", "sqrt", "julianday", "time", "STRFTIME", "length", "COLLECT", "tan", "datetime", "NOT-NULL", "cos", "DEGREES", "truncate", "GROUP_CONCAT", "FLOOR", "LTRIM", "CHAR_LENGTH", "and", "INSTR", "ACOS", "mod", "avg", "COLLECT-DISTINCT", "<", "abs", "between", "ATAN", "<>", "lower", "char_length", "COVAR_SAMP", "collect", "date", "group_concatd", "REPLACE", "SIN", "DATETIME", "RTRIM", "ROUND", "TAN", "variance", "OR", "all", "LOWER", "exists", "EXP", "ROW_NUMBER", "STDDEV_SAMP", "stddev_samp", "RADIANS", "GROUP_CONCATD", "RAND_INTEGER", "character_length", "ALL", "||", "LIKE", "round", "IN", "LOG10", "covar_pop", "asin", "sign", "+", "rtrim", "BETWEEN", "ABS", "CAST", "in", "acos", ">"
+                 ]
+               },
+               {
+                 "anyOf":[
+                   {
+                     "anyOf":[
+                       {
+                         "type":"string"
+                       },
+                       {
+                         keyword?
+                       }
+                     ]
+                   },
+                   {
+                     "type":"number"
+                   },
+                   {
+                     "$ref":"sql.json"
+                   },
+                   {
+                     "type":"array" ,
+                     "items":{
+                       "anyOf":[
+                         {
+                           "anyOf":[
+                             {
+                               "type":"string"
+                             },
+                             {
+                               keyword?
+                             }
+                           ]
+                         },
+                         {
+                           "type":"number"
+                         },
+                         {
+                           "$ref":"sql.json"
+                         }
+                       ]
+                     }
+                   }
+                 ]
+               }
+             ],
+             "description":"A select condition as a function application"
+           }
+         },
+         "required":[
+           "select"
+         ],
+         "additionalProperties": false,
+         "description":"A canonical translation of `query` (when given) as a JSON map, using field identifiers everywhere."
        },
        "juxtapose":{
          "type":"boolean",
@@ -1149,6 +1939,13 @@
                  ],
                  "default": true,
                  "description":"Whether the field is used by default for model creation"
+               },
+               "provenance":{
+                 "type":"string" ,
+                 "enum":[
+                   "forecast", "confidence", "flatline", "probability", "query", "forecast_timestamp", "vote_count", "vote", "forecast_upper_bound", "datetime", "prediction", "anomaly_score", "projection", "forecast_trend", "topic_distribution", "forecast_level", "forecast_seasonality", "forecast_lower_bound", "centroid", "batch_input", "importance", "node"
+                 ],
+                 "description":"Field value origin (when the value is generated)"
                }
              }
            }
@@ -1233,6 +2030,114 @@
                    },
                    "description":"List of ids for fields generated by this generator"
                  },
+                 "item_analyses":{
+                   "type":"array" ,
+                   "items":{
+                     "anyOf":[
+                       {
+                         "type":"null"
+                       },
+                       {
+                         "type":"object",
+                         "properties":{
+                           "limit":{
+                             "type":"number",
+                             "minimum":1,
+                             "default": 10000,
+                             "description":"Maximum number of items considered."
+                           },
+                           "pruning_strategy":{
+                             "type":"string" ,
+                             "enum":[
+                               "nearest_to_frequency", "most_frequent"
+                             ],
+                             "default": "nearest_to_frequency",
+                             "description":"Strategy used to select items when item_limit is surpassed"
+                           },
+                           "separator":{
+                             "anyOf":[
+                               {
+                                 "type":"null"
+                               },
+                               {
+                                 "type":"string"
+                               }
+                             ],
+                             "description":"Character delimiting items in the field. Set to null to autodetect if there is no regular expression."
+                           },
+                           "separator_regexp":{
+                             "anyOf":[
+                               {
+                                 "type":"null"
+                               },
+                               {
+                                 "type":"string"
+                               }
+                             ],
+                             "description":"Regular expression delimiting items in the field. Overrides item_separator."
+                           },
+                           "target_frequency":{
+                             "type":"number",
+                             "minimum":0,
+                             "maximum":1,
+                             "default": 0.3333333333333333,
+                             "description":"A ratio in (0, 1] with the occurence rate used when the prunning_strategy is nearest_to_frequency"
+                           }
+                         }
+                       }
+                     ]
+                   },
+                   "description":"A list of item analysis properties, one per generated field. Entries can be null to denote no special value."
+                 },
+                 "item_analysis":{
+                   "type":"object",
+                   "properties":{
+                     "limit":{
+                       "type":"number",
+                       "minimum":1,
+                       "default": 10000,
+                       "description":"Maximum number of items considered."
+                     },
+                     "pruning_strategy":{
+                       "type":"string" ,
+                       "enum":[
+                         "nearest_to_frequency", "most_frequent"
+                       ],
+                       "default": "nearest_to_frequency",
+                       "description":"Strategy used to select items when item_limit is surpassed"
+                     },
+                     "separator":{
+                       "anyOf":[
+                         {
+                           "type":"null"
+                         },
+                         {
+                           "type":"string"
+                         }
+                       ],
+                       "description":"Character delimiting items in the field. Set to null to autodetect if there is no regular expression."
+                     },
+                     "separator_regexp":{
+                       "anyOf":[
+                         {
+                           "type":"null"
+                         },
+                         {
+                           "type":"string"
+                         }
+                       ],
+                       "description":"Regular expression delimiting items in the field. Overrides item_separator."
+                     },
+                     "target_frequency":{
+                       "type":"number",
+                       "minimum":0,
+                       "maximum":1,
+                       "default": 0.3333333333333333,
+                       "description":"A ratio in (0, 1] with the occurence rate used when the prunning_strategy is nearest_to_frequency"
+                     }
+                   },
+                   "description":"For a single generated field, its item analysis options. If many fields are generated by this entry, all will have this default"
+                 },
                  "json_generator":{
                    "type":"array" ,
                    "items":{
@@ -1278,6 +2183,298 @@
                      ]
                    },
                    "description":"A list of optypes, one per generated field"
+                 },
+                 "term_analyses":{
+                   "type":"array" ,
+                   "items":{
+                     "anyOf":[
+                       {
+                         "type":"null"
+                       },
+                       {
+                         "type":"object",
+                         "properties":{
+                           "bigrams":{
+                             "type":"boolean",
+                             "description":"Allow terms to be bigrams"
+                           },
+                           "case_sensitive":{
+                             "anyOf":[
+                               {
+                                 "type":"null"
+                               },
+                               {
+                                 "type":"boolean"
+                               }
+                             ],
+                             "description":"Defines whether the term analysis is case sensitive"
+                           },
+                           "enabled":{
+                             "type":"boolean",
+                             "description":"Enable/disables term analysis for this field.  Has no effect except for dataset creation."
+                           },
+                           "excluded_terms":{
+                             "anyOf":[
+                               {
+                                 "type":"null"
+                               },
+                               {
+                                 "type":"array" ,
+                                 "items":{
+                                   "type":"string"
+                                 }
+                               }
+                             ],
+                             "description":"A list of terms to ignore when performing term analysis"
+                           },
+                           "language":{
+                             "anyOf":[
+                               {
+                                 "type":"null"
+                               },
+                               {
+                                 "type":"string" ,
+                                 "enum":[
+                                   "nl", "pt", "en", "none", "zh", "ro", "tr", "it", "fa", "pl", "fi", "ca", "sv", "fr", "da", "hu", "de", "ru", "es", "ja", "cs", "ar", "ko"
+                                 ]
+                               }
+                             ],
+                             "default": "none",
+                             "description":"Language code for detected language, or 'none' for no detection, or nil to let us detect it."
+                           },
+                           "ngrams":{
+                             "type":"integer",
+                             "minimum":1,
+                             "description":"The maximum length of consecutive tokens to consider as terms"
+                           },
+                           "stem_words":{
+                             "anyOf":[
+                               {
+                                 "type":"null"
+                               },
+                               {
+                                 "type":"boolean"
+                               }
+                             ],
+                             "description":"Defines whether the term analysis stems words"
+                           },
+                           "stopword_diligence":{
+                             "anyOf":[
+                               {
+                                 "type":"null"
+                               },
+                               {
+                                 "type":"string" ,
+                                 "enum":[
+                                   "light", "aggressive", "normal"
+                                 ]
+                               }
+                             ],
+                             "description":"Defines whether the term analysis uses stop words"
+                           },
+                           "stopword_removal":{
+                             "type":"string" ,
+                             "enum":[
+                               "none", "all_languages", "selected_language"
+                             ],
+                             "description":"Remove words that are stopwords in any language."
+                           },
+                           "term_filters":{
+                             "anyOf":[
+                               {
+                                 "type":"null"
+                               },
+                               {
+                                 "type":"array" ,
+                                 "items":{
+                                   "type":"string" ,
+                                   "enum":[
+                                     "numeric_digits", "non_dictionary", "non_language_characters", "single_tokens", "html_keywords"
+                                   ]
+                                 }
+                               }
+                             ],
+                             "description":"A list of filters to apply when choosing the termset"
+                           },
+                           "term_regexps":{
+                             "anyOf":[
+                               {
+                                 "type":"null"
+                               },
+                               {
+                                 "type":"array" ,
+                                 "items":{
+                                   "type":"string"
+                                 }
+                               }
+                             ],
+                             "description":"A list of regular expressions to consider as terms"
+                           },
+                           "token_mode":{
+                             "type":"string" ,
+                             "enum":[
+                               "full_terms_only", "tokens_only", "all"
+                             ],
+                             "default": "all",
+                             "description":"Defines whether the term analysis uses full terms, tokenized terms, or both"
+                           },
+                           "use_stopwords":{
+                             "anyOf":[
+                               {
+                                 "type":"null"
+                               },
+                               {
+                                 "type":"boolean"
+                               }
+                             ],
+                             "description":"Defines whether the term analysis uses stop words"
+                           }
+                         }
+                       }
+                     ]
+                   },
+                   "description":"A list of term analysis properties, one per generated field. Entries can be null to denote no special value."
+                 },
+                 "term_analysis":{
+                   "type":"object",
+                   "properties":{
+                     "bigrams":{
+                       "type":"boolean",
+                       "description":"Allow terms to be bigrams"
+                     },
+                     "case_sensitive":{
+                       "anyOf":[
+                         {
+                           "type":"null"
+                         },
+                         {
+                           "type":"boolean"
+                         }
+                       ],
+                       "description":"Defines whether the term analysis is case sensitive"
+                     },
+                     "enabled":{
+                       "type":"boolean",
+                       "description":"Enable/disables term analysis for this field.  Has no effect except for dataset creation."
+                     },
+                     "excluded_terms":{
+                       "anyOf":[
+                         {
+                           "type":"null"
+                         },
+                         {
+                           "type":"array" ,
+                           "items":{
+                             "type":"string"
+                           }
+                         }
+                       ],
+                       "description":"A list of terms to ignore when performing term analysis"
+                     },
+                     "language":{
+                       "anyOf":[
+                         {
+                           "type":"null"
+                         },
+                         {
+                           "type":"string" ,
+                           "enum":[
+                             "nl", "pt", "en", "none", "zh", "ro", "tr", "it", "fa", "pl", "fi", "ca", "sv", "fr", "da", "hu", "de", "ru", "es", "ja", "cs", "ar", "ko"
+                           ]
+                         }
+                       ],
+                       "default": "none",
+                       "description":"Language code for detected language, or 'none' for no detection, or nil to let us detect it."
+                     },
+                     "ngrams":{
+                       "type":"integer",
+                       "minimum":1,
+                       "description":"The maximum length of consecutive tokens to consider as terms"
+                     },
+                     "stem_words":{
+                       "anyOf":[
+                         {
+                           "type":"null"
+                         },
+                         {
+                           "type":"boolean"
+                         }
+                       ],
+                       "description":"Defines whether the term analysis stems words"
+                     },
+                     "stopword_diligence":{
+                       "anyOf":[
+                         {
+                           "type":"null"
+                         },
+                         {
+                           "type":"string" ,
+                           "enum":[
+                             "light", "aggressive", "normal"
+                           ]
+                         }
+                       ],
+                       "description":"Defines whether the term analysis uses stop words"
+                     },
+                     "stopword_removal":{
+                       "type":"string" ,
+                       "enum":[
+                         "none", "all_languages", "selected_language"
+                       ],
+                       "description":"Remove words that are stopwords in any language."
+                     },
+                     "term_filters":{
+                       "anyOf":[
+                         {
+                           "type":"null"
+                         },
+                         {
+                           "type":"array" ,
+                           "items":{
+                             "type":"string" ,
+                             "enum":[
+                               "numeric_digits", "non_dictionary", "non_language_characters", "single_tokens", "html_keywords"
+                             ]
+                           }
+                         }
+                       ],
+                       "description":"A list of filters to apply when choosing the termset"
+                     },
+                     "term_regexps":{
+                       "anyOf":[
+                         {
+                           "type":"null"
+                         },
+                         {
+                           "type":"array" ,
+                           "items":{
+                             "type":"string"
+                           }
+                         }
+                       ],
+                       "description":"A list of regular expressions to consider as terms"
+                     },
+                     "token_mode":{
+                       "type":"string" ,
+                       "enum":[
+                         "full_terms_only", "tokens_only", "all"
+                       ],
+                       "default": "all",
+                       "description":"Defines whether the term analysis uses full terms, tokenized terms, or both"
+                     },
+                     "use_stopwords":{
+                       "anyOf":[
+                         {
+                           "type":"null"
+                         },
+                         {
+                           "type":"boolean"
+                         }
+                       ],
+                       "description":"Defines whether the term analysis uses stop words"
+                     }
+                   },
+                   "description":"For a single generated field, its term analysis options. If many fields are generated by this entry, all will have this default"
                  }
                },
                "required":[
@@ -1328,10 +2525,87 @@
                  },
                  "description":"A list of dataset names to be used as tables"
                },
+               "full_join":{
+                 "type":"array" ,
+                 "items":[
+                   {
+                     "anyOf":[
+                       {
+                         keyword?
+                       },
+                       {
+                         "type":"string"
+                       }
+                     ]
+                   },
+                   {
+                     "type":"array" ,
+                     "items":[
+                       {
+                         "type":"string" ,
+                         "enum":[
+                           "covar_samp", "CHARACTER_LENGTH", "floor", "ceil", "not-null", "NULL", "!=", "SIGN", "var_pop", "PI", "SQRT", "SIMILAR", "min", "trim", "=", "OVERLAPS", "row_number", "coalesce", "TRUNCATE", "SUM", "*", "%", "strftime", "<=", "cast", "COT", "upper", "group_concat", "STDDEV_POP", "instr", "COUNT", "AVG", "COALESCE", "ATAN2", "not", "CONTAINS", "atan2", "cot", "count-distinct", "sum", "/", "rand_integer", "VARIANCE", "rand", "CEIL", "contains", "TRIM", "null", "like", "JULIANDAY", "-", "DATE", "RAND", "LENGTH", "COUNT-DISTINCT", "max", "POSITION", "MIN", "DISTINCT", "degrees", "overlaps", "count", "atan", "UPPER", "EXISTS", "ln", "LN", "collect-distinct", "NOT", "any", "POWER", "distinct", "position", "MOD", "ASIN", "sin", "MAX", "replace", "power", "pi", "radians", "AND", "similar", "stddev_pop", "ltrim", "COVAR_POP", "VAR_POP", "TIME", "exp", "SUBSTR", "ANY", "or", "COS", "substr", "stddev", "STDDEV", "log10", "var_samp", ">=", "VAR_SAMP", "sqrt", "julianday", "time", "STRFTIME", "length", "COLLECT", "tan", "datetime", "NOT-NULL", "cos", "DEGREES", "truncate", "GROUP_CONCAT", "FLOOR", "LTRIM", "CHAR_LENGTH", "and", "INSTR", "ACOS", "mod", "avg", "COLLECT-DISTINCT", "<", "abs", "between", "ATAN", "<>", "lower", "char_length", "COVAR_SAMP", "collect", "date", "group_concatd", "REPLACE", "SIN", "DATETIME", "RTRIM", "ROUND", "TAN", "variance", "OR", "all", "LOWER", "exists", "EXP", "ROW_NUMBER", "STDDEV_SAMP", "stddev_samp", "RADIANS", "GROUP_CONCATD", "RAND_INTEGER", "character_length", "ALL", "||", "LIKE", "round", "IN", "LOG10", "covar_pop", "asin", "sign", "+", "rtrim", "BETWEEN", "ABS", "CAST", "in", "acos", ">"
+                         ]
+                       },
+                       {
+                         "anyOf":[
+                           {
+                             "anyOf":[
+                               {
+                                 "type":"string"
+                               },
+                               {
+                                 keyword?
+                               }
+                             ]
+                           },
+                           {
+                             "type":"number"
+                           },
+                           {
+                             "$ref":"sql.json"
+                           },
+                           {
+                             "type":"array" ,
+                             "items":{
+                               "anyOf":[
+                                 {
+                                   "anyOf":[
+                                     {
+                                       "type":"string"
+                                     },
+                                     {
+                                       keyword?
+                                     }
+                                   ]
+                                 },
+                                 {
+                                   "type":"number"
+                                 },
+                                 {
+                                   "$ref":"sql.json"
+                                 }
+                               ]
+                             }
+                           }
+                         ]
+                       }
+                     ]
+                   }
+                 ],
+                 "description":"A FULL OUTER join specification"
+               },
                "group_by":{
                  "type":"array" ,
                  "items":{
-                   "type":"string"
+                   "anyOf":[
+                     {
+                       "type":"string"
+                     },
+                     {
+                       keyword?
+                     }
+                   ]
                  },
                  "description":"A list of field ids to perform a GROUP BY"
                },
@@ -1341,7 +2615,7 @@
                    {
                      "type":"string" ,
                      "enum":[
-                       "!=", "min", "=", "SUM", "<=", "COUNT", "AVG", "sum", "max", "MIN", "count", "MAX", "AND", "or", ">=", "and", "avg", "<", "between", "<>", "OR", "BETWEEN", ">"
+                       "covar_samp", "CHARACTER_LENGTH", "floor", "ceil", "not-null", "NULL", "!=", "SIGN", "var_pop", "PI", "SQRT", "SIMILAR", "min", "trim", "=", "OVERLAPS", "row_number", "coalesce", "TRUNCATE", "SUM", "*", "%", "strftime", "<=", "cast", "COT", "upper", "group_concat", "STDDEV_POP", "instr", "COUNT", "AVG", "COALESCE", "ATAN2", "not", "CONTAINS", "atan2", "cot", "count-distinct", "sum", "/", "rand_integer", "VARIANCE", "rand", "CEIL", "contains", "TRIM", "null", "like", "JULIANDAY", "-", "DATE", "RAND", "LENGTH", "COUNT-DISTINCT", "max", "POSITION", "MIN", "DISTINCT", "degrees", "overlaps", "count", "atan", "UPPER", "EXISTS", "ln", "LN", "collect-distinct", "NOT", "any", "POWER", "distinct", "position", "MOD", "ASIN", "sin", "MAX", "replace", "power", "pi", "radians", "AND", "similar", "stddev_pop", "ltrim", "COVAR_POP", "VAR_POP", "TIME", "exp", "SUBSTR", "ANY", "or", "COS", "substr", "stddev", "STDDEV", "log10", "var_samp", ">=", "VAR_SAMP", "sqrt", "julianday", "time", "STRFTIME", "length", "COLLECT", "tan", "datetime", "NOT-NULL", "cos", "DEGREES", "truncate", "GROUP_CONCAT", "FLOOR", "LTRIM", "CHAR_LENGTH", "and", "INSTR", "ACOS", "mod", "avg", "COLLECT-DISTINCT", "<", "abs", "between", "ATAN", "<>", "lower", "char_length", "COVAR_SAMP", "collect", "date", "group_concatd", "REPLACE", "SIN", "DATETIME", "RTRIM", "ROUND", "TAN", "variance", "OR", "all", "LOWER", "exists", "EXP", "ROW_NUMBER", "STDDEV_SAMP", "stddev_samp", "RADIANS", "GROUP_CONCATD", "RAND_INTEGER", "character_length", "ALL", "||", "LIKE", "round", "IN", "LOG10", "covar_pop", "asin", "sign", "+", "rtrim", "BETWEEN", "ABS", "CAST", "in", "acos", ">"
                      ]
                    },
                    {
@@ -1361,6 +2635,29 @@
                        },
                        {
                          "$ref":"sql.json"
+                       },
+                       {
+                         "type":"array" ,
+                         "items":{
+                           "anyOf":[
+                             {
+                               "anyOf":[
+                                 {
+                                   "type":"string"
+                                 },
+                                 {
+                                   keyword?
+                                 }
+                               ]
+                             },
+                             {
+                               "type":"number"
+                             },
+                             {
+                               "$ref":"sql.json"
+                             }
+                           ]
+                         }
                        }
                      ]
                    }
@@ -1386,7 +2683,7 @@
                        {
                          "type":"string" ,
                          "enum":[
-                           "!=", "min", "=", "SUM", "<=", "COUNT", "AVG", "sum", "max", "MIN", "count", "MAX", "AND", "or", ">=", "and", "avg", "<", "between", "<>", "OR", "BETWEEN", ">"
+                           "covar_samp", "CHARACTER_LENGTH", "floor", "ceil", "not-null", "NULL", "!=", "SIGN", "var_pop", "PI", "SQRT", "SIMILAR", "min", "trim", "=", "OVERLAPS", "row_number", "coalesce", "TRUNCATE", "SUM", "*", "%", "strftime", "<=", "cast", "COT", "upper", "group_concat", "STDDEV_POP", "instr", "COUNT", "AVG", "COALESCE", "ATAN2", "not", "CONTAINS", "atan2", "cot", "count-distinct", "sum", "/", "rand_integer", "VARIANCE", "rand", "CEIL", "contains", "TRIM", "null", "like", "JULIANDAY", "-", "DATE", "RAND", "LENGTH", "COUNT-DISTINCT", "max", "POSITION", "MIN", "DISTINCT", "degrees", "overlaps", "count", "atan", "UPPER", "EXISTS", "ln", "LN", "collect-distinct", "NOT", "any", "POWER", "distinct", "position", "MOD", "ASIN", "sin", "MAX", "replace", "power", "pi", "radians", "AND", "similar", "stddev_pop", "ltrim", "COVAR_POP", "VAR_POP", "TIME", "exp", "SUBSTR", "ANY", "or", "COS", "substr", "stddev", "STDDEV", "log10", "var_samp", ">=", "VAR_SAMP", "sqrt", "julianday", "time", "STRFTIME", "length", "COLLECT", "tan", "datetime", "NOT-NULL", "cos", "DEGREES", "truncate", "GROUP_CONCAT", "FLOOR", "LTRIM", "CHAR_LENGTH", "and", "INSTR", "ACOS", "mod", "avg", "COLLECT-DISTINCT", "<", "abs", "between", "ATAN", "<>", "lower", "char_length", "COVAR_SAMP", "collect", "date", "group_concatd", "REPLACE", "SIN", "DATETIME", "RTRIM", "ROUND", "TAN", "variance", "OR", "all", "LOWER", "exists", "EXP", "ROW_NUMBER", "STDDEV_SAMP", "stddev_samp", "RADIANS", "GROUP_CONCATD", "RAND_INTEGER", "character_length", "ALL", "||", "LIKE", "round", "IN", "LOG10", "covar_pop", "asin", "sign", "+", "rtrim", "BETWEEN", "ABS", "CAST", "in", "acos", ">"
                          ]
                        },
                        {
@@ -1406,6 +2703,29 @@
                            },
                            {
                              "$ref":"sql.json"
+                           },
+                           {
+                             "type":"array" ,
+                             "items":{
+                               "anyOf":[
+                                 {
+                                   "anyOf":[
+                                     {
+                                       "type":"string"
+                                     },
+                                     {
+                                       keyword?
+                                     }
+                                   ]
+                                 },
+                                 {
+                                   "type":"number"
+                                 },
+                                 {
+                                   "$ref":"sql.json"
+                                 }
+                               ]
+                             }
                            }
                          ]
                        }
@@ -1433,7 +2753,7 @@
                        {
                          "type":"string" ,
                          "enum":[
-                           "!=", "min", "=", "SUM", "<=", "COUNT", "AVG", "sum", "max", "MIN", "count", "MAX", "AND", "or", ">=", "and", "avg", "<", "between", "<>", "OR", "BETWEEN", ">"
+                           "covar_samp", "CHARACTER_LENGTH", "floor", "ceil", "not-null", "NULL", "!=", "SIGN", "var_pop", "PI", "SQRT", "SIMILAR", "min", "trim", "=", "OVERLAPS", "row_number", "coalesce", "TRUNCATE", "SUM", "*", "%", "strftime", "<=", "cast", "COT", "upper", "group_concat", "STDDEV_POP", "instr", "COUNT", "AVG", "COALESCE", "ATAN2", "not", "CONTAINS", "atan2", "cot", "count-distinct", "sum", "/", "rand_integer", "VARIANCE", "rand", "CEIL", "contains", "TRIM", "null", "like", "JULIANDAY", "-", "DATE", "RAND", "LENGTH", "COUNT-DISTINCT", "max", "POSITION", "MIN", "DISTINCT", "degrees", "overlaps", "count", "atan", "UPPER", "EXISTS", "ln", "LN", "collect-distinct", "NOT", "any", "POWER", "distinct", "position", "MOD", "ASIN", "sin", "MAX", "replace", "power", "pi", "radians", "AND", "similar", "stddev_pop", "ltrim", "COVAR_POP", "VAR_POP", "TIME", "exp", "SUBSTR", "ANY", "or", "COS", "substr", "stddev", "STDDEV", "log10", "var_samp", ">=", "VAR_SAMP", "sqrt", "julianday", "time", "STRFTIME", "length", "COLLECT", "tan", "datetime", "NOT-NULL", "cos", "DEGREES", "truncate", "GROUP_CONCAT", "FLOOR", "LTRIM", "CHAR_LENGTH", "and", "INSTR", "ACOS", "mod", "avg", "COLLECT-DISTINCT", "<", "abs", "between", "ATAN", "<>", "lower", "char_length", "COVAR_SAMP", "collect", "date", "group_concatd", "REPLACE", "SIN", "DATETIME", "RTRIM", "ROUND", "TAN", "variance", "OR", "all", "LOWER", "exists", "EXP", "ROW_NUMBER", "STDDEV_SAMP", "stddev_samp", "RADIANS", "GROUP_CONCATD", "RAND_INTEGER", "character_length", "ALL", "||", "LIKE", "round", "IN", "LOG10", "covar_pop", "asin", "sign", "+", "rtrim", "BETWEEN", "ABS", "CAST", "in", "acos", ">"
                          ]
                        },
                        {
@@ -1453,13 +2773,36 @@
                            },
                            {
                              "$ref":"sql.json"
+                           },
+                           {
+                             "type":"array" ,
+                             "items":{
+                               "anyOf":[
+                                 {
+                                   "anyOf":[
+                                     {
+                                       "type":"string"
+                                     },
+                                     {
+                                       keyword?
+                                     }
+                                   ]
+                                 },
+                                 {
+                                   "type":"number"
+                                 },
+                                 {
+                                   "$ref":"sql.json"
+                                 }
+                               ]
+                             }
                            }
                          ]
                        }
                      ]
                    }
                  ],
-                 "description":"A LEFT JOIN specification"
+                 "description":"An outer LEFT JOIN specification"
                },
                "limit":{
                  "type":"integer",
@@ -1530,7 +2873,7 @@
                        {
                          "type":"string" ,
                          "enum":[
-                           "!=", "min", "=", "SUM", "<=", "COUNT", "AVG", "sum", "max", "MIN", "count", "MAX", "AND", "or", ">=", "and", "avg", "<", "between", "<>", "OR", "BETWEEN", ">"
+                           "covar_samp", "CHARACTER_LENGTH", "floor", "ceil", "not-null", "NULL", "!=", "SIGN", "var_pop", "PI", "SQRT", "SIMILAR", "min", "trim", "=", "OVERLAPS", "row_number", "coalesce", "TRUNCATE", "SUM", "*", "%", "strftime", "<=", "cast", "COT", "upper", "group_concat", "STDDEV_POP", "instr", "COUNT", "AVG", "COALESCE", "ATAN2", "not", "CONTAINS", "atan2", "cot", "count-distinct", "sum", "/", "rand_integer", "VARIANCE", "rand", "CEIL", "contains", "TRIM", "null", "like", "JULIANDAY", "-", "DATE", "RAND", "LENGTH", "COUNT-DISTINCT", "max", "POSITION", "MIN", "DISTINCT", "degrees", "overlaps", "count", "atan", "UPPER", "EXISTS", "ln", "LN", "collect-distinct", "NOT", "any", "POWER", "distinct", "position", "MOD", "ASIN", "sin", "MAX", "replace", "power", "pi", "radians", "AND", "similar", "stddev_pop", "ltrim", "COVAR_POP", "VAR_POP", "TIME", "exp", "SUBSTR", "ANY", "or", "COS", "substr", "stddev", "STDDEV", "log10", "var_samp", ">=", "VAR_SAMP", "sqrt", "julianday", "time", "STRFTIME", "length", "COLLECT", "tan", "datetime", "NOT-NULL", "cos", "DEGREES", "truncate", "GROUP_CONCAT", "FLOOR", "LTRIM", "CHAR_LENGTH", "and", "INSTR", "ACOS", "mod", "avg", "COLLECT-DISTINCT", "<", "abs", "between", "ATAN", "<>", "lower", "char_length", "COVAR_SAMP", "collect", "date", "group_concatd", "REPLACE", "SIN", "DATETIME", "RTRIM", "ROUND", "TAN", "variance", "OR", "all", "LOWER", "exists", "EXP", "ROW_NUMBER", "STDDEV_SAMP", "stddev_samp", "RADIANS", "GROUP_CONCATD", "RAND_INTEGER", "character_length", "ALL", "||", "LIKE", "round", "IN", "LOG10", "covar_pop", "asin", "sign", "+", "rtrim", "BETWEEN", "ABS", "CAST", "in", "acos", ">"
                          ]
                        },
                        {
@@ -1550,13 +2893,36 @@
                            },
                            {
                              "$ref":"sql.json"
+                           },
+                           {
+                             "type":"array" ,
+                             "items":{
+                               "anyOf":[
+                                 {
+                                   "anyOf":[
+                                     {
+                                       "type":"string"
+                                     },
+                                     {
+                                       keyword?
+                                     }
+                                   ]
+                                 },
+                                 {
+                                   "type":"number"
+                                 },
+                                 {
+                                   "$ref":"sql.json"
+                                 }
+                               ]
+                             }
                            }
                          ]
                        }
                      ]
                    }
                  ],
-                 "description":"A RIGHT JOIN specification"
+                 "description":"An outer RIGHT JOIN specification"
                },
                "select":{
                  "type":"array" ,
@@ -1568,7 +2934,7 @@
                          {
                            "type":"string" ,
                            "enum":[
-                             "!=", "min", "=", "SUM", "<=", "COUNT", "AVG", "sum", "max", "MIN", "count", "MAX", "AND", "or", ">=", "and", "avg", "<", "between", "<>", "OR", "BETWEEN", ">"
+                             "covar_samp", "CHARACTER_LENGTH", "floor", "ceil", "not-null", "NULL", "!=", "SIGN", "var_pop", "PI", "SQRT", "SIMILAR", "min", "trim", "=", "OVERLAPS", "row_number", "coalesce", "TRUNCATE", "SUM", "*", "%", "strftime", "<=", "cast", "COT", "upper", "group_concat", "STDDEV_POP", "instr", "COUNT", "AVG", "COALESCE", "ATAN2", "not", "CONTAINS", "atan2", "cot", "count-distinct", "sum", "/", "rand_integer", "VARIANCE", "rand", "CEIL", "contains", "TRIM", "null", "like", "JULIANDAY", "-", "DATE", "RAND", "LENGTH", "COUNT-DISTINCT", "max", "POSITION", "MIN", "DISTINCT", "degrees", "overlaps", "count", "atan", "UPPER", "EXISTS", "ln", "LN", "collect-distinct", "NOT", "any", "POWER", "distinct", "position", "MOD", "ASIN", "sin", "MAX", "replace", "power", "pi", "radians", "AND", "similar", "stddev_pop", "ltrim", "COVAR_POP", "VAR_POP", "TIME", "exp", "SUBSTR", "ANY", "or", "COS", "substr", "stddev", "STDDEV", "log10", "var_samp", ">=", "VAR_SAMP", "sqrt", "julianday", "time", "STRFTIME", "length", "COLLECT", "tan", "datetime", "NOT-NULL", "cos", "DEGREES", "truncate", "GROUP_CONCAT", "FLOOR", "LTRIM", "CHAR_LENGTH", "and", "INSTR", "ACOS", "mod", "avg", "COLLECT-DISTINCT", "<", "abs", "between", "ATAN", "<>", "lower", "char_length", "COVAR_SAMP", "collect", "date", "group_concatd", "REPLACE", "SIN", "DATETIME", "RTRIM", "ROUND", "TAN", "variance", "OR", "all", "LOWER", "exists", "EXP", "ROW_NUMBER", "STDDEV_SAMP", "stddev_samp", "RADIANS", "GROUP_CONCATD", "RAND_INTEGER", "character_length", "ALL", "||", "LIKE", "round", "IN", "LOG10", "covar_pop", "asin", "sign", "+", "rtrim", "BETWEEN", "ABS", "CAST", "in", "acos", ">"
                            ]
                          },
                          {
@@ -1588,6 +2954,29 @@
                              },
                              {
                                "$ref":"sql.json"
+                             },
+                             {
+                               "type":"array" ,
+                               "items":{
+                                 "anyOf":[
+                                   {
+                                     "anyOf":[
+                                       {
+                                         "type":"string"
+                                       },
+                                       {
+                                         keyword?
+                                       }
+                                     ]
+                                   },
+                                   {
+                                     "type":"number"
+                                   },
+                                   {
+                                     "$ref":"sql.json"
+                                   }
+                                 ]
+                               }
                              }
                            ]
                          }
@@ -1599,10 +2988,68 @@
                          {
                            "anyOf":[
                              {
-                               "type":"string"
+                               "anyOf":[
+                                 {
+                                   "type":"string"
+                                 },
+                                 {
+                                   keyword?
+                                 }
+                               ]
                              },
                              {
-                               keyword?
+                               "type":"array" ,
+                               "items":[
+                                 {
+                                   "type":"string" ,
+                                   "enum":[
+                                     "covar_samp", "CHARACTER_LENGTH", "floor", "ceil", "not-null", "NULL", "!=", "SIGN", "var_pop", "PI", "SQRT", "SIMILAR", "min", "trim", "=", "OVERLAPS", "row_number", "coalesce", "TRUNCATE", "SUM", "*", "%", "strftime", "<=", "cast", "COT", "upper", "group_concat", "STDDEV_POP", "instr", "COUNT", "AVG", "COALESCE", "ATAN2", "not", "CONTAINS", "atan2", "cot", "count-distinct", "sum", "/", "rand_integer", "VARIANCE", "rand", "CEIL", "contains", "TRIM", "null", "like", "JULIANDAY", "-", "DATE", "RAND", "LENGTH", "COUNT-DISTINCT", "max", "POSITION", "MIN", "DISTINCT", "degrees", "overlaps", "count", "atan", "UPPER", "EXISTS", "ln", "LN", "collect-distinct", "NOT", "any", "POWER", "distinct", "position", "MOD", "ASIN", "sin", "MAX", "replace", "power", "pi", "radians", "AND", "similar", "stddev_pop", "ltrim", "COVAR_POP", "VAR_POP", "TIME", "exp", "SUBSTR", "ANY", "or", "COS", "substr", "stddev", "STDDEV", "log10", "var_samp", ">=", "VAR_SAMP", "sqrt", "julianday", "time", "STRFTIME", "length", "COLLECT", "tan", "datetime", "NOT-NULL", "cos", "DEGREES", "truncate", "GROUP_CONCAT", "FLOOR", "LTRIM", "CHAR_LENGTH", "and", "INSTR", "ACOS", "mod", "avg", "COLLECT-DISTINCT", "<", "abs", "between", "ATAN", "<>", "lower", "char_length", "COVAR_SAMP", "collect", "date", "group_concatd", "REPLACE", "SIN", "DATETIME", "RTRIM", "ROUND", "TAN", "variance", "OR", "all", "LOWER", "exists", "EXP", "ROW_NUMBER", "STDDEV_SAMP", "stddev_samp", "RADIANS", "GROUP_CONCATD", "RAND_INTEGER", "character_length", "ALL", "||", "LIKE", "round", "IN", "LOG10", "covar_pop", "asin", "sign", "+", "rtrim", "BETWEEN", "ABS", "CAST", "in", "acos", ">"
+                                   ]
+                                 },
+                                 {
+                                   "anyOf":[
+                                     {
+                                       "anyOf":[
+                                         {
+                                           "type":"string"
+                                         },
+                                         {
+                                           keyword?
+                                         }
+                                       ]
+                                     },
+                                     {
+                                       "type":"number"
+                                     },
+                                     {
+                                       "$ref":"sql.json"
+                                     },
+                                     {
+                                       "type":"array" ,
+                                       "items":{
+                                         "anyOf":[
+                                           {
+                                             "anyOf":[
+                                               {
+                                                 "type":"string"
+                                               },
+                                               {
+                                                 keyword?
+                                               }
+                                             ]
+                                           },
+                                           {
+                                             "type":"number"
+                                           },
+                                           {
+                                             "$ref":"sql.json"
+                                           }
+                                         ]
+                                       }
+                                     }
+                                   ]
+                                 }
+                               ]
                              }
                            ]
                          },
@@ -1610,6 +3057,9 @@
                            "type":"string"
                          }
                        ]
+                     },
+                     {
+                       "type":"number"
                      },
                      {
                        "anyOf":[
@@ -1631,7 +3081,7 @@
                    {
                      "type":"string" ,
                      "enum":[
-                       "!=", "min", "=", "SUM", "<=", "COUNT", "AVG", "sum", "max", "MIN", "count", "MAX", "AND", "or", ">=", "and", "avg", "<", "between", "<>", "OR", "BETWEEN", ">"
+                       "covar_samp", "CHARACTER_LENGTH", "floor", "ceil", "not-null", "NULL", "!=", "SIGN", "var_pop", "PI", "SQRT", "SIMILAR", "min", "trim", "=", "OVERLAPS", "row_number", "coalesce", "TRUNCATE", "SUM", "*", "%", "strftime", "<=", "cast", "COT", "upper", "group_concat", "STDDEV_POP", "instr", "COUNT", "AVG", "COALESCE", "ATAN2", "not", "CONTAINS", "atan2", "cot", "count-distinct", "sum", "/", "rand_integer", "VARIANCE", "rand", "CEIL", "contains", "TRIM", "null", "like", "JULIANDAY", "-", "DATE", "RAND", "LENGTH", "COUNT-DISTINCT", "max", "POSITION", "MIN", "DISTINCT", "degrees", "overlaps", "count", "atan", "UPPER", "EXISTS", "ln", "LN", "collect-distinct", "NOT", "any", "POWER", "distinct", "position", "MOD", "ASIN", "sin", "MAX", "replace", "power", "pi", "radians", "AND", "similar", "stddev_pop", "ltrim", "COVAR_POP", "VAR_POP", "TIME", "exp", "SUBSTR", "ANY", "or", "COS", "substr", "stddev", "STDDEV", "log10", "var_samp", ">=", "VAR_SAMP", "sqrt", "julianday", "time", "STRFTIME", "length", "COLLECT", "tan", "datetime", "NOT-NULL", "cos", "DEGREES", "truncate", "GROUP_CONCAT", "FLOOR", "LTRIM", "CHAR_LENGTH", "and", "INSTR", "ACOS", "mod", "avg", "COLLECT-DISTINCT", "<", "abs", "between", "ATAN", "<>", "lower", "char_length", "COVAR_SAMP", "collect", "date", "group_concatd", "REPLACE", "SIN", "DATETIME", "RTRIM", "ROUND", "TAN", "variance", "OR", "all", "LOWER", "exists", "EXP", "ROW_NUMBER", "STDDEV_SAMP", "stddev_samp", "RADIANS", "GROUP_CONCATD", "RAND_INTEGER", "character_length", "ALL", "||", "LIKE", "round", "IN", "LOG10", "covar_pop", "asin", "sign", "+", "rtrim", "BETWEEN", "ABS", "CAST", "in", "acos", ">"
                      ]
                    },
                    {
@@ -1651,6 +3101,29 @@
                        },
                        {
                          "$ref":"sql.json"
+                       },
+                       {
+                         "type":"array" ,
+                         "items":{
+                           "anyOf":[
+                             {
+                               "anyOf":[
+                                 {
+                                   "type":"string"
+                                 },
+                                 {
+                                   keyword?
+                                 }
+                               ]
+                             },
+                             {
+                               "type":"number"
+                             },
+                             {
+                               "$ref":"sql.json"
+                             }
+                           ]
+                         }
                        }
                      ]
                    }
@@ -1709,66 +3182,55 @@
              "minimum":0
            }
          },
-         "additionalProperties": false,
          "description":"Rows used to build this object"
        },
        "row_ranges":{
-         "anyOf":[
-           {
-             "type":"object",
-             "additionalProperties": false
-           },
-           {
-             "type":"array" ,
-             "items":{
+         "type":"array" ,
+         "items":{
+           "anyOf":[
+             {
                "anyOf":[
                  {
-                   "anyOf":[
-                     {
-                       "type":"null"
-                     },
-                     {
-                       "type":"object",
-                       "properties":{
-                         "size":{
-                           "type":"integer",
-                           "minimum":0
-                         },
-                         "start":{
-                           "type":"integer",
-                           "minimum":0
-                         }
-                       },
-                       "additionalProperties": false
-                     }
-                   ]
+                   "type":"null"
                  },
                  {
-                   "type":"array" ,
-                   "items":[
-                     {
-                       "type":"string"
+                   "type":"object",
+                   "properties":{
+                     "size":{
+                       "type":"integer",
+                       "minimum":0
                      },
-                     {
-                       "type":"object",
-                       "properties":{
-                         "size":{
-                           "type":"integer",
-                           "minimum":0
-                         },
-                         "start":{
-                           "type":"integer",
-                           "minimum":0
-                         }
-                       },
-                       "additionalProperties": false
+                     "start":{
+                       "type":"integer",
+                       "minimum":0
                      }
-                   ]
+                   }
+                 }
+               ]
+             },
+             {
+               "type":"array" ,
+               "items":[
+                 {
+                   "type":"string"
+                 },
+                 {
+                   "type":"object",
+                   "properties":{
+                     "size":{
+                       "type":"integer",
+                       "minimum":0
+                     },
+                     "start":{
+                       "type":"integer",
+                       "minimum":0
+                     }
+                   }
                  }
                ]
              }
-           }
-         ],
+           ]
+         },
          "description":"Rows used to build this object, per dataset"
        },
        "sample":{
@@ -1803,94 +3265,86 @@
          "description":"Sampling of input rows used to build this object"
        },
        "samples":{
-         "anyOf":[
-           {
-             "type":"object",
-             "additionalProperties": false
-           },
-           {
-             "type":"array" ,
-             "items":{
+         "type":"array" ,
+         "items":{
+           "anyOf":[
+             {
                "anyOf":[
                  {
-                   "anyOf":[
-                     {
-                       "type":"null"
-                     },
-                     {
-                       "type":"object",
-                       "properties":{
-                         "out_of_bag":{
-                           "type":"boolean",
-                           "description":"Is the sampling out of bag?"
-                         },
-                         "rate":{
-                           "type":"number",
-                           "minimum":0,
-                           "default": 1.0,
-                           "description":"The rate: fraction of rows we pick"
-                         },
-                         "replace":{
-                           "type":"boolean",
-                           "description":"Whether we sample with replacement or not"
-                         },
-                         "seed":{
-                           "anyOf":[
-                             {
-                               "type":"number"
-                             },
-                             {
-                               "type":"string"
-                             }
-                           ],
-                           "description":"A string to feed the random number generator used for sampling.  The same seed produces always the same sample (if all other parameters stay the same).  If not specified, we choose a seed at random"
-                         }
-                       }
-                     }
-                   ]
+                   "type":"null"
                  },
                  {
-                   "type":"array" ,
-                   "items":[
-                     {
-                       "type":"string"
+                   "type":"object",
+                   "properties":{
+                     "out_of_bag":{
+                       "type":"boolean",
+                       "description":"Is the sampling out of bag?"
                      },
-                     {
-                       "type":"object",
-                       "properties":{
-                         "out_of_bag":{
-                           "type":"boolean",
-                           "description":"Is the sampling out of bag?"
+                     "rate":{
+                       "type":"number",
+                       "minimum":0,
+                       "default": 1.0,
+                       "description":"The rate: fraction of rows we pick"
+                     },
+                     "replace":{
+                       "type":"boolean",
+                       "description":"Whether we sample with replacement or not"
+                     },
+                     "seed":{
+                       "anyOf":[
+                         {
+                           "type":"number"
                          },
-                         "rate":{
-                           "type":"number",
-                           "minimum":0,
-                           "default": 1.0,
-                           "description":"The rate: fraction of rows we pick"
-                         },
-                         "replace":{
-                           "type":"boolean",
-                           "description":"Whether we sample with replacement or not"
-                         },
-                         "seed":{
-                           "anyOf":[
-                             {
-                               "type":"number"
-                             },
-                             {
-                               "type":"string"
-                             }
-                           ],
-                           "description":"A string to feed the random number generator used for sampling.  The same seed produces always the same sample (if all other parameters stay the same).  If not specified, we choose a seed at random"
+                         {
+                           "type":"string"
                          }
-                       }
+                       ],
+                       "description":"A string to feed the random number generator used for sampling.  The same seed produces always the same sample (if all other parameters stay the same).  If not specified, we choose a seed at random"
                      }
-                   ]
+                   }
+                 }
+               ]
+             },
+             {
+               "type":"array" ,
+               "items":[
+                 {
+                   "type":"string"
+                 },
+                 {
+                   "type":"object",
+                   "properties":{
+                     "out_of_bag":{
+                       "type":"boolean",
+                       "description":"Is the sampling out of bag?"
+                     },
+                     "rate":{
+                       "type":"number",
+                       "minimum":0,
+                       "default": 1.0,
+                       "description":"The rate: fraction of rows we pick"
+                     },
+                     "replace":{
+                       "type":"boolean",
+                       "description":"Whether we sample with replacement or not"
+                     },
+                     "seed":{
+                       "anyOf":[
+                         {
+                           "type":"number"
+                         },
+                         {
+                           "type":"string"
+                         }
+                       ],
+                       "description":"A string to feed the random number generator used for sampling.  The same seed produces always the same sample (if all other parameters stay the same).  If not specified, we choose a seed at random"
+                     }
+                   }
                  }
                ]
              }
-           }
-         ],
+           ]
+         },
          "description":"Sampling of rows used to build this object, per dataset"
        },
        "separator":{
@@ -1902,6 +3356,262 @@
          "type":"integer",
          "minimum":-1,
          "description":"Number of bytes of the serialized dataset"
+       },
+       "sql_output_fields":{
+         "type":"array" ,
+         "items":{
+           "type":"object",
+           "properties":{
+             "column":{
+               "type":"integer",
+               "minimum":0,
+               "description":"The output column number"
+             },
+             "item_analysis":{
+               "type":"object",
+               "properties":{
+                 "limit":{
+                   "type":"number",
+                   "minimum":1,
+                   "default": 10000,
+                   "description":"Maximum number of items considered."
+                 },
+                 "pruning_strategy":{
+                   "type":"string" ,
+                   "enum":[
+                     "nearest_to_frequency", "most_frequent"
+                   ],
+                   "default": "nearest_to_frequency",
+                   "description":"Strategy used to select items when item_limit is surpassed"
+                 },
+                 "separator":{
+                   "anyOf":[
+                     {
+                       "type":"null"
+                     },
+                     {
+                       "type":"string"
+                     }
+                   ],
+                   "description":"Character delimiting items in the field. Set to null to autodetect if there is no regular expression."
+                 },
+                 "separator_regexp":{
+                   "anyOf":[
+                     {
+                       "type":"null"
+                     },
+                     {
+                       "type":"string"
+                     }
+                   ],
+                   "description":"Regular expression delimiting items in the field. Overrides item_separator."
+                 },
+                 "target_frequency":{
+                   "type":"number",
+                   "minimum":0,
+                   "maximum":1,
+                   "default": 0.3333333333333333,
+                   "description":"A ratio in (0, 1] with the occurence rate used when the prunning_strategy is nearest_to_frequency"
+                 }
+               },
+               "description":"The item analysis parameters for an SQL-generated column"
+             },
+             "name":{
+               "type":"string",
+               "description":"The name of an SQL-generated column"
+             },
+             "optype":{
+               "type":"string" ,
+               "enum":[
+                 "numeric", "items", "text", "datetime", "categorical"
+               ],
+               "description":"The optype of an SQL-generated column"
+             },
+             "refresh_field_type":{
+               "type":"boolean",
+               "description":"Whether the field's optype should be recomputed"
+             },
+             "refresh_preferred":{
+               "type":"boolean",
+               "description":"Whether the field's preferred flag should be recomputed"
+             },
+             "term_analysis":{
+               "type":"object",
+               "properties":{
+                 "bigrams":{
+                   "type":"boolean",
+                   "description":"Allow terms to be bigrams"
+                 },
+                 "case_sensitive":{
+                   "anyOf":[
+                     {
+                       "type":"null"
+                     },
+                     {
+                       "type":"boolean"
+                     }
+                   ],
+                   "description":"Defines whether the term analysis is case sensitive"
+                 },
+                 "enabled":{
+                   "type":"boolean",
+                   "description":"Enable/disables term analysis for this field.  Has no effect except for dataset creation."
+                 },
+                 "excluded_terms":{
+                   "anyOf":[
+                     {
+                       "type":"null"
+                     },
+                     {
+                       "type":"array" ,
+                       "items":{
+                         "type":"string"
+                       }
+                     }
+                   ],
+                   "description":"A list of terms to ignore when performing term analysis"
+                 },
+                 "language":{
+                   "anyOf":[
+                     {
+                       "type":"null"
+                     },
+                     {
+                       "type":"string" ,
+                       "enum":[
+                         "nl", "pt", "en", "none", "zh", "ro", "tr", "it", "fa", "pl", "fi", "ca", "sv", "fr", "da", "hu", "de", "ru", "es", "ja", "cs", "ar", "ko"
+                       ]
+                     }
+                   ],
+                   "default": "none",
+                   "description":"Language code for detected language, or 'none' for no detection, or nil to let us detect it."
+                 },
+                 "ngrams":{
+                   "type":"integer",
+                   "minimum":1,
+                   "description":"The maximum length of consecutive tokens to consider as terms"
+                 },
+                 "stem_words":{
+                   "anyOf":[
+                     {
+                       "type":"null"
+                     },
+                     {
+                       "type":"boolean"
+                     }
+                   ],
+                   "description":"Defines whether the term analysis stems words"
+                 },
+                 "stopword_diligence":{
+                   "anyOf":[
+                     {
+                       "type":"null"
+                     },
+                     {
+                       "type":"string" ,
+                       "enum":[
+                         "light", "aggressive", "normal"
+                       ]
+                     }
+                   ],
+                   "description":"Defines whether the term analysis uses stop words"
+                 },
+                 "stopword_removal":{
+                   "type":"string" ,
+                   "enum":[
+                     "none", "all_languages", "selected_language"
+                   ],
+                   "description":"Remove words that are stopwords in any language."
+                 },
+                 "term_filters":{
+                   "anyOf":[
+                     {
+                       "type":"null"
+                     },
+                     {
+                       "type":"array" ,
+                       "items":{
+                         "type":"string" ,
+                         "enum":[
+                           "numeric_digits", "non_dictionary", "non_language_characters", "single_tokens", "html_keywords"
+                         ]
+                       }
+                     }
+                   ],
+                   "description":"A list of filters to apply when choosing the termset"
+                 },
+                 "term_regexps":{
+                   "anyOf":[
+                     {
+                       "type":"null"
+                     },
+                     {
+                       "type":"array" ,
+                       "items":{
+                         "type":"string"
+                       }
+                     }
+                   ],
+                   "description":"A list of regular expressions to consider as terms"
+                 },
+                 "token_mode":{
+                   "type":"string" ,
+                   "enum":[
+                     "full_terms_only", "tokens_only", "all"
+                   ],
+                   "default": "all",
+                   "description":"Defines whether the term analysis uses full terms, tokenized terms, or both"
+                 },
+                 "use_stopwords":{
+                   "anyOf":[
+                     {
+                       "type":"null"
+                     },
+                     {
+                       "type":"boolean"
+                     }
+                   ],
+                   "description":"Defines whether the term analysis uses stop words"
+                 }
+               },
+               "description":"The term analysis parameters for an SQL-generated column"
+             }
+           },
+           "required":[
+             "column"
+           ],
+           "additionalProperties": false
+         },
+         "description":"A list, one per SQL-generated column, of properties for the generated dataset's fields."
+       },
+       "sql_query":{
+         "anyOf":[
+           {
+             "type":"string"
+           },
+           {
+             "type":"array" ,
+             "items":[
+               {
+                 "type":"string"
+               },
+               {
+                 "anyOf":[
+                   {
+                     "type":"string"
+                   },
+                   {
+                     "type":"number"
+                   },
+                   {
+                     "type":"boolean"
+                   }
+                 ]
+               }
+             ]
+           }
+         ],
+         "description":"A canonical translation of `query` (when given) as an SQL prepared statement, using field identifiers everywhere."
        },
        "term_limit":{
          "type":"integer",

@@ -8,23 +8,6 @@
          "type":"boolean",
          "description":"If true, appends all numeric fields to objective_fields."
        },
-       "balance_fields":{
-         "type":"boolean",
-         "default": true,
-         "description":"Standardize numeric fields (zero mean, std. dev 1)?"
-       },
-       "bias":{
-         "type":"boolean",
-         "default": true,
-         "description":"Whether to allow an intercept term"
-       },
-       "c":{
-         "type":"number",
-         "minimum":0,
-         "exclusiveMinimum":true,
-         "default": 1,
-         "description":"Regularization strength"
-       },
        "callbacks":{
          "type":"array" ,
          "items":{
@@ -111,30 +94,22 @@
            ]
          }
        },
-       "coefficients":{
+       "components":{
          "type":"array" ,
          "items":{
            "type":"array" ,
-           "items":[
-             {
-               "type":"string"
-             },
-             {
-               "type":"array" ,
-               "items":{
-                 "type":"array" ,
-                 "items":{
-                   "type":"number"
-                 }
-               }
-             }
-           ]
+           "items":{
+             "type":"number"
+           }
          },
-         "description":"Fitted feature coefficients"
+         "description":"PCA components, ordered by variance"
        },
-       "compute_stats":{
-         "type":"boolean",
-         "description":"Whether to compute fit statistics for the trained model"
+       "cumulative_variance":{
+         "type":"array" ,
+         "items":{
+           "type":"number"
+         },
+         "description":"Cumulative explained variance"
        },
        "dataset_id":{
          "type":"string",
@@ -191,12 +166,21 @@
          "additionalProperties": false,
          "description":"Parameters to control the discetization of numeric fields"
        },
-       "eps":{
-         "type":"number",
-         "minimum":0,
-         "exclusiveMinimum":true,
-         "default": 1.0E-4,
-         "description":"Stopping criterion"
+       "eigenvalues":{
+         "type":"array" ,
+         "items":{
+           "type":"number"
+         }
+       },
+       "eigenvectors":{
+         "type":"array" ,
+         "items":{
+           "type":"array" ,
+           "items":{
+             "type":"number"
+           }
+         },
+         "description":"Unit vector representation of components"
        },
        "excluded_input_fields":{
          "type":"array" ,
@@ -219,44 +203,6 @@
            "description":"A valid regular expression"
          },
          "description":"List of regular expressions, excluding input fields  by name"
-       },
-       "field_codings":{
-         "type":"array" ,
-         "items":{
-           "type":"object",
-           "properties":{
-             "coding":{
-               "type":"string" ,
-               "enum":[
-                 "dummy", "contrast", "other"
-               ],
-               "description":"Type of coding"
-             },
-             "coefficients":{
-               "type":"array" ,
-               "items":{
-                 "type":"array" ,
-                 "items":{
-                   "type":"number"
-                 }
-               },
-               "description":"Coefficients for contrast or other coding"
-             },
-             "dummy_class":{
-               "type":"string",
-               "description":"Class value for dummy coding"
-             },
-             "field":{
-               "type":"string",
-               "description":"Identifier or name of field to be coded"
-             }
-           },
-           "required":[
-             "coding", "field"
-           ],
-           "additionalProperties": false
-         },
-         "description":"Coding of categorical variables"
        },
        "field_discretizations":{
          "type":"object",
@@ -1359,18 +1305,13 @@
        "kind":{
          "type":"string" ,
          "enum":[
-           "logistic"
+           "pca"
          ],
          "description":"The kind of this message's body"
        },
        "locale":{
          "type":"string",
          "description":"Default locale for field value"
-       },
-       "missing_numerics":{
-         "type":"boolean",
-         "default": true,
-         "description":"Add an additional binary predictor for each numeric field to denote a missing value."
        },
        "missing_tokens":{
          "type":"array" ,
@@ -2405,9 +2346,10 @@
          ],
          "description":"Map of descriptors for fields actually appearing in the model, without summaries"
        },
-       "normalize":{
-         "type":"boolean",
-         "description":"Normalize each row in the training data?"
+       "number_of_components":{
+         "type":"integer",
+         "minimum":0,
+         "description":"Number of fitted components"
        },
        "objective_field":{
          "anyOf":[
@@ -4451,21 +4393,6 @@
          },
          "description":"Collection of objective field identifiers (targets)"
        },
-       "objective_map":{
-         "type":"array" ,
-         "items":{
-           "type":"array" ,
-           "items":[
-             {
-               "type":"string"
-             },
-             {
-               "type":"integer"
-             }
-           ]
-         },
-         "description":"Map between objective categories and indices, as used by internal model"
-       },
        "objective_weights":{
          "type":"array" ,
          "items":{
@@ -4620,13 +4547,13 @@
          ],
          "default": "deterministic"
        },
-       "regularization":{
+       "pca_type":{
          "type":"string" ,
          "enum":[
-           "l2", "l1"
+           "batch", "streaming"
          ],
-         "default": "l2",
-         "description":"Norm to use for regularization"
+         "default": "batch",
+         "description":"PRIVATE - Type of PCA computation used."
        },
        "row_range":{
          "type":"object",
@@ -4809,78 +4736,10 @@
          "type":"string",
          "description":"Seed value for random generators"
        },
-       "stats":{
-         "type":"array" ,
-         "items":{
-           "type":"array" ,
-           "items":[
-             {
-               "type":"string"
-             },
-             {
-               "type":"object",
-               "properties":{
-                 "confidence_intervals":{
-                   "type":"array" ,
-                   "items":{
-                     "type":"array" ,
-                     "items":{
-                       "type":"any"
-                     }
-                   }
-                 },
-                 "likelihood_ratio":{
-                   "type":"array" ,
-                   "items":{
-                     "type":"number"
-                   },
-                   "description":"Difference of log likelihoods between fitted model and  intercept-only model. [p-value, log ratio]"
-                 },
-                 "p_values":{
-                   "type":"array" ,
-                   "items":{
-                     "type":"array" ,
-                     "items":{
-                       "type":"any"
-                     }
-                   },
-                   "description":"Wald test p-values of coefficient estimates."
-                 },
-                 "standard_errors":{
-                   "type":"array" ,
-                   "items":{
-                     "type":"array" ,
-                     "items":{
-                       "type":"any"
-                     }
-                   },
-                   "description":"Standard errors of coefficient estimates."
-                 },
-                 "z_scores":{
-                   "type":"array" ,
-                   "items":{
-                     "type":"array" ,
-                     "items":{
-                       "type":"any"
-                     }
-                   },
-                   "description":"Z-scores of coefficient estimates."
-                 }
-               },
-               "required":[
-                 "confidence_intervals", "likelihood_ratio", "p_values", "standard_errors", "z_scores"
-               ],
-               "additionalProperties": false
-             }
-           ]
-         },
-         "description":"Statistics of fitted coefficients"
-       },
-       "stats_sample_size":{
-         "type":"integer",
-         "default": -1,
-         "description":"Maximum number of dataset rows to use when
-                    computing stats."
+       "standardized":{
+         "type":"boolean",
+         "default": true,
+         "description":"Scale variables to unit variance"
        },
        "training_performance_measure":{
          "type":"object",
@@ -5021,6 +4880,13 @@
            }
          ],
          "description":"Identifier of this model's type (e.g., regression)"
+       },
+       "variance":{
+         "type":"array" ,
+         "items":{
+           "type":"number"
+         },
+         "description":"Explained variance per factor"
        },
        "weight_field":{
          "type":"string",

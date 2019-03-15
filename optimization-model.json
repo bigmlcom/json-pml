@@ -1,0 +1,118 @@
+{
+ "type":"object",
+ "properties":{
+   "model":{
+     "type":"object",
+     "properties":{
+       "apian_dataset_id":{
+         "type":"string",
+         "description":"The apian id of the dataset over which to run the search"
+       },
+       "apian_query_params":{
+         "type":"object",
+         "additionalProperties": false,
+         "description":"Additional query params to add to all URL requests in the optimization execution"
+       },
+       "apian_test_dataset_id":{
+         "type":"string",
+         "description":"The apian id of the dataset for validation"
+       },
+       "apian_uri":{
+         "type":"string",
+         "description":"The base URI to which API requests should go in the optimization execution"
+       },
+       "creation_defaults":{
+         "type":"object",
+         "default": {},
+         "description":"Defaults for submodel creation"
+       },
+       "dataset_id":{
+         "type":"string",
+         "description":"The id of the dataset over which to run the search"
+       },
+       "excluded_input_fields":{
+         "type":"array" ,
+         "items":{
+           "type":"string"
+         },
+         "description":"ids of fields to be excluded for all models"
+       },
+       "input_fields":{
+         "type":"array" ,
+         "items":{
+           "type":"string"
+         },
+         "description":"ids of fields to be included for all models"
+       },
+       "kind":{
+         "type":"string" ,
+         "enum":[
+           "optimization"
+         ],
+         "description":"The kind of this message's body"
+       },
+       "max_training_time":{
+         "type":"integer",
+         "minimum":1,
+         "default": 1800,
+         "description":"Wall-clock time (in seconds) that the search was run."
+       },
+       "metric":{
+         "type":"string" ,
+         "enum":[
+           "phi_coefficient", "precision", "area_under_roc_curve", "recall", "max_phi", "balanced_accuracy", "area_under_pr_curve", "f_measure", "r_squared", "ks_statistic", "accuracy", "kendalls_tau_b", "spearmans_rho"
+         ],
+         "default": "max_phi",
+         "description":"The metric to optimize"
+       },
+       "metric_class":{
+         "type":"string",
+         "description":"The class to optimize for"
+       },
+       "model_types":{
+         "type":"array" ,
+         "items":{
+           "type":"string" ,
+           "enum":[
+             "model", "deepnet", "boosting", "ensemble", "logisticregression", "all", "only_ensemble"
+           ]
+         },
+         "default": ["all"],
+         "description":"List of model types to try or empty for all"
+       },
+       "number_of_model_candidates":{
+         "type":"integer",
+         "minimum":1,
+         "maximum":200,
+         "default": 128,
+         "description":"The number of models tried in the model search"
+       },
+       "objective_field":{
+         "type":"string",
+         "description":"The id for the objective field of all models"
+       },
+       "seed":{
+         "type":"string",
+         "default": "search",
+         "description":"The random seed for the search"
+       },
+       "test_dataset_id":{
+         "type":"string",
+         "description":"The id of a dataset to use for testing, or nil for random splits"
+       },
+       "tlp":{
+         "type":"integer",
+         "default": 4,
+         "description":"Maximum number of simultaneous, non-finished, resource creation tasks."
+       }
+     },
+     "required":[
+       "kind"
+     ]
+   }
+ },
+ "required":[
+   "model"
+ ],
+ "additionalProperties": false
+}
